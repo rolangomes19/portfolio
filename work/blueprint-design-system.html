@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blueprint Design System — Rolan Gomes</title>
+  <meta name="description" content="Case study: building the Blueprint Design System end to end — a three-tier OKLCH token model, a Style Dictionary pipeline, and Figma-to-code parity via Code Connect, adopted across 6 products." />
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+
+  <script>
+    (function () {
+      var t = localStorage.getItem("theme");
+      if (!t && window.matchMedia("(prefers-color-scheme: dark)").matches) t = "dark";
+      if (t) document.documentElement.dataset.theme = t;
+      if (localStorage.getItem("lang") === "ar") {
+        document.documentElement.lang = "ar";
+        document.documentElement.dir = "rtl";
+      }
+      var mc = localStorage.getItem("matColor");
+      if (mc) document.documentElement.style.setProperty("--color-mat", mc);
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script src="../js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="../index.html"><span class="icon-directional" aria-hidden="true">←</span> Rolan Gomes</a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="../index.html#work" data-i18n="nav.work">Work</a></li>
+          <li><a href="../about.html" data-i18n="nav.about">About</a></li>
+          <li><a href="../writing/index.html" data-i18n="nav.writing">Writing</a></li>
+          <li><a href="../more-work.html" data-i18n="nav.morework">More work</a></li>
+          <li><a href="../contact.html" data-i18n="nav.contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="header-controls">
+        <button class="toggle-btn" type="button" data-lang-toggle aria-pressed="false" data-i18n="toggle.lang">العربية</button>
+        <button class="toggle-btn" type="button" data-theme-toggle aria-pressed="false" data-i18n-label="toggle.theme" aria-label="Toggle dark mode">
+          <span aria-hidden="true">◐</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <section class="section case-hero" aria-labelledby="case-title">
+      <div class="container" data-reveal-intro>
+        <span class="eyebrow">2024–2026 · Design systems · Figma · Code Connect</span>
+        <h1 id="case-title">Blueprint Design System</h1>
+        <p class="case-summary">Five products, no shared design language, and no reliable bridge between Figma and code. I built the system that fixed all three — a token architecture, a component library, and the Code Connect links that made the two artifacts one source of truth.</p>
+
+        <dl class="facts-bar">
+          <div class="fact"><dt>Timeline</dt><dd>2024 – 2026</dd></div>
+          <div class="fact"><dt>Role</dt><dd>UX Engineer II — sole owner</dd></div>
+          <div class="fact"><dt>Adoption</dt><dd>6 products (Hub + 5 onboarding)</dd></div>
+          <div class="fact"><dt>Scope</dt><dd>Tokens · kit · docs · code · Code Connect</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <article class="section">
+      <div class="container prose" data-reveal-children>
+
+        <p class="nda-note">Detailed UI masked per NDA. Process artifacts and metrics shared with permission. <!-- PLACEHOLDER: confirm written sign-off covering the published (not just interview-walkthrough) version before this goes live — see Master Profile §11.15.1 --></p>
+
+        <h2>Context</h2>
+        <p>Wipfli Hub is the firm's unified client-and-associate portal for finance and compliance work. As the product grew, so did visual drift: every squad shipped its own buttons, spacing, and states, and design-to-development handoffs relied on screenshots and goodwill rather than a shared source of truth.</p>
+
+        <h2>Problem</h2>
+        <p>Three symptoms kept recurring: inconsistent components across sections, slow handoffs because developers rebuilt what already existed elsewhere, and accessibility fixes that didn't propagate because there was no single place to fix them. Anything built to solve this had to hold up across products with different teams, timelines, and — eventually — an AI tool reading the same source.</p>
+
+        <figure>
+          <!-- PLACEHOLDER image -->
+          <img src="../assets/images/placeholder-blueprint.svg" width="1200" height="900" alt="Audit board showing duplicated component variants across the Hub portal" loading="lazy" decoding="async" />
+          <figcaption>Fig 1 — The audit that started it: duplicated variants across sections.</figcaption>
+        </figure>
+
+        <h2>Process</h2>
+        <p>I started with an inventory of every component in production, then designed a token architecture with three tiers: <strong>Primitives</strong> (raw values — e.g. <code>tg-700</code> at <code>#3D4A64</code>, <code>blue-500</code> at <code>#004DFF</code>), <strong>Semantic</strong> tokens that name a role rather than a value (<code>text/body</code>, <code>action/primary</code>), and <strong>Component</strong> tokens that consume semantic tokens only (<code>button/label</code>, <code>button/bg-default</code>). Components never reference primitives directly — that's what lets the system re-theme without touching a single component.</p>
+
+        <p>The color system itself uses a tinted grey rather than a neutral one, for perceptual warmth that sits coherently with the blue accent palette, built on <strong>OKLCH</strong> for perceptual uniformity, a better dark-mode gamut, and Tailwind v4 compatibility. Six semantic intents — Info, Success, Critical, Warning, Neutral, and AI — each map to a specific hue, and a surface-layering model (<code>surface/base → layer-1 → layer-2</code>) creates elevation through shadow rather than darkening, so light and dark mode share the same token names with different values and zero component rewrites.</p>
+
+        <p>Tokens ship through a <strong>Style Dictionary</strong> pipeline: one platform-agnostic source emits CSS custom properties, a Tailwind <code>@theme</code> block, and JSON, in two build passes. Before Blueprint, the same intent existed as 47 hardcoded hex values spread across 3 files; after, it's one source of truth. Components themselves are built as <strong>CVA</strong> (class-variance-authority) variants — the Button component alone covers primary/secondary/ghost/destructive variants, a full interaction-state set, a size scale, icon support, and ARIA/keyboard/focus-ring accessibility built in rather than bolted on per instance.</p>
+
+        <figure>
+          <!-- PLACEHOLDER image -->
+          <img src="../assets/images/placeholder-blueprint.svg" width="1200" height="900" alt="Three-tier token model diagram: primitives, semantic tokens, component tokens" loading="lazy" decoding="async" />
+          <figcaption>Fig 2 — Token architecture: Primitives → Semantic → Component. Components consume Tier 2 only.</figcaption>
+        </figure>
+
+        <h2>Solution</h2>
+        <p>Blueprint shipped as three connected artifacts: the Figma component kit (built with Variables, Auto Layout, and Dev Mode), the usage documentation, and the linked component code. Code Connect ties each Figma component to its code counterpart, so Dev Mode shows the real, current implementation rather than an approximation — and the same links later gave an LLM a precise, structured target to build against (see the AI-generated frontend POC).</p>
+
+        <h2>Outcome</h2>
+        <p>Adopted by the Wipfli Hub product team, then extended to 5 additional projects — 3 internal, 2 client-facing — for 6 products running on the same system. Blueprint became the foundation that made AI-generated frontend work possible: the same token coverage and Code Connect mapping that kept designers and engineers aligned turned out to be exactly what an LLM needed to generate a compliant frontend on its own.</p>
+
+        <div class="draft-note">Placeholder — expand with the full narrative (specific squad-by-squad rollout story, governance model for the 5 onboarding projects, and any resistance/adoption friction worth naming) once source notes are on hand.</div>
+
+      </div>
+    </article>
+
+    <nav class="section" aria-label="Case study navigation">
+      <div class="container case-nav" data-reveal>
+        <a class="btn btn-secondary" href="../index.html#work"><span class="icon-directional" aria-hidden="true">←</span> All work</a>
+        <a class="btn btn-secondary" href="ai-design-to-code.html">Next: AI-generated frontend POC <span class="icon-directional" aria-hidden="true">→</span></a>
+      </div>
+    </nav>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p class="colophon">
+        Built with HTML, CSS, and vanilla JS. WCAG&nbsp;2.2&nbsp;AA, RTL-ready.
+        © <span data-year>2026</span> Rolan Gomes.
+      </p>
+    </div>
+  </footer>
+
+  <div class="surface-picker">
+    <button type="button" class="surface-picker-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="surface-picker-panel" aria-label="Customize mat color">
+      <span class="surface-picker-trigger-swatch" aria-hidden="true"></span>
+    </button>
+    <div class="surface-picker-panel" id="surface-picker-panel" hidden>
+      <span class="surface-picker-label" id="surface-picker-label">Mat color</span>
+      <div class="surface-picker-swatches" role="radiogroup" aria-labelledby="surface-picker-label">
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="true" tabindex="0" data-color="#095848" style="--swatch:#095848" aria-label="Green"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#141414" style="--swatch:#141414" aria-label="Charcoal"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0b3556" style="--swatch:#0b3556" aria-label="Navy"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal"></button>
+      </div>
+      <div class="surface-picker-custom">
+        <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>
+        <input type="color" id="surface-picker-custom-input" value="#095848" />
+        <button type="button" class="surface-picker-reset" data-surface-reset>Reset to default</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

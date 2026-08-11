@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>More Work — Rolan Gomes</title>
+  <meta name="description" content="Creative range beyond enterprise UI: event and brand direction, internal experience design, video production, and freelance branding." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+  <script>
+    (function () {
+      var t = localStorage.getItem("theme");
+      if (!t && window.matchMedia("(prefers-color-scheme: dark)").matches) t = "dark";
+      if (t) document.documentElement.dataset.theme = t;
+      if (localStorage.getItem("lang") === "ar") {
+        document.documentElement.lang = "ar";
+        document.documentElement.dir = "rtl";
+      }
+      var mc = localStorage.getItem("matColor");
+      if (mc) document.documentElement.style.setProperty("--color-mat", mc);
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="index.html">Rolan Gomes</a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="index.html#work" data-i18n="nav.work">Work</a></li>
+          <li><a href="about.html" data-i18n="nav.about">About</a></li>
+          <li><a href="writing/index.html" data-i18n="nav.writing">Writing</a></li>
+          <li><a href="more-work.html" aria-current="page" data-i18n="nav.morework">More work</a></li>
+          <li><a href="contact.html" data-i18n="nav.contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="header-controls">
+        <button class="toggle-btn" type="button" data-lang-toggle aria-pressed="false" data-i18n="toggle.lang">العربية</button>
+        <button class="toggle-btn" type="button" data-theme-toggle aria-pressed="false" data-i18n-label="toggle.theme" aria-label="Toggle dark mode">
+          <span aria-hidden="true">◐</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <section class="section" aria-labelledby="more-work-title">
+      <div class="container" data-reveal-intro>
+        <span class="eyebrow">More work</span>
+        <h1 id="more-work-title" class="section-title">Range beyond enterprise UI.</h1>
+        <p class="lead">Before and alongside UX, I've directed brand identity, event experience, and video — proof of range, not a second set of case studies.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Creative range">
+      <div class="container">
+        <ul class="more-work-grid" data-reveal-children>
+
+          <li data-reveal>
+            <div class="more-item-media">
+              <img src="assets/images/placeholder-incridea.svg" width="1200" height="900" alt="" loading="lazy" decoding="async" />
+            </div>
+            <div class="more-item-body">
+              <h2 class="more-item-title">Incridea 2022 — Design Committee Lead</h2>
+              <p class="more-item-desc">Directed brand identity, visual themes, and the full attendee/sponsor/visitor experience for a national-level college fest at NMAM Institute of Technology. Drove $35k in sponsorship — roughly 10x the historical average.</p>
+            </div>
+          </li>
+
+          <li data-reveal>
+            <div class="more-item-media">
+              <img src="assets/images/placeholder-offsites.svg" width="1200" height="900" alt="" loading="lazy" decoding="async" />
+            </div>
+            <div class="more-item-body">
+              <h2 class="more-item-title">Wipfli internal offsites (2023, 2025)</h2>
+              <p class="more-item-desc">Led visual and brand identity design for two internal team offsites, plus the design team's contribution to Wipforia 2024 — Wipfli India's 20th-anniversary celebration for 1,000+ people across two locations.</p>
+            </div>
+          </li>
+
+          <li data-reveal>
+            <div class="more-item-media">
+              <img src="assets/images/placeholder-i3t-video.svg" width="1200" height="900" alt="" loading="lazy" decoding="async" />
+            </div>
+            <div class="more-item-body">
+              <h2 class="more-item-title">I3T all-hands video</h2>
+              <p class="more-item-desc">Conceptualized, storyboarded, and produced a video-first recognition format that cut a recurring all-hands segment by 65% (9 → 3 minutes), reaching 190+ associates across the US and India.</p>
+            </div>
+          </li>
+
+          <li data-reveal>
+            <div class="more-item-media">
+              <img src="assets/images/placeholder-freelance-branding.svg" width="1200" height="900" alt="" loading="lazy" decoding="async" />
+            </div>
+            <div class="more-item-body">
+              <h2 class="more-item-title">Freelance branding &amp; visual identity (2019–2022)</h2>
+              <p class="more-item-desc">20+ projects — logos, brand identities, social content, presentation decks — for clients from local businesses to a shipping MNC, with 6 clients returning for multi-year partnerships.</p>
+              <p class="more-item-desc"><!-- PLACEHOLDER: link to Behance once branding case studies are published --> Full case studies on Behance — coming soon.</p>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid" data-reveal-children>
+        <div>
+          <h2 class="footer-heading" data-i18n="footer.contact">Contact</h2>
+          <ul class="footer-links">
+            <li><a href="mailto:rolangomes19@gmail.com"><bdi>rolangomes19@gmail.com</bdi></a></li>
+            <li><a href="tel:+919019536394"><bdi dir="ltr">+91 90195 36394</bdi></a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="footer-heading" data-i18n="footer.explore">Explore</h2>
+          <ul class="footer-links">
+            <li><a href="index.html#work">Work</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="writing/index.html">Writing</a></li>
+            <li><a href="more-work.html">More work</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="footer-heading" data-i18n="footer.elsewhere">Elsewhere</h2>
+          <ul class="footer-links">
+            <li><a href="https://www.linkedin.com/in/rolan-gomes/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="footer-heading">Colophon</h2>
+          <ul class="footer-links">
+            <li><a href="#main">Back to top ↑</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="colophon">
+        Built with HTML, CSS, and vanilla JS — no frameworks. IBM Plex, token-driven theming,
+        WCAG&nbsp;2.2&nbsp;AA, RTL-ready. Designed and developed by Rolan Gomes with Claude Code.
+        © <span data-year>2026</span>.
+      </p>
+    </div>
+  </footer>
+
+  <div class="surface-picker">
+    <button type="button" class="surface-picker-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="surface-picker-panel" aria-label="Customize mat color">
+      <span class="surface-picker-trigger-swatch" aria-hidden="true"></span>
+    </button>
+    <div class="surface-picker-panel" id="surface-picker-panel" hidden>
+      <span class="surface-picker-label" id="surface-picker-label">Mat color</span>
+      <div class="surface-picker-swatches" role="radiogroup" aria-labelledby="surface-picker-label">
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="true" tabindex="0" data-color="#095848" style="--swatch:#095848" aria-label="Green"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#141414" style="--swatch:#141414" aria-label="Charcoal"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0b3556" style="--swatch:#0b3556" aria-label="Navy"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal"></button>
+      </div>
+      <div class="surface-picker-custom">
+        <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>
+        <input type="color" id="surface-picker-custom-input" value="#095848" />
+        <button type="button" class="surface-picker-reset" data-surface-reset>Reset to default</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

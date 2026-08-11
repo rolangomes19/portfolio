@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Writing — Rolan Gomes</title>
+  <meta name="description" content="Articles on design systems, AI-directed frontend work, and enterprise accessibility, from Rolan Gomes." />
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+
+  <script>
+    (function () {
+      var t = localStorage.getItem("theme");
+      if (!t && window.matchMedia("(prefers-color-scheme: dark)").matches) t = "dark";
+      if (t) document.documentElement.dataset.theme = t;
+      if (localStorage.getItem("lang") === "ar") {
+        document.documentElement.lang = "ar";
+        document.documentElement.dir = "rtl";
+      }
+      var mc = localStorage.getItem("matColor");
+      if (mc) document.documentElement.style.setProperty("--color-mat", mc);
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script src="../js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="../index.html">Rolan Gomes</a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="../index.html#work" data-i18n="nav.work">Work</a></li>
+          <li><a href="../about.html" data-i18n="nav.about">About</a></li>
+          <li><a href="index.html" aria-current="page" data-i18n="nav.writing">Writing</a></li>
+          <li><a href="../more-work.html" data-i18n="nav.morework">More work</a></li>
+          <li><a href="../contact.html" data-i18n="nav.contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="header-controls">
+        <button class="toggle-btn" type="button" data-lang-toggle aria-pressed="false" data-i18n="toggle.lang">العربية</button>
+        <button class="toggle-btn" type="button" data-theme-toggle aria-pressed="false" data-i18n-label="toggle.theme" aria-label="Toggle dark mode">
+          <span aria-hidden="true">◐</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <section class="section" aria-labelledby="writing-title">
+      <div class="container" data-reveal-intro>
+        <span class="eyebrow">Writing</span>
+        <h1 id="writing-title" class="section-title">What the work taught me, written down.</h1>
+        <p class="lead">Three pieces on design systems, AI-directed frontend work, and enterprise accessibility — each trailing back to the case study it came from. Publishing over the coming weeks; the first is in progress.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Article archive">
+      <div class="container">
+        <ul class="writing-list" data-reveal-children>
+
+          <li class="writing-item" data-reveal>
+            <p class="writing-meta mono"><span>1,200–1,500 words</span><span>·</span><span>Design leads · design system owners</span><span class="tag">Draft in progress</span></p>
+            <h2 class="writing-title"><a href="design-system-ai-instruction-manual.html">The Design System Is the AI's Instruction Manual</a></h2>
+            <p class="writing-thesis">A well-structured design system with token coverage and Code Connect is what makes AI-generated frontend reliable — not the prompt alone.</p>
+          </li>
+
+          <li class="writing-item" data-reveal>
+            <p class="writing-meta mono"><span>1,000–1,300 words</span><span>·</span><span>PMs · enterprise UX · engineering leads</span><span class="tag">Not yet started</span></p>
+            <h2 class="writing-title"><a href="35-violations-to-zero.html">35 Violations to Zero: What Enterprise Accessibility Actually Looks Like</a></h2>
+            <p class="writing-thesis">Accessibility remediation is a compliance delivery with triage logic and a re-test protocol, not a design-polish task.</p>
+          </li>
+
+          <li class="writing-item" data-reveal>
+            <p class="writing-meta mono"><span>1,200–1,500 words</span><span>·</span><span>Designers exploring AI · recruiters</span><span class="tag">Not yet started</span></p>
+            <h2 class="writing-title"><a href="directing-an-llm-to-build-a-frontend.html">What I Learned Directing an LLM to Build a Frontend</a></h2>
+            <p class="writing-thesis">AI-generated frontend quality is determined by the quality of your direction and the system it's built from — not delegation.</p>
+          </li>
+
+        </ul>
+
+        <p class="draft-note">Also reads as an essay: <a href="../work/ai-process-framework.html">AI in UX Design-to-Development</a> — the case study behind Wipfli's firm-wide AI process framework.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid" data-reveal-children>
+        <div>
+          <h2 class="footer-heading" data-i18n="footer.contact">Contact</h2>
+          <ul class="footer-links">
+            <li><a href="mailto:rolangomes19@gmail.com"><bdi>rolangomes19@gmail.com</bdi></a></li>
+            <li><a href="tel:+919019536394"><bdi dir="ltr">+91 90195 36394</bdi></a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="footer-heading" data-i18n="footer.explore">Explore</h2>
+          <ul class="footer-links">
+            <li><a href="../index.html#work">Work</a></li>
+            <li><a href="../about.html">About</a></li>
+            <li><a href="index.html">Writing</a></li>
+            <li><a href="../more-work.html">More work</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="footer-heading" data-i18n="footer.elsewhere">Elsewhere</h2>
+          <ul class="footer-links">
+            <li><a href="https://www.linkedin.com/in/rolan-gomes/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="footer-heading">Colophon</h2>
+          <ul class="footer-links">
+            <li><a href="#main">Back to top ↑</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="colophon">
+        Built with HTML, CSS, and vanilla JS — no frameworks. IBM Plex, token-driven theming,
+        WCAG&nbsp;2.2&nbsp;AA, RTL-ready. Designed and developed by Rolan Gomes with Claude Code.
+        © <span data-year>2026</span>.
+      </p>
+    </div>
+  </footer>
+
+  <div class="surface-picker">
+    <button type="button" class="surface-picker-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="surface-picker-panel" aria-label="Customize mat color">
+      <span class="surface-picker-trigger-swatch" aria-hidden="true"></span>
+    </button>
+    <div class="surface-picker-panel" id="surface-picker-panel" hidden>
+      <span class="surface-picker-label" id="surface-picker-label">Mat color</span>
+      <div class="surface-picker-swatches" role="radiogroup" aria-labelledby="surface-picker-label">
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="true" tabindex="0" data-color="#095848" style="--swatch:#095848" aria-label="Green"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#141414" style="--swatch:#141414" aria-label="Charcoal"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0b3556" style="--swatch:#0b3556" aria-label="Navy"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal"></button>
+      </div>
+      <div class="surface-picker-custom">
+        <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>
+        <input type="color" id="surface-picker-custom-input" value="#095848" />
+        <button type="button" class="surface-picker-reset" data-surface-reset>Reset to default</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

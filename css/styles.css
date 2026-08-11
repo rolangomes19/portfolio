@@ -1,0 +1,1102 @@
+/* ==========================================================================
+   styles.css — base + components.
+   Rules: tokens only (no raw values), logical properties only (RTL-safe).
+   ========================================================================== */
+
+/* ------ Reset & base ------ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/* ------ The cutting mat ------
+   The background colour MUST live on <html>. Without it, <body>'s background
+   propagates to the canvas and the paper would fill the whole viewport
+   instead of sitting on the mat.
+
+   The artwork rides on a fixed pseudo-element rather than
+   `background-attachment: fixed`, which iOS Safari degrades to `scroll` and
+   then stretches a `cover` image down the full document height. This is a
+   static layer, not parallax — parallax is banned in DESIGN-GUIDELINES §8.
+
+   --mat-image is a ruled-mat SVG "chunk" (see tokens.css) — grid, axis
+   numbers, corner protractor — not a photograph, so it repeats at its own
+   intrinsic 1280x680px size rather than stretching to cover. That keeps the
+   grid at a consistent scale regardless of viewport width, instead of a
+   `cover`-fit image reading differently at 768px vs 2560px. js/main.js
+   overwrites this same custom property with a freshly-colored version of the
+   identical template when a visitor picks a custom mat color. */
+html {
+  scroll-behavior: smooth;
+  background-color: var(--color-mat);
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+html::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: var(--mat-image);
+  background-repeat: repeat;
+}
+/* Below 48em the paper is full-bleed and the mat can never be seen — it's
+   already inlined in this stylesheet either way (no separate request to
+   save), but there's no reason to pay the tiling paint cost for a layer
+   nothing can see. */
+@media (max-width: 47.99em) {
+  html::before {
+    background-image: none;
+  }
+}
+
+/* ------ The paper ------
+   <body> is the sheet. `container-type: inline-size` is what lets headings and
+   page margins be sized in cqi against the paper rather than the viewport.
+   Note this makes <body> the containing block for positioned descendants —
+   which is why the mat above hangs off <html> and not <body>. */
+body {
+  inline-size: var(--paper-inline);
+  margin-inline: auto;
+  margin-block-start: var(--paper-inset-block-start);
+  margin-block-end: 0;
+  min-block-size: 100vh;
+  container-type: inline-size;
+  background: var(--color-bg);
+  box-shadow: var(--shadow-paper);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  transition: background var(--duration-base) var(--ease),
+    color var(--duration-base) var(--ease);
+}
+
+img {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+h1,
+h2,
+h3 {
+  line-height: var(--leading-tight);
+  text-wrap: balance;
+  font-weight: 600;
+}
+
+p {
+  max-inline-size: var(--measure);
+}
+
+/* ------ Focus: visible everywhere, both themes ------ */
+:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+  border-radius: var(--radius-sm);
+}
+
+/* ------ Utilities ------ */
+/* The paper is now the width authority, so .container stops capping width and
+   instead supplies the page margins — which scale with the sheet, so no
+   breakpoints are needed. */
+.container {
+  margin-inline: auto;
+  padding-inline: var(--paper-margin-inline);
+}
+
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-secondary);
+  display: block;
+  margin-block-end: var(--space-05);
+}
+
+/* Arrows and other directional icons flip in RTL */
+[dir="rtl"] .icon-directional {
+  display: inline-block;
+  transform: scaleX(-1);
+}
+
+/* ------ Skip link ------ */
+.skip-link {
+  position: absolute;
+  inset-block-start: var(--space-03);
+  inset-inline-start: var(--space-03);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  padding: var(--space-03) var(--space-05);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  font-weight: 500;
+  transform: translateY(-200%);
+  z-index: 10;
+}
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* ------ Header ------ */
+.site-header {
+  border-block-end: 1px solid var(--color-border);
+}
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-05);
+  padding-block: var(--space-05);
+  flex-wrap: wrap;
+}
+.site-logo {
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--color-text);
+}
+.site-nav ul {
+  display: flex;
+  gap: var(--space-06);
+  list-style: none;
+  padding: 0;
+}
+.site-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: var(--text-small);
+}
+.site-nav a:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.header-controls {
+  display: flex;
+  gap: var(--space-03);
+}
+
+/* Toggle buttons: 44px hit area, real buttons, state via aria-pressed */
+.toggle-btn {
+  min-inline-size: 2.75rem;
+  min-block-size: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-02);
+  background: transparent;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease);
+}
+.toggle-btn:hover {
+  background: var(--color-bg-subtle);
+}
+.toggle-btn[aria-pressed="true"] {
+  background: var(--color-text);
+  color: var(--color-bg);
+  border-color: var(--color-text);
+}
+
+/* ------ Sections ------ */
+.section {
+  padding-block: var(--section-rhythm);
+  border-block-end: 1px solid var(--color-border);
+}
+/* The rule under the final section used to butt against the page edge; on
+   paper it reads as a line left stranded mid-sheet. */
+.section:last-of-type {
+  border-block-end: 0;
+}
+
+/* ------ Hero ------ */
+.hero h1 {
+  font-size: var(--text-display);
+  max-inline-size: 22ch;
+}
+.hero .sub {
+  margin-block-start: var(--space-06);
+  color: var(--color-text-secondary);
+  font-size: var(--text-h3);
+  font-weight: 400;
+}
+
+/* Page-lead: intro paragraph under a section-title, reused across
+   Writing / More Work / Contact top-of-page copy. */
+.lead {
+  margin-block-start: var(--space-06);
+  color: var(--color-text-secondary);
+  font-size: var(--text-h3);
+  font-weight: 400;
+  max-inline-size: var(--measure);
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-04);
+  margin-block-start: var(--space-08);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-03);
+  padding: var(--space-04) var(--space-06);
+  min-block-size: 2.75rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-small);
+  font-weight: 500;
+  text-decoration: none;
+  transition: background var(--duration-fast) var(--ease),
+    color var(--duration-fast) var(--ease);
+}
+.btn-primary {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+.btn-primary:hover {
+  background: var(--color-accent-hover);
+}
+.btn-secondary {
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text);
+}
+.btn-secondary:hover {
+  background: var(--color-bg-subtle);
+}
+
+/* ------ Work list ------ */
+.section-title {
+  font-size: var(--text-h2);
+  margin-block-end: var(--space-08);
+}
+
+.work-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-06);
+}
+
+.work-item {
+  position: relative; /* containment for the card-link ::after */
+  display: grid;
+  gap: var(--space-05);
+  padding: var(--space-05);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  transition: background var(--duration-fast) var(--ease);
+}
+/* Layout responds to the paper, not the window: on desktop the sheet is only
+   60vw, so a viewport breakpoint would break a five-across strip into a 599px
+   column. <body> is the size container. */
+@container (min-width: 40em) {
+  .work-item {
+    grid-template-columns: 2fr 3fr;
+    align-items: center;
+    gap: var(--space-07);
+    padding: var(--space-06);
+  }
+}
+.work-item:hover,
+.work-item:focus-within {
+  background: var(--color-bg-subtle);
+}
+
+.work-media img {
+  aspect-ratio: 4 / 3;
+  inline-size: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-subtle);
+  outline: 1px solid var(--color-image-edge);
+  outline-offset: -1px;
+}
+.work-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-04);
+  color: var(--color-text-secondary);
+  margin-block-end: var(--space-03);
+}
+
+.work-title {
+  font-size: var(--text-h3);
+}
+/* Card-link pattern: title link's ::after covers the whole row,
+   so the row is one tab stop named by the title. */
+.work-title a {
+  color: var(--color-text);
+  text-decoration: none;
+}
+.work-title a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-md);
+}
+.work-title a:hover {
+  color: var(--color-accent);
+}
+
+.work-desc {
+  margin-block-start: var(--space-03);
+  color: var(--color-text-secondary);
+  font-size: var(--text-small);
+}
+
+.work-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-03);
+  margin-block-start: var(--space-04);
+}
+.tag {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-01) var(--space-03);
+  color: var(--color-text-secondary);
+}
+
+.work-arrow {
+  font-size: var(--text-h3);
+  color: var(--color-text-secondary);
+  transition: transform var(--duration-fast) var(--ease);
+  justify-self: end;
+}
+.work-item:hover .work-arrow,
+.work-item:focus-within .work-arrow {
+  transform: translateX(var(--space-02));
+  color: var(--color-accent);
+}
+[dir="rtl"] .work-item:hover .work-arrow,
+[dir="rtl"] .work-item:focus-within .work-arrow {
+  transform: scaleX(-1) translateX(var(--space-02));
+}
+
+/* ------ Highlights strip (homepage stat cards) ------ */
+.highlight-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-05);
+  grid-template-columns: repeat(2, 1fr);
+}
+@container (min-width: 48em) {
+  .highlight-list {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+.highlight-card {
+  position: relative;
+  display: grid;
+  gap: var(--space-02);
+  padding: var(--space-05);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: background var(--duration-fast) var(--ease);
+}
+.highlight-card:hover,
+.highlight-card:focus-within {
+  background: var(--color-bg-subtle);
+}
+.highlight-number {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-text);
+}
+.highlight-label {
+  position: static;
+  font-size: var(--text-small);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+.highlight-label::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-md);
+}
+.highlight-label:hover {
+  color: var(--color-accent);
+}
+
+/* ------ Skills ------ */
+.skills-grid {
+  display: grid;
+  gap: var(--space-08);
+}
+@container (min-width: 34em) {
+  .skills-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.skill-group h3 {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  margin-block-end: var(--space-05);
+}
+[dir="rtl"] .skill-group h3 {
+  letter-spacing: 0;
+}
+
+.skill-list {
+  list-style: none;
+  padding: 0;
+}
+.skill-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-04);
+  padding-block: var(--space-03);
+  border-block-end: 1px solid var(--color-border);
+}
+.skill-index {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  color: var(--color-text-secondary);
+  min-inline-size: 2ch;
+}
+.skill-chip {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  inline-size: 2rem;
+  block-size: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.skill-name {
+  font-size: var(--text-small);
+}
+.skill-note {
+  font-size: var(--text-mono);
+  font-family: var(--font-mono);
+  color: var(--color-text-secondary);
+  margin-inline-start: auto;
+}
+
+/* ------ About ------ */
+.about-grid {
+  display: grid;
+  gap: var(--space-07);
+}
+@container (min-width: 40em) {
+  .about-grid {
+    grid-template-columns: 1fr 2fr;
+    align-items: start;
+  }
+}
+.about-portrait img {
+  aspect-ratio: 1;
+  inline-size: 100%;
+  max-inline-size: 20rem;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+  outline: 1px solid var(--color-image-edge);
+  outline-offset: -1px;
+}
+.about-body p + p {
+  margin-block-start: var(--space-05);
+}
+.about-facts {
+  margin-block-start: var(--space-06);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  color: var(--color-text-secondary);
+  display: grid;
+  gap: var(--space-02);
+}
+
+/* In-text links: underlined always (never color alone) */
+.about-body a,
+.prose a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+.about-body a:hover,
+.prose a:hover {
+  color: var(--color-accent-hover);
+}
+
+/* ------ Footer ------ */
+.site-footer {
+  padding-block: var(--space-09);
+}
+.footer-grid {
+  display: grid;
+  gap: var(--space-07);
+}
+@container (min-width: 40em) {
+  .footer-grid {
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  }
+}
+.footer-heading {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  margin-block-end: var(--space-04);
+}
+[dir="rtl"] .footer-heading {
+  letter-spacing: 0;
+}
+.footer-links {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-03);
+}
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 1.5rem;
+  color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  font-size: var(--text-small);
+}
+.footer-links a:hover {
+  color: var(--color-accent);
+}
+.colophon {
+  margin-block-start: var(--space-08);
+  padding-block-start: var(--space-05);
+  border-block-start: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: var(--text-mono);
+  font-family: var(--font-mono);
+  max-inline-size: none;
+}
+
+/* ------ Case study pages ------ */
+.case-hero h1 {
+  font-size: var(--text-display);
+  max-inline-size: 20ch;
+}
+.case-summary {
+  margin-block-start: var(--space-06);
+  font-size: var(--text-h3);
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+.facts-bar {
+  display: grid;
+  gap: var(--space-05);
+  margin-block-start: var(--space-08);
+  padding-block: var(--space-06);
+  border-block: 1px solid var(--color-border);
+}
+@container (min-width: 40em) {
+  .facts-bar {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.fact dt {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-secondary);
+}
+[dir="rtl"] .fact dt {
+  letter-spacing: 0;
+}
+.fact dd {
+  margin: var(--space-02) 0 0;
+  font-size: var(--text-small);
+  font-weight: 500;
+}
+
+.prose {
+  display: grid;
+  gap: var(--space-05);
+}
+.prose h2 {
+  font-size: var(--text-h2);
+  margin-block-start: var(--space-07);
+}
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.1em 0.4em;
+}
+
+.prose figure {
+  margin-block: var(--space-05);
+}
+.prose figure img {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  outline: 1px solid var(--color-image-edge);
+  outline-offset: -2px;
+}
+.prose figcaption {
+  margin-block-start: var(--space-03);
+  font-size: var(--text-mono);
+  font-family: var(--font-mono);
+  color: var(--color-text-secondary);
+}
+
+.case-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-05);
+  flex-wrap: wrap;
+}
+
+/* ------ NDA disclosure callout (case studies) ------ */
+.nda-note {
+  border-inline-start: 3px solid var(--color-border-strong);
+  background: var(--color-bg-subtle);
+  padding: var(--space-04) var(--space-05);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-small);
+  color: var(--color-text-secondary);
+}
+
+/* ------ Placeholder note (unwritten narrative sections) ------ */
+.draft-note {
+  border: 1px dashed var(--color-border-strong);
+  padding: var(--space-04) var(--space-05);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-small);
+  font-style: italic;
+  color: var(--color-text-secondary);
+  margin-block-start: var(--space-06);
+}
+
+/* ------ More Work grid ------ */
+.more-work-grid {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-08);
+}
+@container (min-width: 34em) {
+  .more-work-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.more-item-media img {
+  aspect-ratio: 4 / 3;
+  inline-size: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+  outline: 1px solid var(--color-image-edge);
+  outline-offset: -1px;
+}
+.more-item-body {
+  margin-block-start: var(--space-04);
+}
+.more-item-title {
+  font-size: var(--text-h3);
+}
+.more-item-desc {
+  margin-block-start: var(--space-03);
+  color: var(--color-text-secondary);
+  font-size: var(--text-small);
+}
+.more-item-link {
+  display: inline-block;
+  margin-block-start: var(--space-03);
+}
+
+/* ------ Writing list ------ */
+.writing-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-06);
+}
+.writing-item {
+  position: relative;
+  padding: var(--space-06);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: background var(--duration-fast) var(--ease);
+}
+.writing-item:hover,
+.writing-item:focus-within {
+  background: var(--color-bg-subtle);
+}
+.writing-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-04);
+  color: var(--color-text-secondary);
+  margin-block-end: var(--space-03);
+}
+.writing-title {
+  font-size: var(--text-h3);
+}
+.writing-title a {
+  color: var(--color-text);
+  text-decoration: none;
+}
+.writing-title a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-md);
+}
+.writing-title a:hover {
+  color: var(--color-accent);
+}
+.writing-thesis {
+  margin-block-start: var(--space-03);
+  color: var(--color-text-secondary);
+  font-size: var(--text-small);
+  max-inline-size: var(--measure);
+}
+
+/* ------ About: specializations ------ */
+.spec-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-07);
+  counter-reset: spec;
+}
+.spec-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-05);
+}
+.spec-index {
+  counter-increment: spec;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  color: var(--color-text-secondary);
+}
+.spec-index::before {
+  content: counter(spec);
+}
+.spec-item h3 {
+  font-size: var(--text-h3);
+  margin-block-end: var(--space-02);
+}
+.spec-item p {
+  color: var(--color-text-secondary);
+}
+
+/* ------ Certification list ------ */
+.cert-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-01);
+}
+.cert-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-04);
+  padding-block: var(--space-04);
+  border-block-end: 1px solid var(--color-border);
+}
+.cert-name {
+  font-weight: 500;
+  flex: 1 1 16rem;
+}
+.cert-meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  color: var(--color-text-secondary);
+}
+.cert-status {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-01) var(--space-03);
+  color: var(--color-text-secondary);
+}
+.cert-status[data-status="ongoing"] {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* ------ Surface picker ------
+   A floating control, independent of the header toggle row, for recoloring
+   the cutting mat. Lives outside <body> in reading order conceptually (it's
+   chrome, not content) but is placed just before </body> in the DOM on every
+   page so it never interrupts the primary reading/tab order — visitors reach
+   it only after the page's real content. */
+.surface-picker {
+  position: fixed;
+  inset-block-end: var(--space-05);
+  inset-inline-end: var(--space-05);
+  z-index: 9;
+}
+@media (min-width: 48em) {
+  .surface-picker {
+    inset-block-end: var(--space-06);
+    inset-inline-end: var(--space-06);
+  }
+}
+
+.surface-picker-trigger {
+  appearance: none;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-bg);
+  box-shadow: var(--shadow-float);
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease);
+}
+.surface-picker-trigger:hover {
+  transform: scale(1.04);
+}
+.surface-picker-trigger:active {
+  transform: scale(0.96);
+}
+.surface-picker-trigger-swatch {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  border-radius: 50%;
+  background: var(--color-mat);
+  border: 1px solid var(--color-paper-edge);
+}
+
+.surface-picker-panel {
+  position: absolute;
+  inset-block-end: calc(100% + var(--space-03));
+  inset-inline-end: 0;
+  inline-size: max-content;
+  padding: var(--space-04);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  box-shadow: var(--shadow-float);
+}
+.surface-picker-panel[hidden] {
+  display: none;
+}
+
+.surface-picker-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-secondary);
+  margin-block-end: var(--space-03);
+}
+
+.surface-picker-swatches {
+  display: flex;
+  gap: var(--space-03);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.surface-picker-swatch {
+  appearance: none;
+  inline-size: 2rem;
+  block-size: 2rem;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  padding: 2px;
+  cursor: pointer;
+  background-color: var(--swatch);
+  background-clip: content-box;
+  transition: border-color var(--duration-fast) var(--ease);
+}
+.surface-picker-swatch[aria-checked="true"] {
+  border-color: var(--color-accent);
+}
+.surface-picker-swatch:hover {
+  border-color: var(--color-border-strong);
+}
+.surface-picker-swatch[aria-checked="true"]:hover {
+  border-color: var(--color-accent);
+}
+
+.surface-picker-custom {
+  display: flex;
+  align-items: center;
+  gap: var(--space-03);
+  margin-block-start: var(--space-04);
+  padding-block-start: var(--space-04);
+  border-block-start: 1px solid var(--color-border);
+}
+.surface-picker-custom input[type="color"] {
+  inline-size: 2rem;
+  block-size: 2rem;
+  padding: 0;
+  border: 2px solid var(--color-border-strong);
+  border-radius: 50%;
+  cursor: pointer;
+  background: none;
+}
+/* Browsers render <input type="color"> with their own inner swatch box —
+   strip its default padding/border chrome so our own ring is the only one
+   visible. */
+.surface-picker-custom input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.surface-picker-custom input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 50%;
+}
+.surface-picker-custom input[type="color"]::-moz-color-swatch {
+  border: none;
+  border-radius: 50%;
+}
+
+.surface-picker-reset {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  cursor: pointer;
+  min-block-size: 1.5rem;
+  padding: 0;
+}
+.surface-picker-reset:hover {
+  color: var(--color-accent);
+}
+
+/* ------ Contact page ------ */
+.contact-hero p {
+  color: var(--color-text-secondary);
+  font-size: var(--text-h3);
+  font-weight: 400;
+  max-inline-size: var(--measure);
+}
+.contact-links {
+  margin-block-start: var(--space-07);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-06);
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+}
+.contact-links a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+.contact-links a:hover {
+  color: var(--color-accent-hover);
+}
+.contact-availability {
+  margin-block-start: var(--space-08);
+  padding-block-start: var(--space-06);
+  border-block-start: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: var(--text-small);
+  max-inline-size: var(--measure);
+}
+
+/* ------ Reveal animation (JS adds .reveal; motion-safe only) ------
+   Content easing onto the page, not a control responding to input — hence the
+   slower duration and the decelerating entrance curve rather than --ease.
+   --reveal-delay is set per element by main.js to stagger siblings. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(var(--reveal-rise));
+    transition: opacity var(--duration-reveal) var(--ease-entrance),
+      transform var(--duration-reveal) var(--ease-entrance);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ------ Hero: the one orchestrated moment ------
+     Above-the-fold content is already on screen at load, so there is no
+     intersection to wait for. This is a CSS animation rather than the
+     JS-driven transition above on purpose: the hero must never depend on a
+     script running to become visible. */
+  [data-reveal-intro] > * {
+    animation: reveal-rise var(--duration-reveal) var(--ease-entrance) both;
+  }
+  [data-reveal-intro] > :nth-child(2) {
+    animation-delay: calc(var(--reveal-stagger) * 1);
+  }
+  [data-reveal-intro] > :nth-child(3) {
+    animation-delay: calc(var(--reveal-stagger) * 2);
+  }
+  [data-reveal-intro] > :nth-child(4) {
+    animation-delay: calc(var(--reveal-stagger) * 3);
+  }
+  [data-reveal-intro] > :nth-child(n + 5) {
+    animation-delay: calc(var(--reveal-stagger) * 4);
+  }
+}
+
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--reveal-rise));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rolan Gomes — UX Designer · Visual/UI Design, Design Systems &amp; Accessibility</title>
+  <meta name="description" content="Rolan Gomes is a UX Designer specializing in Visual/UI Design, Design Systems, and WCAG 2.2 Accessibility — closing the gap between Figma and production. Bengaluru → Dubai." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Rolan Gomes — UX Designer" />
+  <meta property="og:description" content="Visual/UI Design · Design Systems · WCAG 2.2 Accessibility — closing the gap between Figma and production." />
+  <meta property="og:type" content="website" />
+  <!-- PLACEHOLDER: add og:image (1200x630) and og:url after deploy -->
+
+  <!-- Apply saved theme BEFORE first paint to avoid a flash of wrong theme -->
+  <script>
+    (function () {
+      var t = localStorage.getItem("theme");
+      if (!t && window.matchMedia("(prefers-color-scheme: dark)").matches) t = "dark";
+      if (t) document.documentElement.dataset.theme = t;
+      if (localStorage.getItem("lang") === "ar") {
+        document.documentElement.lang = "ar";
+        document.documentElement.dir = "rtl";
+      }
+      var mc = localStorage.getItem("matColor");
+      if (mc) document.documentElement.style.setProperty("--color-mat", mc);
+    })();
+  </script>
+
+  <!-- Fonts: IBM Plex Sans + Mono + Sans Arabic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="index.html">Rolan Gomes</a>
+
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="#work" data-i18n="nav.work">Work</a></li>
+          <li><a href="about.html" data-i18n="nav.about">About</a></li>
+          <li><a href="writing/index.html" data-i18n="nav.writing">Writing</a></li>
+          <li><a href="more-work.html" data-i18n="nav.morework">More work</a></li>
+          <li><a href="contact.html" data-i18n="nav.contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-controls">
+        <button class="toggle-btn" type="button" data-lang-toggle aria-pressed="false" data-i18n="toggle.lang">العربية</button>
+        <button class="toggle-btn" type="button" data-theme-toggle aria-pressed="false" data-i18n-label="toggle.theme" aria-label="Toggle dark mode">
+          <span aria-hidden="true">◐</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ============ 00 · HERO ============ -->
+    <section class="section hero" aria-labelledby="hero-title">
+      <div class="container" data-reveal-intro>
+        <span class="eyebrow" data-i18n="hero.eyebrow">UX Designer — Bengaluru → Dubai</span>
+        <h1 id="hero-title">UX Designer specializing in Visual/UI Design, Design Systems &amp; WCAG&nbsp;2.2 Accessibility — closing the gap between Figma and production.</h1>
+        <p class="sub">I design and engineer design systems for enterprise products — from token architecture in Figma to component code in production. At Wipfli, I built the Blueprint Design System end to end: adopted across 6 products, remediated to zero WCAG&nbsp;2.2 violations, and structured well enough to power an AI-generated frontend that hit an 80% component match rate in 7 days.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#work" data-i18n="actions.work">View selected work</a>
+          <!-- PLACEHOLDER: drop the CV at assets/rolan-gomes-cv.pdf -->
+          <a class="btn btn-secondary" href="assets/rolan-gomes-cv.pdf" data-i18n="actions.cv">Download CV</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HIGHLIGHTS ============ -->
+    <section class="section highlights" aria-labelledby="highlights-title">
+      <div class="container">
+        <h2 id="highlights-title" class="visually-hidden">Highlights</h2>
+        <ul class="highlight-list" data-reveal-children>
+          <li class="highlight-card">
+            <span class="highlight-number mono">6 products</span>
+            <a class="highlight-label" href="work/blueprint-design-system.html">Blueprint Design System adoption</a>
+          </li>
+          <li class="highlight-card">
+            <span class="highlight-number mono">80% match · 7 days</span>
+            <a class="highlight-label" href="work/ai-design-to-code.html">AI-generated frontend POC</a>
+          </li>
+          <li class="highlight-card">
+            <span class="highlight-number mono">35 → 0</span>
+            <a class="highlight-label" href="work/hub-accessibility.html">WCAG 2.2 violations remediated</a>
+          </li>
+          <li class="highlight-card">
+            <span class="highlight-number mono">14 → 1</span>
+            <a class="highlight-label" href="work/hub-migration.html">CSS files consolidated</a>
+          </li>
+          <li class="highlight-card">
+            <span class="highlight-number mono">$35k</span>
+            <a class="highlight-label" href="more-work.html">Sponsorship driven, Incridea 2022</a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ 01 · SELECTED WORK ============ -->
+    <section id="work" class="section" aria-labelledby="work-title">
+      <div class="container">
+        <span class="eyebrow" data-i18n="section.work" data-reveal>01 — Selected work</span>
+        <h2 id="work-title" class="section-title" data-reveal>Five projects, closing the loop from Figma to production.</h2>
+
+        <ul class="work-list">
+
+          <!-- Tile 1 -->
+          <li class="work-item" data-reveal>
+            <div class="work-media">
+              <img src="assets/images/placeholder-blueprint.svg" width="1200" height="900" alt="" loading="lazy" decoding="async" />
+            </div>
+            <div class="work-body">
+              <p class="work-meta mono"><span>2024–2026</span><span>·</span><span>Design systems</span></p>
+              <h3 class="work-title"><a href="work/blueprint-design-system.html">Blueprint Design System</a></h3>
+              <p class="work-desc">Five products, no shared design language, no bridge between Figma and code — I built the system that fixed all three.</p>
+              <p class="work-tags"><span class="tag">Figma</span><span class="tag">Code Connect</span><span class="tag">Design tokens</span></p>
+            </div>
+            <span class="work-arrow icon-directional" aria-hidden="true">→</span>
+          </li>
+
+          <!-- Tile 2 -->
+          <li class="work-item" data-reveal>
+            <div class="work-media">
+              <img src="assets/images/placeholder-ai-poc.svg" width="1200" height="900" alt="" loading="lazy" decoding="async" />
+            </div>
+            <div class="work-body">
+              <p class="work-meta mono"><span>2026</span><span>·</span><span>AI workflow</span></p>
+              <h3 class="work-title"><a href="work/ai-design-to-code.html">AI-generated frontend POC</a></h3>
+              <p class="work-desc">An LLM didn't build this frontend. I built the conditions under which it could, then directed it precisely.</p>
+              <p class="work-tags"><span class="tag">LLM</span><span class="tag">Design-to-code</span><span class="tag">POC</span></p>
+            </div>
+            <span class="work-arrow icon-directional" aria-hidden="true">→</span>
+          </li>
+
+          <!-- Tile 3 -->
+          <li class="work-item" data-reveal>
+            <div class="work-media">
+              <img src="assets/images/placeholder-wcag.svg" width="1200" height="900" alt="" loading="lazy" decoding="async" />
+            </div>
+            <div class="work-body">
+              <p class="work-meta mono"><span>2025</span><span>·</span><span>Accessibility</span></p>
+              <h3 class="work-title"><a href="work/hub-accessibility.html">WCAG 2.2 remediation at scale</a></h3>
+              <p class="work-desc">35 violations, 8 Critical, during a live migration — down to zero, with the prevention mechanism built into the design system itself.</p>
+              <p class="work-tags"><span class="tag">WCAG 2.2</span><span class="tag">Audits</span><span class="tag">Axe</span></p>
+            </div>
+            <span class="work-arrow icon-directional" aria-hidden="true">→</span>
+          </li>
+
+          <!-- Tile 4 -->
+          <li class="work-item" data-reveal>
+            <div class="work-media">
+              <img src="assets/images/placeholder-modernization.svg" width="1200" height="900" alt="" loading="lazy" decoding="async" />
+            </div>
+            <div class="work-body">
+              <p class="work-meta mono"><span>2023–2024</span><span>·</span><span>UI engineering</span></p>
+              <h3 class="work-title"><a href="work/hub-migration.html">Front-end modernization</a></h3>
+              <p class="work-desc">14 fragmented CSS files, 10+ pages, 25+ components — consolidated into one scalable architecture without regressions.</p>
+              <p class="work-tags"><span class="tag">Bootstrap 5</span><span class="tag">CSS architecture</span><span class="tag">Refactor</span></p>
+            </div>
+            <span class="work-arrow icon-directional" aria-hidden="true">→</span>
+          </li>
+
+          <!-- Tile 5 -->
+          <li class="work-item" data-reveal>
+            <div class="work-media">
+              <img src="assets/images/placeholder-process-framework.svg" width="1200" height="900" alt="" loading="lazy" decoding="async" />
+            </div>
+            <div class="work-body">
+              <p class="work-meta mono"><span>2025–2026</span><span>·</span><span>Process &amp; AI strategy</span></p>
+              <h3 class="work-title"><a href="work/ai-process-framework.html">AI in UX design-to-development</a></h3>
+              <p class="work-desc">Not just AI tool usage — a firm-wide framework, formally adopted, presented to technical directors and partners.</p>
+              <p class="work-tags"><span class="tag">AI strategy</span><span class="tag">Process design</span><span class="tag">Thought leadership</span></p>
+            </div>
+            <span class="work-arrow icon-directional" aria-hidden="true">→</span>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid" data-reveal-children>
+        <div>
+          <h2 class="footer-heading" data-i18n="footer.contact">Contact</h2>
+          <ul class="footer-links">
+            <li><a href="mailto:rolangomes19@gmail.com"><bdi>rolangomes19@gmail.com</bdi></a></li>
+            <li><a href="tel:+919019536394"><bdi dir="ltr">+91 90195 36394</bdi></a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="footer-heading" data-i18n="footer.explore">Explore</h2>
+          <ul class="footer-links">
+            <li><a href="index.html#work">Work</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="writing/index.html">Writing</a></li>
+            <li><a href="more-work.html">More work</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="footer-heading" data-i18n="footer.elsewhere">Elsewhere</h2>
+          <ul class="footer-links">
+            <li><a href="https://www.linkedin.com/in/rolan-gomes/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+            <!-- PLACEHOLDER: add Behance link once branding case studies are live (see more-work.html) -->
+          </ul>
+        </div>
+        <div>
+          <h2 class="footer-heading">Colophon</h2>
+          <ul class="footer-links">
+            <li><a href="#main">Back to top ↑</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="colophon">
+        Built with HTML, CSS, and vanilla JS — no frameworks. IBM Plex, token-driven theming,
+        WCAG&nbsp;2.2&nbsp;AA, RTL-ready. Designed and developed by Rolan Gomes with Claude Code.
+        © <span data-year>2026</span>.
+      </p>
+    </div>
+  </footer>
+
+  <div class="surface-picker">
+    <button type="button" class="surface-picker-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="surface-picker-panel" aria-label="Customize mat color">
+      <span class="surface-picker-trigger-swatch" aria-hidden="true"></span>
+    </button>
+    <div class="surface-picker-panel" id="surface-picker-panel" hidden>
+      <span class="surface-picker-label" id="surface-picker-label">Mat color</span>
+      <div class="surface-picker-swatches" role="radiogroup" aria-labelledby="surface-picker-label">
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="true" tabindex="0" data-color="#095848" style="--swatch:#095848" aria-label="Green"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#141414" style="--swatch:#141414" aria-label="Charcoal"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0b3556" style="--swatch:#0b3556" aria-label="Navy"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal"></button>
+      </div>
+      <div class="surface-picker-custom">
+        <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>
+        <input type="color" id="surface-picker-custom-input" value="#095848" />
+        <button type="button" class="surface-picker-reset" data-surface-reset>Reset to default</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

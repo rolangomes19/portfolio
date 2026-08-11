@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About — Rolan Gomes</title>
+  <meta name="description" content="Rolan Gomes — UX Designer specializing in Visual/UI Design, Design Systems, and WCAG 2.2 Accessibility. Relocating to the UAE, available immediately." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+  <script>
+    (function () {
+      var t = localStorage.getItem("theme");
+      if (!t && window.matchMedia("(prefers-color-scheme: dark)").matches) t = "dark";
+      if (t) document.documentElement.dataset.theme = t;
+      if (localStorage.getItem("lang") === "ar") {
+        document.documentElement.lang = "ar";
+        document.documentElement.dir = "rtl";
+      }
+      var mc = localStorage.getItem("matColor");
+      if (mc) document.documentElement.style.setProperty("--color-mat", mc);
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="index.html">Rolan Gomes</a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="index.html#work" data-i18n="nav.work">Work</a></li>
+          <li><a href="about.html" aria-current="page" data-i18n="nav.about">About</a></li>
+          <li><a href="writing/index.html" data-i18n="nav.writing">Writing</a></li>
+          <li><a href="more-work.html" data-i18n="nav.morework">More work</a></li>
+          <li><a href="contact.html" data-i18n="nav.contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="header-controls">
+        <button class="toggle-btn" type="button" data-lang-toggle aria-pressed="false" data-i18n="toggle.lang">العربية</button>
+        <button class="toggle-btn" type="button" data-theme-toggle aria-pressed="false" data-i18n-label="toggle.theme" aria-label="Toggle dark mode">
+          <span aria-hidden="true">◐</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ============ ABOUT HERO + POSITIONING ============ -->
+    <section class="section" aria-labelledby="about-title">
+      <div class="container about-grid" data-reveal-intro>
+        <div class="about-portrait">
+          <!-- PLACEHOLDER: replace with real portrait, WebP 800x800 -->
+          <img src="assets/images/placeholder-portrait.svg" width="800" height="800" alt="Portrait of Rolan Gomes" loading="lazy" decoding="async" />
+        </div>
+        <div class="about-body">
+          <span class="eyebrow">About</span>
+          <h1 id="about-title">UX Designer specializing in Visual/UI Design, Design Systems &amp; WCAG&nbsp;2.2 Accessibility.</h1>
+          <p>I'm at my best solving three kinds of problems:</p>
+
+          <h2 class="visually-hidden">What I do</h2>
+          <ol class="spec-list">
+            <li class="spec-item">
+              <span class="spec-index" aria-hidden="true"></span>
+              <div>
+                <h3>Design systems that scale</h3>
+                <p>I think in tokens, not screens — architecting the layer between design intent and production code so a system stays consistent as it grows across teams and products, not just at launch.</p>
+              </div>
+            </li>
+            <li class="spec-item">
+              <span class="spec-index" aria-hidden="true"></span>
+              <div>
+                <h3>Accessibility as infrastructure, not a checklist</h3>
+                <p>I've taken a live enterprise product from 35 WCAG&nbsp;2.2 violations to zero during an active migration, then built the prevention mechanism into the design system itself so the violations don't come back.</p>
+              </div>
+            </li>
+            <li class="spec-item">
+              <span class="spec-index" aria-hidden="true"></span>
+              <div>
+                <h3>Design-to-code, including AI-directed</h3>
+                <p>My engineering background (B.E., Mechanical) means I read and reason about code, not just hand it off. I've directed LLM-assisted frontend generation from a well-structured design system to an 80% component match rate in 7 days — and I can tell you honestly what the other 20% needed and why.</p>
+              </div>
+            </li>
+          </ol>
+
+          <p>Before UX, I ran design for a national college fest (Incridea 2022) and freelanced across branding and visual identity for clients from local businesses to a shipping MNC — which is where the systems thinking and the visual craft both started. I'm currently relocating to the UAE, based between Dubai, Abu Dhabi, and Sharjah, and available immediately.</p>
+
+          <p><a class="btn btn-primary" href="contact.html">Have a design systems or accessibility problem worth solving? Get in touch</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TOOLS & SKILLS ============ -->
+    <section id="skills" class="section" aria-labelledby="skills-title">
+      <div class="container">
+        <span class="eyebrow" data-reveal>Tools &amp; skills</span>
+        <h2 id="skills-title" class="section-title" data-reveal>What each case study is built with.</h2>
+
+        <div class="skills-grid" data-reveal-children>
+
+          <div class="skill-group">
+            <h3>Design systems &amp; UI engineering</h3>
+            <ul class="skill-list">
+              <li class="skill-item"><span class="skill-index">1</span><span class="skill-chip" aria-hidden="true">Fi</span><span class="skill-name">Figma</span><span class="skill-note">Variables · Auto Layout · Dev Mode · Code Connect</span></li>
+              <li class="skill-item"><span class="skill-index">2</span><span class="skill-chip" aria-hidden="true">Fj</span><span class="skill-name">FigJam &amp; Figma Make</span></li>
+              <li class="skill-item"><span class="skill-index">3</span><span class="skill-chip" aria-hidden="true">Dt</span><span class="skill-name">Design tokens</span><span class="skill-note">3-tier · OKLCH · Style Dictionary</span></li>
+              <li class="skill-item"><span class="skill-index">4</span><span class="skill-chip" aria-hidden="true">Ca</span><span class="skill-name">Component architecture</span><span class="skill-note">CVA variants</span></li>
+            </ul>
+          </div>
+
+          <div class="skill-group">
+            <h3>Accessibility</h3>
+            <ul class="skill-list">
+              <li class="skill-item"><span class="skill-index">5</span><span class="skill-chip" aria-hidden="true">Wc</span><span class="skill-name">WCAG 2.2 compliance &amp; remediation</span></li>
+              <li class="skill-item"><span class="skill-index">6</span><span class="skill-chip" aria-hidden="true">Aa</span><span class="skill-name">Accessibility audits</span></li>
+              <li class="skill-item"><span class="skill-index">7</span><span class="skill-chip" aria-hidden="true">Fa</span><span class="skill-name">Focus state &amp; ARIA standardization</span></li>
+              <li class="skill-item"><span class="skill-index">8</span><span class="skill-chip" aria-hidden="true">In</span><span class="skill-name">Inclusive design</span></li>
+            </ul>
+          </div>
+
+          <div class="skill-group">
+            <h3>AI-assisted &amp; front-end workflows</h3>
+            <ul class="skill-list">
+              <li class="skill-item"><span class="skill-index">9</span><span class="skill-chip" aria-hidden="true">Ll</span><span class="skill-name">LLM-directed code generation</span></li>
+              <li class="skill-item"><span class="skill-index">10</span><span class="skill-chip" aria-hidden="true">Gc</span><span class="skill-name">GitHub Copilot</span></li>
+              <li class="skill-item"><span class="skill-index">11</span><span class="skill-chip" aria-hidden="true">Pe</span><span class="skill-name">Prompt engineering</span></li>
+              <li class="skill-item"><span class="skill-index">12</span><span class="skill-chip" aria-hidden="true">B5</span><span class="skill-name">Bootstrap 5 &amp; HTML/CSS architecture</span></li>
+            </ul>
+          </div>
+
+          <div class="skill-group">
+            <h3>Creative suite &amp; process</h3>
+            <ul class="skill-list">
+              <li class="skill-item"><span class="skill-index">13</span><span class="skill-chip" aria-hidden="true">Ps</span><span class="skill-name">Adobe Photoshop &amp; Illustrator</span></li>
+              <li class="skill-item"><span class="skill-index">14</span><span class="skill-chip" aria-hidden="true">Pr</span><span class="skill-name">Adobe Premiere Pro</span></li>
+              <li class="skill-item"><span class="skill-index">15</span><span class="skill-chip" aria-hidden="true">Ag</span><span class="skill-name">Agile/Scrum &amp; cross-functional collaboration</span></li>
+              <li class="skill-item"><span class="skill-index">16</span><span class="skill-chip" aria-hidden="true">Dc</span><span class="skill-name">Design critique facilitation</span></li>
+            </ul>
+          </div>
+
+        </div>
+        <p class="draft-note">Placeholder — this list will be re-issued once the expanded skills inventory (research methods, additional tools, PM/collaboration software) is finalized.</p>
+      </div>
+    </section>
+
+    <!-- ============ CERTIFICATIONS ============ -->
+    <section class="section" aria-labelledby="certs-title">
+      <div class="container">
+        <span class="eyebrow" data-reveal>Certifications</span>
+        <h2 id="certs-title" class="section-title" data-reveal>Continuous learning.</h2>
+
+        <ul class="cert-list" data-reveal-children>
+          <li class="cert-item">
+            <span class="cert-name">Accessibility: How to Design for All</span>
+            <span class="cert-meta">Interaction Design Foundation · Jul 2025</span>
+            <span class="cert-status" data-status="completed">Completed</span>
+          </li>
+          <li class="cert-item">
+            <span class="cert-name">AI for Designers</span>
+            <span class="cert-meta">Interaction Design Foundation · Jul 2025</span>
+            <span class="cert-status" data-status="completed">Completed</span>
+          </li>
+          <li class="cert-item">
+            <span class="cert-name">Enterprise Design Thinking Practitioner</span>
+            <span class="cert-meta">IBM · Sep 2025</span>
+            <span class="cert-status" data-status="completed">Completed</span>
+          </li>
+          <li class="cert-item">
+            <span class="cert-name">AI Ethics</span>
+            <span class="cert-meta">IBM · May 2026</span>
+            <span class="cert-status" data-status="completed">Completed</span>
+          </li>
+          <li class="cert-item">
+            <span class="cert-name">Introduction to Web Accessibility</span>
+            <span class="cert-meta">W3Cx</span>
+            <span class="cert-status" data-status="ongoing">Ongoing</span>
+          </li>
+          <li class="cert-item">
+            <span class="cert-name">One Million Prompters</span>
+            <span class="cert-meta">Dubai Future Foundation / Dubai Centre for Artificial Intelligence · Jul 2026</span>
+            <span class="cert-status" data-status="completed">Completed</span>
+          </li>
+        </ul>
+        <p class="draft-note">Placeholder — add "show credential" links once Credential IDs/URLs are ready to publish here (already on LinkedIn).</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid" data-reveal-children>
+        <div>
+          <h2 class="footer-heading" data-i18n="footer.contact">Contact</h2>
+          <ul class="footer-links">
+            <li><a href="mailto:rolangomes19@gmail.com"><bdi>rolangomes19@gmail.com</bdi></a></li>
+            <li><a href="tel:+919019536394"><bdi dir="ltr">+91 90195 36394</bdi></a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="footer-heading" data-i18n="footer.explore">Explore</h2>
+          <ul class="footer-links">
+            <li><a href="index.html#work">Work</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="writing/index.html">Writing</a></li>
+            <li><a href="more-work.html">More work</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="footer-heading" data-i18n="footer.elsewhere">Elsewhere</h2>
+          <ul class="footer-links">
+            <li><a href="https://www.linkedin.com/in/rolan-gomes/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="footer-heading">Colophon</h2>
+          <ul class="footer-links">
+            <li><a href="#main">Back to top ↑</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="colophon">
+        Built with HTML, CSS, and vanilla JS — no frameworks. IBM Plex, token-driven theming,
+        WCAG&nbsp;2.2&nbsp;AA, RTL-ready. Designed and developed by Rolan Gomes with Claude Code.
+        © <span data-year>2026</span>.
+      </p>
+    </div>
+  </footer>
+
+  <div class="surface-picker">
+    <button type="button" class="surface-picker-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="surface-picker-panel" aria-label="Customize mat color">
+      <span class="surface-picker-trigger-swatch" aria-hidden="true"></span>
+    </button>
+    <div class="surface-picker-panel" id="surface-picker-panel" hidden>
+      <span class="surface-picker-label" id="surface-picker-label">Mat color</span>
+      <div class="surface-picker-swatches" role="radiogroup" aria-labelledby="surface-picker-label">
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="true" tabindex="0" data-color="#095848" style="--swatch:#095848" aria-label="Green"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#141414" style="--swatch:#141414" aria-label="Charcoal"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0b3556" style="--swatch:#0b3556" aria-label="Navy"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum"></button>
+        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal"></button>
+      </div>
+      <div class="surface-picker-custom">
+        <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>
+        <input type="color" id="surface-picker-custom-input" value="#095848" />
+        <button type="button" class="surface-picker-reset" data-surface-reset>Reset to default</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
