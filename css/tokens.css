@@ -54,6 +54,17 @@
   --color-paper-edge: rgb(0 0 0 / 0.05);   /* 1px ring defining the sheet */
   --color-image-edge: oklch(0 0 0 / 0.1);  /* hairline over photographic art */
 
+  /* ------ Concept accents: Design (blue) vs Engineering (green) ------
+     Used for the hero's underlines and the work-tag pill variants. One token
+     per concept doubles as both text and border color (rather than a
+     separate pastel border token) because the Figma reference's pastel
+     border hexes (#83c2ff / #93d3a2) measure under 3:1 against --color-bg —
+     failing WCAG 1.4.11 non-text contrast. Reusing the AA/AAA text color as
+     the border clears that bar for free: 9.6:1 (design) / 6.5:1
+     (engineering) on paper. */
+  --color-concept-design: #0e33a8;       /* 9.6:1 on paper */
+  --color-concept-engineering: #106838;  /* 6.5:1 on paper */
+
   /* ------ Typography ------
      Body copy and headings run on Inter (self-hosted InterVariable — see
      the @font-face block in styles.css — sourced from rsms.me/inter/).
@@ -69,8 +80,15 @@
      font-variant-alternates: character-variant() — rsms.me's own
      stylesheet notes the newer syntax isn't broadly supported yet). */
   --font-sans: "InterVariable", "Segoe UI", system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", monospace;
-  --font-sans-arabic: "IBM Plex Sans Arabic", "InterVariable", system-ui, sans-serif;
+  /* Headings and button/link labels run on Commissioner (self-hosted variable
+     font, FLAR/VOLM/slnt/wght axes) — body copy stays on Inter. Its own
+     default axis values match the Figma reference ("FLAR" 0, "VOLM" 0), so
+     no font-variation-settings override is needed beyond weight. */
+  --font-heading: "Commissioner", var(--font-sans);
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", monospace;
+  /* Estedad covers ALL Arabic text — headings, buttons, and body — not just
+     body copy, per the brief. It replaces IBM Plex Sans Arabic entirely. */
+  --font-sans-arabic: "Estedad", "InterVariable", system-ui, sans-serif;
   --tracking-body: -0.02em;
   --tracking-heading: -0.025em;
   --font-feature-alt:
@@ -193,6 +211,9 @@
   --color-paper-edge: rgb(255 255 255 / 0.07);
   --color-image-edge: oklch(1 0 0 / 0.1);
 
+  --color-concept-design: #78a9ff;       /* Carbon Blue 40 — 7.3:1 on paper */
+  --color-concept-engineering: #42be65;  /* Carbon Green 40 — 7.2:1 on paper */
+
   /* On a black mat a dark shadow does nothing — the light ring does the
      edge definition, and the diffuse layers deepen to keep the lift. */
   --shadow-paper:
@@ -208,10 +229,22 @@
 }
 
 /* ------ RTL: Arabic type ------
-   IBM Plex Sans Arabic takes over; Arabic must never be letter-spaced. */
+   Estedad takes over — headings, buttons, AND body (--font-heading is
+   overridden too, since h1-h6/.btn set it explicitly and would otherwise
+   win over body's inherited font-family). Arabic must never be
+   letter-spaced. */
 [dir="rtl"] body {
   font-family: var(--font-sans-arabic);
   letter-spacing: 0;
+}
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] h4,
+[dir="rtl"] h5,
+[dir="rtl"] h6,
+[dir="rtl"] .btn {
+  font-family: var(--font-sans-arabic);
 }
 [dir="rtl"] .eyebrow,
 [dir="rtl"] .mono {

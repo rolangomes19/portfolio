@@ -16,7 +16,7 @@ because that is the entire point.
 ## Tech stack (do not change without asking)
 
 - Plain **HTML + CSS + vanilla JS**. No frameworks, no build step, no npm dependencies.
-- Fonts: Inter (body/headings — self-hosted variable font from rsms.me/inter/, see `assets/fonts/`), IBM Plex Mono (mono/meta), IBM Plex Sans Arabic (RTL) (latter two via Google Fonts for now).
+- Fonts: all self-hosted variable fonts in `assets/fonts/` — Inter (body, from rsms.me/inter/), Commissioner (headings + buttons, from kosbarts/Commissioner), Geist Mono (mono/meta, from vercel/geist-font), Estedad (RTL — headings, buttons, and body, from aminabedi68/Estedad).
 - Hosting target: any static host (GitHub Pages / Vercel / Netlify).
 - Local preview: `npx serve .` or VS Code Live Server. Never require a build.
 

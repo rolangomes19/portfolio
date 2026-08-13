@@ -24,6 +24,34 @@
   src: url("../assets/fonts/InterVariable-Italic.woff2") format("woff2");
 }
 
+/* ------ Fonts: self-hosted Commissioner, Estedad, Geist Mono ------
+   Commissioner (headings + button/link labels) and Geist Mono (all
+   monospace/meta text) downloaded from their GitHub source repos
+   (kosbarts/Commissioner, vercel/geist-font). Estedad (all Arabic text —
+   headings, buttons, body) downloaded from aminabedi68/Estedad. All three
+   are single variable-font files, same pattern as InterVariable above. */
+@font-face {
+  font-family: "Commissioner";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../assets/fonts/Commissioner-Variable.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Estedad";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../assets/fonts/Estedad-Variable.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../assets/fonts/GeistMono-Variable.woff2") format("woff2");
+}
+
 /* ------ Reset & base ------ */
 *,
 *::before,
@@ -123,6 +151,7 @@ h3,
 h4,
 h5,
 h6 {
+  font-family: var(--font-heading);
   line-height: var(--leading-tight);
   text-wrap: balance;
   font-weight: 600;
@@ -293,15 +322,66 @@ pre,
 }
 
 /* ------ Hero ------ */
+.hero-identity {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-05);
+  margin-block-end: var(--space-07);
+}
+/* The GIF is a solid white silhouette on transparent, made for a dark
+   surface. A plain invert() turns the solid white fill into solid black —
+   readable, but it reads as a harsh photo-negative rather than an
+   intentional light-mode graphic, since the art is filled shapes, not thin
+   linework. Softening the inverted result (contrast down, brightness up)
+   turns that solid black into a mid-gray silhouette instead. Dark theme
+   needs no correction since white-on-transparent is already right there. */
+.hero-avatar img {
+  inline-size: 8rem;
+  block-size: auto;
+}
+[data-theme="dark"] .hero-avatar img {
+  filter: none;
+}
+.hero-name {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--text-h3);
+  color: var(--color-text);
+}
+.hero-role {
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+}
+
 .hero h1 {
   font-size: var(--text-display);
-  max-inline-size: 22ch;
 }
 .hero .sub {
   margin-block-start: var(--space-06);
   color: var(--color-text-secondary);
   font-size: var(--text-h3);
   font-weight: 400;
+}
+
+/* Concept underlines: blue/wavy = design, green/solid = engineering. Text
+   color stays inherited — only the underline carries the meaning, so it
+   still reads correctly for anyone who can't distinguish the hues (the
+   wavy-vs-solid style is the non-color signal). */
+.concept-design,
+.concept-engineering {
+  text-underline-offset: 0.15em;
+  text-decoration-thickness: 0.08em;
+  text-decoration-line: underline;
+  -webkit-text-decoration-skip-ink: none;
+  text-decoration-skip-ink: none;
+}
+.concept-design {
+  text-decoration-style: wavy;
+  text-decoration-color: var(--color-concept-design);
+}
+.concept-engineering {
+  text-decoration-style: solid;
+  text-decoration-color: var(--color-concept-engineering);
 }
 
 /* Page-lead: intro paragraph under a section-title, reused across
@@ -327,6 +407,7 @@ pre,
   padding: var(--space-04) var(--space-06);
   min-block-size: 2.75rem;
   border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
   font-size: var(--text-small);
   font-weight: 500;
   text-decoration: none;
@@ -357,107 +438,103 @@ pre,
 .work-list {
   list-style: none;
   padding: 0;
-  display: grid;
-  gap: var(--space-06);
+  border-block-start: 1px solid var(--color-border);
 }
 
-.work-item {
+/* Flat divided list, not individually boxed tiles: each card is a row with
+   a content column and an (empty, for now) image column. grid-template-columns
+   places content first — the inline-start track — so it mirrors to the
+   right automatically under [dir="rtl"] with no extra rule, same mechanism
+   the old .work-item relied on for its arrow-only RTL override. */
+.work-card {
   position: relative; /* containment for the card-link ::after */
   display: grid;
   gap: var(--space-05);
-  padding: var(--space-05);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-bg);
+  padding: var(--space-07) var(--space-05);
+  border-block-end: 1px solid var(--color-border);
   transition: background var(--duration-fast) var(--ease);
 }
-/* Layout responds to the paper, not the window: on desktop the sheet is only
-   60vw, so a viewport breakpoint would break a five-across strip into a 599px
-   column. <body> is the size container. */
 @container (min-width: 40em) {
-  .work-item {
-    grid-template-columns: 2fr 3fr;
-    align-items: center;
+  .work-card {
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
     gap: var(--space-07);
-    padding: var(--space-06);
   }
 }
-.work-item:hover,
-.work-item:focus-within {
+.work-card:hover,
+.work-card:focus-within {
   background: var(--color-bg-subtle);
 }
 
-.work-media img {
-  aspect-ratio: 4 / 3;
-  inline-size: 100%;
-  object-fit: cover;
+.work-card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-05);
+}
+
+.work-card-media {
+  display: none;
   border-radius: var(--radius-sm);
   background: var(--color-bg-subtle);
   outline: 1px solid var(--color-image-edge);
   outline-offset: -1px;
+  min-block-size: 12rem;
 }
-.work-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-04);
-  color: var(--color-text-secondary);
-  margin-block-end: var(--space-03);
+@container (min-width: 40em) {
+  .work-card-media {
+    display: block;
+  }
 }
 
-.work-title {
-  font-size: var(--text-h3);
+.work-card-title {
+  font-size: var(--text-h2);
 }
 /* Card-link pattern: title link's ::after covers the whole row,
    so the row is one tab stop named by the title. */
-.work-title a {
+.work-card-title a {
   color: var(--color-text);
   text-decoration: none;
 }
-.work-title a::after {
+.work-card-title a::after {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: var(--radius-md);
 }
-.work-title a:hover {
+.work-card-title a:hover {
   color: var(--color-accent);
 }
 
-.work-desc {
-  margin-block-start: var(--space-03);
+.work-card-desc {
   color: var(--color-text-secondary);
   font-size: var(--text-small);
 }
 
-.work-tags {
+.work-card-tags {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-03);
-  margin-block-start: var(--space-04);
-}
-.tag {
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: var(--space-01) var(--space-03);
-  color: var(--color-text-secondary);
 }
 
-.work-arrow {
-  font-size: var(--text-h3);
-  color: var(--color-text-secondary);
-  transition: transform var(--duration-fast) var(--ease);
-  justify-self: end;
+/* Concept tags: blue = design, green = engineering (see tokens.css). A
+   distinct class from the site's existing `.tag` (mono status chips, still
+   used on the Writing index) rather than repurposing it. */
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid;
+  border-radius: 9999px;
+  padding: var(--space-02) var(--space-03);
+  font-size: var(--text-mono);
+  font-weight: 500;
 }
-.work-item:hover .work-arrow,
-.work-item:focus-within .work-arrow {
-  transform: translateX(var(--space-02));
-  color: var(--color-accent);
+.tag-pill--design {
+  color: var(--color-concept-design);
+  border-color: var(--color-concept-design);
 }
-[dir="rtl"] .work-item:hover .work-arrow,
-[dir="rtl"] .work-item:focus-within .work-arrow {
-  transform: scaleX(-1) translateX(var(--space-02));
+.tag-pill--engineering {
+  color: var(--color-concept-engineering);
+  border-color: var(--color-concept-engineering);
 }
 
 /* ------ Highlights strip (homepage stat cards) ------ */
@@ -571,46 +648,12 @@ pre,
 }
 
 /* ------ About ------ */
-.about-grid {
-  display: grid;
-  gap: var(--space-07);
-}
-@container (min-width: 40em) {
-  .about-grid {
-    grid-template-columns: 1fr 2fr;
-    align-items: start;
-  }
-}
-.about-portrait img {
-  aspect-ratio: 1;
-  inline-size: 100%;
-  max-inline-size: 20rem;
-  object-fit: cover;
-  border-radius: var(--radius-md);
-  background: var(--color-bg-subtle);
-  outline: 1px solid var(--color-image-edge);
-  outline-offset: -1px;
-}
-.about-body p + p {
-  margin-block-start: var(--space-05);
-}
-.about-facts {
-  margin-block-start: var(--space-06);
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
-  color: var(--color-text-secondary);
-  display: grid;
-  gap: var(--space-02);
-}
-
 /* In-text links: underlined always (never color alone) */
-.about-body a,
 .prose a {
   color: var(--color-accent);
   text-decoration: underline;
   text-underline-offset: 0.15em;
 }
-.about-body a:hover,
 .prose a:hover {
   color: var(--color-accent-hover);
 }
@@ -1287,35 +1330,40 @@ pre,
 }
 
 /* ------ Contact page ------ */
-.contact-hero p {
+.contact-meta {
   color: var(--color-text-secondary);
-  font-size: var(--text-h3);
-  font-weight: 400;
+  font-size: var(--text-small);
   max-inline-size: var(--measure);
 }
-.contact-links {
+.contact-row {
   margin-block-start: var(--space-07);
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-06);
-  font-family: var(--font-mono);
-  font-size: var(--text-small);
+  align-items: center;
+  gap: var(--space-05);
+  font-size: var(--text-h3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
-.contact-links a {
+.contact-row a {
+  color: var(--color-text);
+  text-decoration: none;
+}
+.contact-row a:hover {
   color: var(--color-accent);
   text-decoration: underline;
   text-underline-offset: 0.15em;
 }
-.contact-links a:hover {
-  color: var(--color-accent-hover);
-}
-.contact-availability {
-  margin-block-start: var(--space-08);
-  padding-block-start: var(--space-06);
-  border-block-start: 1px solid var(--color-border);
+.contact-row .sep {
   color: var(--color-text-secondary);
-  font-size: var(--text-small);
-  max-inline-size: var(--measure);
+}
+/* Behance/Instagram have no URL on file yet — shown, not linked, until a
+   real one is added (matches the footer's existing Behance placeholder). */
+.contact-row-placeholder {
+  color: var(--color-text-secondary);
+}
+[dir="rtl"] .contact-row {
+  letter-spacing: 0;
 }
 
 /* ------ Reveal animation (JS adds .reveal; motion-safe only) ------
