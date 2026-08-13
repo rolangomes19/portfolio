@@ -34,11 +34,11 @@
     })();
   </script>
 
-  <!-- Fonts: Inter, self-hosted from rsms.me/inter/ (body/headings) + IBM Plex Mono (mono) + IBM Plex Sans Arabic (RTL, via Google Fonts) -->
+  <!-- Fonts: all self-hosted. Inter (body), Commissioner (headings/buttons),
+       Geist Mono (mono/meta), Estedad (RTL — headings, buttons, and body). -->
   <link rel="preload" href="assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="preload" href="assets/fonts/Commissioner-Variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin />
 
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
@@ -53,11 +53,9 @@
 
       <nav class="site-nav" aria-label="Main">
         <ul>
-          <li><a href="#work" data-i18n="nav.work">Work</a></li>
-          <li><a href="about.html" data-i18n="nav.about">About</a></li>
-          <li><a href="writing/index.html" data-i18n="nav.writing">Writing</a></li>
-          <li><a href="more-work.html" data-i18n="nav.morework">More work</a></li>
-          <li><a href="contact.html" data-i18n="nav.contact">Contact</a></li>
+          <li><a href="#work" data-i18n="nav.work">Works</a></li>
+          <li><a href="#about" data-i18n="nav.about">About</a></li>
+          <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
         </ul>
       </nav>
 
@@ -72,16 +70,24 @@
 
   <main id="main">
 
-    <!-- ============ 00 · HERO ============ -->
+    <!-- ============ HERO ============ -->
     <section class="section hero" aria-labelledby="hero-title">
       <div class="container" data-reveal-intro>
-        <span class="eyebrow" data-i18n="hero.eyebrow">UX Designer — Bengaluru → Dubai</span>
-        <h1 id="hero-title">UX Designer specializing in Visual/UI Design, Design Systems &amp; WCAG&nbsp;2.2 Accessibility — closing the gap between Figma and production.</h1>
-        <p class="sub">I design and engineer design systems for enterprise products — from token architecture in Figma to component code in production. At Wipfli, I built the Blueprint Design System end to end: adopted across 6 products, remediated to zero WCAG&nbsp;2.2 violations, and structured well enough to power an AI-generated frontend that hit an 80% component match rate in 7 days.</p>
+        <div class="hero-identity">
+          <div class="hero-avatar">
+            <img src="assets/images/rolan-says-hello.gif" width="124" height="83" alt="" loading="eager" decoding="async" />
+          </div>
+          <div>
+            <p class="hero-name">Rolan Gomes</p>
+            <p class="hero-role mono">UX Designer</p>
+          </div>
+        </div>
+        <h1 id="hero-title">Creative Designer working across brand, product, and design systems, backed by both design and engineering.</h1>
+        <p class="sub">I'm a Creative Designer with a UX Generalist's range and an engineer's ability to build. My background sits at the intersection of <span class="concept-design">design</span> and <span class="concept-engineering">engineering</span>, and I focus on solutions that make good business, which comes down to two goals: <span class="concept-design">Building the right thing</span>, and then <span class="concept-engineering">building the thing right</span>.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#work" data-i18n="actions.work">View selected work</a>
+          <a class="btn btn-primary" href="#work" data-i18n="actions.work">View my work</a>
           <!-- PLACEHOLDER: drop the CV at assets/rolan-gomes-cv.pdf -->
-          <a class="btn btn-secondary" href="assets/rolan-gomes-cv.pdf" data-i18n="actions.cv">Download CV</a>
+          <a class="btn btn-secondary" href="https://drive.google.com/file/d/1KeqMbbiq8YD9qykbmwIHMkxMBkiWAaLz/view?usp=sharing" data-i18n="actions.cv">Download my Resume</a>
         </div>
       </div>
     </section>
@@ -109,91 +115,225 @@
           </li>
           <li class="highlight-card">
             <span class="highlight-number mono">$35k</span>
-            <a class="highlight-label" href="more-work.html">Sponsorship driven, Incridea 2022</a>
+            <a class="highlight-label" href="work/incridea-2022-branding.html">Sponsorship driven, Incridea 2022</a>
           </li>
         </ul>
       </div>
     </section>
 
-    <!-- ============ 01 · SELECTED WORK ============ -->
+    <!-- ============ WORK ============ -->
     <section id="work" class="section" aria-labelledby="work-title">
       <div class="container">
-        <span class="eyebrow" data-i18n="section.work" data-reveal>01 — Selected work</span>
-        <h2 id="work-title" class="section-title" data-reveal>Five projects, closing the loop from Figma to production.</h2>
+        <span class="eyebrow" data-reveal>WORKS</span>
+        <h2 id="work-title" class="section-title" data-reveal>Some of my best works.</h2>
 
-        <ul class="work-list">
+        <ul class="work-list" data-reveal-children>
 
-          <!-- Tile 1 -->
-          <li class="work-item" data-reveal>
-            <div class="work-media">
-              <img src="assets/images/placeholder-blueprint.svg" width="1200" height="900" alt="" loading="lazy" decoding="async" />
+          <!-- Card 1 — Blueprint Design System -->
+          <li class="work-card">
+            <div class="work-card-content">
+              <div>
+                <h3 class="work-card-title"><a href="work/blueprint-design-system.html">Blueprint Design System</a></h3>
+                <p class="work-card-desc">Built a Design System for a top-20 US audit and accounting firm. Led the Design and owned the decision making.</p>
+              </div>
+              <div class="work-card-tags">
+                <span class="tag-pill tag-pill--design">Design System</span>
+                <span class="tag-pill tag-pill--design">Figma</span>
+                <span class="tag-pill tag-pill--engineering">Code Connect</span>
+                <span class="tag-pill tag-pill--engineering">Token architecture</span>
+              </div>
             </div>
-            <div class="work-body">
-              <p class="work-meta mono"><span>2024–2026</span><span>·</span><span>Design systems</span></p>
-              <h3 class="work-title"><a href="work/blueprint-design-system.html">Blueprint Design System</a></h3>
-              <p class="work-desc">Five products, no shared design language, no bridge between Figma and code — I built the system that fixed all three.</p>
-              <p class="work-tags"><span class="tag">Figma</span><span class="tag">Code Connect</span><span class="tag">Design tokens</span></p>
-            </div>
-            <span class="work-arrow icon-directional" aria-hidden="true">→</span>
+            <!-- PLACEHOLDER: cover image comes later — see item 6 of the redesign brief -->
+            <div class="work-card-media" aria-hidden="true"></div>
           </li>
 
-          <!-- Tile 2 -->
-          <li class="work-item" data-reveal>
-            <div class="work-media">
-              <img src="assets/images/placeholder-ai-poc.svg" width="1200" height="900" alt="" loading="lazy" decoding="async" />
+          <!-- Card 2 — AI-generated frontend POC -->
+          <li class="work-card">
+            <div class="work-card-content">
+              <div>
+                <h3 class="work-card-title"><a href="work/ai-design-to-code.html">AI-generated frontend POC</a></h3>
+                <p class="work-card-desc">Using the Design System components, we directed and built a functioning frontend POC of a task management feature. Achieved 80% component match rate while converting Design to code.</p>
+              </div>
+              <div class="work-card-tags">
+                <span class="tag-pill tag-pill--design">Design to code</span>
+                <span class="tag-pill tag-pill--design">Figma</span>
+                <span class="tag-pill tag-pill--engineering">Code Connect</span>
+                <span class="tag-pill tag-pill--engineering">shadcn</span>
+              </div>
             </div>
-            <div class="work-body">
-              <p class="work-meta mono"><span>2026</span><span>·</span><span>AI workflow</span></p>
-              <h3 class="work-title"><a href="work/ai-design-to-code.html">AI-generated frontend POC</a></h3>
-              <p class="work-desc">An LLM didn't build this frontend. I built the conditions under which it could, then directed it precisely.</p>
-              <p class="work-tags"><span class="tag">LLM</span><span class="tag">Design-to-code</span><span class="tag">POC</span></p>
-            </div>
-            <span class="work-arrow icon-directional" aria-hidden="true">→</span>
+            <div class="work-card-media" aria-hidden="true"></div>
           </li>
 
-          <!-- Tile 3 -->
-          <li class="work-item" data-reveal>
-            <div class="work-media">
-              <img src="assets/images/placeholder-wcag.svg" width="1200" height="900" alt="" loading="lazy" decoding="async" />
+          <!-- Card 3 — Incridea 2022 -->
+          <li class="work-card">
+            <div class="work-card-content">
+              <div>
+                <h3 class="work-card-title"><a href="work/incridea-2022-branding.html">Incridea 2022 - Branding and Creative Direction</a></h3>
+                <p class="work-card-desc">Led the Design team for Incridea 2022. I was in charge of the Branding, creative direction and the execution of the fest theme on the digital, social media and physical media.</p>
+              </div>
+              <div class="work-card-tags">
+                <span class="tag-pill tag-pill--design">Figma</span>
+                <span class="tag-pill tag-pill--design">Social media</span>
+                <span class="tag-pill tag-pill--design">Creative Design</span>
+              </div>
             </div>
-            <div class="work-body">
-              <p class="work-meta mono"><span>2025</span><span>·</span><span>Accessibility</span></p>
-              <h3 class="work-title"><a href="work/hub-accessibility.html">WCAG 2.2 remediation at scale</a></h3>
-              <p class="work-desc">35 violations, 8 Critical, during a live migration — down to zero, with the prevention mechanism built into the design system itself.</p>
-              <p class="work-tags"><span class="tag">WCAG 2.2</span><span class="tag">Audits</span><span class="tag">Axe</span></p>
-            </div>
-            <span class="work-arrow icon-directional" aria-hidden="true">→</span>
+            <div class="work-card-media" aria-hidden="true"></div>
           </li>
 
-          <!-- Tile 4 -->
-          <li class="work-item" data-reveal>
-            <div class="work-media">
-              <img src="assets/images/placeholder-modernization.svg" width="1200" height="900" alt="" loading="lazy" decoding="async" />
+          <!-- Card 4 — Wipfli Hub modernization -->
+          <li class="work-card">
+            <div class="work-card-content">
+              <div>
+                <h3 class="work-card-title"><a href="work/hub-migration.html">Wipfli Hub modernization</a></h3>
+                <p class="work-card-desc">Led the front-end effort for modernizing the Wipfli Hub framework from Bootstrap v3.x to 5.2.x, and simultaneously fixed 35 Serious and Critical Accessibility violations.</p>
+              </div>
+              <div class="work-card-tags">
+                <span class="tag-pill tag-pill--design">Design System</span>
+                <span class="tag-pill tag-pill--design">Figma</span>
+                <span class="tag-pill tag-pill--engineering">Code Connect</span>
+                <span class="tag-pill tag-pill--engineering">Token architecture</span>
+              </div>
             </div>
-            <div class="work-body">
-              <p class="work-meta mono"><span>2023–2024</span><span>·</span><span>UI engineering</span></p>
-              <h3 class="work-title"><a href="work/hub-migration.html">Front-end modernization</a></h3>
-              <p class="work-desc">14 fragmented CSS files, 10+ pages, 25+ components — consolidated into one scalable architecture without regressions.</p>
-              <p class="work-tags"><span class="tag">Bootstrap 5</span><span class="tag">CSS architecture</span><span class="tag">Refactor</span></p>
-            </div>
-            <span class="work-arrow icon-directional" aria-hidden="true">→</span>
-          </li>
-
-          <!-- Tile 5 -->
-          <li class="work-item" data-reveal>
-            <div class="work-media">
-              <img src="assets/images/placeholder-process-framework.svg" width="1200" height="900" alt="" loading="lazy" decoding="async" />
-            </div>
-            <div class="work-body">
-              <p class="work-meta mono"><span>2025–2026</span><span>·</span><span>Process &amp; AI strategy</span></p>
-              <h3 class="work-title"><a href="work/ai-process-framework.html">AI in UX design-to-development</a></h3>
-              <p class="work-desc">Not just AI tool usage — a firm-wide framework, formally adopted, presented to technical directors and partners.</p>
-              <p class="work-tags"><span class="tag">AI strategy</span><span class="tag">Process design</span><span class="tag">Thought leadership</span></p>
-            </div>
-            <span class="work-arrow icon-directional" aria-hidden="true">→</span>
+            <div class="work-card-media" aria-hidden="true"></div>
           </li>
 
         </ul>
+      </div>
+    </section>
+
+    <!-- ============ ABOUT ============ -->
+    <section id="about" class="section" aria-labelledby="about-title">
+      <div class="container" data-reveal-intro>
+        <span class="eyebrow">ABOUT ME</span>
+        <h2 id="about-title" class="section-title">Hey there, I'm Rolan!</h2>
+
+        <div class="prose">
+          <p>I'm a Creative Designer who thinks in systems. I work at the intersection of Design and Engineering, and focus on solutions that make good business. I love bringing making sense of messes, and figuring how to make it work. My mentor, Nabarun always says that "The space of ambiguity is a designer's best friend, as anything and everything is possible!"</p>
+          <p>I've been designing since 2019. In the beginning, it was all about creating logos, crafting brand identities, social media, posters, etc. Alongside freelancing as a Graphic Designer and running a business and leading the design team of the college fest, I was pursuing my Bachelors Degree in Mechanical Engineering. So building CAD models in college and then designing posters, both felt right at home to me. One thing about me, is that I don't restrict myself inside a box, and I don't shy away from a challenge. You might realize that when you see my academic and career history.</p>
+          <p>In my final year of Engineering, I was intrigued by the field of UX Design, learning about user experience, accessibility, usability, and all the other concepts. I could relate it to my experience with brand design, but realized that this is something very interesting and was also the best of both my worlds, Design and Engineering. Since then, I never really looked back. I started as a UI and Visual Designer, and quickly progressed to learning more and more about the experience side of things. I also delved into basic front-end development (brushing aside my code-phobia) and all these experiences only added to my understanding of design.</p>
+          <p>I love working with people. My journey as a designer is nothing if not a testament to the fact that good people make good impact, and can propel you to unseen heights. I believe in being a force multiplier in teams that I'm a part of, and by bringing out the best in everyone and collaborating, teams can deliver beyond the sum of their parts.</p>
+          <p>From starting out in the small temple town of Udupi, to dreaming big in the bustling city of Bengaluru. I'm now dreaming bigger and bringing my expertise to Dubai and the United Arab Emirates. I'm looking forward to add value to your team and grow in my career.</p>
+          <p>I guess that's enough about me. Let's talk about how I can help you!</p>
+        </div>
+
+        <p><a class="btn btn-primary" href="#contact">Have a design systems or accessibility problem worth solving? Get in touch</a></p>
+      </div>
+    </section>
+
+    <!-- ============ TOOLS & SKILLS ============ -->
+    <section id="skills" class="section" aria-labelledby="skills-title">
+      <div class="container">
+        <span class="eyebrow" data-reveal>Tools &amp; skills</span>
+        <h2 id="skills-title" class="section-title" data-reveal>What each case study is built with.</h2>
+
+        <div class="skills-grid" data-reveal-children>
+
+          <div class="skill-group">
+            <h3>Design systems &amp; UI engineering</h3>
+            <ul class="skill-list">
+              <li class="skill-item"><span class="skill-index">1</span><span class="skill-chip" aria-hidden="true">Fi</span><span class="skill-name">Figma</span><span class="skill-note">Variables · Auto Layout · Dev Mode · Code Connect</span></li>
+              <li class="skill-item"><span class="skill-index">2</span><span class="skill-chip" aria-hidden="true">Fj</span><span class="skill-name">FigJam &amp; Figma Make</span></li>
+              <li class="skill-item"><span class="skill-index">3</span><span class="skill-chip" aria-hidden="true">Dt</span><span class="skill-name">Design tokens</span><span class="skill-note">3-tier · OKLCH · Style Dictionary</span></li>
+              <li class="skill-item"><span class="skill-index">4</span><span class="skill-chip" aria-hidden="true">Ca</span><span class="skill-name">Component architecture</span><span class="skill-note">CVA variants</span></li>
+            </ul>
+          </div>
+
+          <div class="skill-group">
+            <h3>Accessibility</h3>
+            <ul class="skill-list">
+              <li class="skill-item"><span class="skill-index">5</span><span class="skill-chip" aria-hidden="true">Wc</span><span class="skill-name">WCAG 2.2 compliance &amp; remediation</span></li>
+              <li class="skill-item"><span class="skill-index">6</span><span class="skill-chip" aria-hidden="true">Aa</span><span class="skill-name">Accessibility audits</span></li>
+              <li class="skill-item"><span class="skill-index">7</span><span class="skill-chip" aria-hidden="true">Fa</span><span class="skill-name">Focus state &amp; ARIA standardization</span></li>
+              <li class="skill-item"><span class="skill-index">8</span><span class="skill-chip" aria-hidden="true">In</span><span class="skill-name">Inclusive design</span></li>
+            </ul>
+          </div>
+
+          <div class="skill-group">
+            <h3>AI-assisted &amp; front-end workflows</h3>
+            <ul class="skill-list">
+              <li class="skill-item"><span class="skill-index">9</span><span class="skill-chip" aria-hidden="true">Ll</span><span class="skill-name">LLM-directed code generation</span></li>
+              <li class="skill-item"><span class="skill-index">10</span><span class="skill-chip" aria-hidden="true">Gc</span><span class="skill-name">GitHub Copilot</span></li>
+              <li class="skill-item"><span class="skill-index">11</span><span class="skill-chip" aria-hidden="true">Pe</span><span class="skill-name">Prompt engineering</span></li>
+              <li class="skill-item"><span class="skill-index">12</span><span class="skill-chip" aria-hidden="true">B5</span><span class="skill-name">Bootstrap 5 &amp; HTML/CSS architecture</span></li>
+            </ul>
+          </div>
+
+          <div class="skill-group">
+            <h3>Creative suite &amp; process</h3>
+            <ul class="skill-list">
+              <li class="skill-item"><span class="skill-index">13</span><span class="skill-chip" aria-hidden="true">Ps</span><span class="skill-name">Adobe Photoshop &amp; Illustrator</span></li>
+              <li class="skill-item"><span class="skill-index">14</span><span class="skill-chip" aria-hidden="true">Pr</span><span class="skill-name">Adobe Premiere Pro</span></li>
+              <li class="skill-item"><span class="skill-index">15</span><span class="skill-chip" aria-hidden="true">Ag</span><span class="skill-name">Agile/Scrum &amp; cross-functional collaboration</span></li>
+              <li class="skill-item"><span class="skill-index">16</span><span class="skill-chip" aria-hidden="true">Dc</span><span class="skill-name">Design critique facilitation</span></li>
+            </ul>
+          </div>
+
+        </div>
+        <p class="draft-note">Placeholder — this list will be re-issued once the expanded skills inventory (research methods, additional tools, PM/collaboration software) is finalized.</p>
+      </div>
+    </section>
+
+    <!-- ============ CERTIFICATIONS ============ -->
+    <section class="section" aria-labelledby="certs-title">
+      <div class="container">
+        <span class="eyebrow" data-reveal>Certifications</span>
+        <h2 id="certs-title" class="section-title" data-reveal>Continuous learning.</h2>
+
+        <ul class="cert-list" data-reveal-children>
+          <li class="cert-item">
+            <span class="cert-name">Accessibility: How to Design for All</span>
+            <span class="cert-meta">Interaction Design Foundation · Jul 2025</span>
+            <span class="cert-status" data-status="completed">Completed</span>
+          </li>
+          <li class="cert-item">
+            <span class="cert-name">AI for Designers</span>
+            <span class="cert-meta">Interaction Design Foundation · Jul 2025</span>
+            <span class="cert-status" data-status="completed">Completed</span>
+          </li>
+          <li class="cert-item">
+            <span class="cert-name">Enterprise Design Thinking Practitioner</span>
+            <span class="cert-meta">IBM · Sep 2025</span>
+            <span class="cert-status" data-status="completed">Completed</span>
+          </li>
+          <li class="cert-item">
+            <span class="cert-name">AI Ethics</span>
+            <span class="cert-meta">IBM · May 2026</span>
+            <span class="cert-status" data-status="completed">Completed</span>
+          </li>
+          <li class="cert-item">
+            <span class="cert-name">Introduction to Web Accessibility</span>
+            <span class="cert-meta">W3Cx</span>
+            <span class="cert-status" data-status="ongoing">Ongoing</span>
+          </li>
+          <li class="cert-item">
+            <span class="cert-name">One Million Prompters</span>
+            <span class="cert-meta">Dubai Future Foundation / Dubai Centre for Artificial Intelligence · Jul 2026</span>
+            <span class="cert-status" data-status="completed">Completed</span>
+          </li>
+        </ul>
+        <p class="draft-note">Placeholder — add "show credential" links once Credential IDs/URLs are ready to publish here (already on LinkedIn).</p>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section id="contact" class="section" aria-labelledby="contact-title">
+      <div class="container" data-reveal-intro>
+        <span class="eyebrow">CONTACT</span>
+        <h2 id="contact-title" class="section-title">Get in touch and we'll talk business!</h2>
+        <p class="contact-meta">Based in Bengaluru, India until 20 August 2026; relocating to the UAE with immediate availability thereafter. Comfortable coordinating across GST/IST.</p>
+        <div class="contact-row mono">
+          <a href="mailto:rolangomes19@gmail.com">EMAIL</a>
+          <span class="sep" aria-hidden="true">/</span>
+          <a href="https://www.linkedin.com/in/rolan-gomes/" target="_blank" rel="noopener noreferrer">LINKEDIN</a>
+          <span class="sep" aria-hidden="true">/</span>
+          <!-- PLACEHOLDER: add Behance link once branding case studies are published -->
+          <span class="contact-row-placeholder">BEHANCE</span>
+          <span class="sep" aria-hidden="true">/</span>
+          <!-- PLACEHOLDER: add Instagram link if desired -->
+          <span class="contact-row-placeholder">INSTAGRAM</span>
+          <span class="sep" aria-hidden="true">/</span>
+          <a href="https://drive.google.com/file/d/1KeqMbbiq8YD9qykbmwIHMkxMBkiWAaLz/view?usp=sharing" target="_blank" rel="noopener noreferrer">RESUME</a>
+        </div>
       </div>
     </section>
 
@@ -213,17 +353,18 @@
         <div>
           <h2 class="footer-heading" data-i18n="footer.explore">Explore</h2>
           <ul class="footer-links">
-            <li><a href="index.html#work">Work</a></li>
-            <li><a href="about.html">About</a></li>
+            <li><a href="#work">Work</a></li>
+            <li><a href="#about">About</a></li>
             <li><a href="writing/index.html">Writing</a></li>
             <li><a href="more-work.html">More work</a></li>
+            <li><a href="#contact">Contact</a></li>
           </ul>
         </div>
         <div>
           <h2 class="footer-heading" data-i18n="footer.elsewhere">Elsewhere</h2>
           <ul class="footer-links">
             <li><a href="https://www.linkedin.com/in/rolan-gomes/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
-            <!-- PLACEHOLDER: add Behance link once branding case studies are live (see more-work.html) -->
+            <!-- PLACEHOLDER: add Behance link once branding case studies are published -->
           </ul>
         </div>
         <div>
@@ -234,7 +375,7 @@
         </div>
       </div>
       <p class="colophon">
-        Built with HTML, CSS, and vanilla JS — no frameworks. Inter, token-driven theming,
+        Built with HTML, CSS, and vanilla JS — no frameworks. Inter, Commissioner, token-driven theming,
         WCAG&nbsp;2.2&nbsp;AA, RTL-ready. Designed and developed by Rolan Gomes with Claude Code.
         © <span data-year>2026</span>.
       </p>

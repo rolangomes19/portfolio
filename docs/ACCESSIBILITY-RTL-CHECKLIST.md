@@ -65,7 +65,7 @@ Flip with the toggle (or set `<html dir="rtl" lang="ar">` in DevTools):
 - [ ] Layout fully mirrors: nav, tiles, skill rows, footer columns
 - [ ] No stray `left/right` physical properties (`grep -rn "margin-left\|margin-right\|padding-left\|padding-right\|text-align: left\|text-align: right" css/` returns nothing)
 - [ ] Directional arrows flip (`.icon-directional`)
-- [ ] Arabic strings render in IBM Plex Sans Arabic, letter-spacing 0
+- [ ] Arabic strings render in Estedad (headings, buttons, and body), letter-spacing 0
 - [ ] Numbers, +91/+971 phone numbers, emails, URLs stay LTR (`<bdi>` / `dir="ltr"`)
 - [ ] Mixed English terms inside Arabic sentences don't break word order
 - [ ] Scrollbars/overflow behave; nothing clipped at inline-start edge
