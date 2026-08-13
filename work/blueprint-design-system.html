@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Blueprint Design System — Rolan Gomes</title>
-  <meta name="description" content="Case study: building the Blueprint Design System end to end — a three-tier OKLCH token model, a Style Dictionary pipeline, and Figma-to-code parity via Code Connect, adopted across 6 products." />
+  <meta name="description" content="Case study: building the Blueprint Design System from the ground up for Wipfli Hub — a three-tier OKLCH token model, a brand color corrected for AA contrast, an elevation model built on shadow rather than tint, and the Code Connect links that made an 80% LLM design-to-code conversion rate possible." />
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
 
   <script>
@@ -16,14 +16,22 @@
         document.documentElement.lang = "ar";
         document.documentElement.dir = "rtl";
       }
-      var mc = localStorage.getItem("matColor");
-      if (mc) document.documentElement.style.setProperty("--color-mat", mc);
+      var ms = localStorage.getItem("matSurface");
+      if (ms) {
+        var fallback = ms === "wood-grain" ? "#8a6a4a" : "#e9e7e2";
+        document.documentElement.style.setProperty("--color-mat", fallback);
+      } else {
+        var mc = localStorage.getItem("matColor");
+        if (mc) document.documentElement.style.setProperty("--color-mat", mc);
+      }
     })();
   </script>
 
+  <!-- Fonts: Inter, self-hosted from rsms.me/inter/ (body/headings) + IBM Plex Mono (mono) + IBM Plex Sans Arabic (RTL, via Google Fonts) -->
+  <link rel="preload" href="../assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="../css/tokens.css" />
   <link rel="stylesheet" href="../css/styles.css" />
@@ -59,14 +67,31 @@
       <div class="container" data-reveal-intro>
         <span class="eyebrow">2024–2026 · Design systems · Figma · Code Connect</span>
         <h1 id="case-title">Blueprint Design System</h1>
-        <p class="case-summary">Five products, no shared design language, and no reliable bridge between Figma and code. I built the system that fixed all three — a token architecture, a component library, and the Code Connect links that made the two artifacts one source of truth.</p>
+        <p class="case-summary">Wipfli Hub had five squads shipping the same button five different ways, and no bridge between Figma and code besides screenshots and goodwill. I built the system that fixed both — a three-tier OKLCH token architecture, a documented component kit, and the Code Connect links that turned out to be exactly what an LLM needed too.</p>
 
         <dl class="facts-bar">
-          <div class="fact"><dt>Timeline</dt><dd>2024 – 2026</dd></div>
-          <div class="fact"><dt>Role</dt><dd>UX Engineer II — sole owner</dd></div>
-          <div class="fact"><dt>Adoption</dt><dd>6 products (Hub + 5 onboarding)</dd></div>
+          <div class="fact"><dt>Role</dt><dd>Design, definitions, documentation, foundational architecture</dd></div>
+          <div class="fact"><dt>Team</dt>
+            <dd>
+              <ul class="team-list">
+                <li>Nabarun Chakravarty — UX Lead Architect</li>
+                <li>Rolan Gomes — UX Designer</li>
+                <li>Satvik Nayak — UX Engineer</li>
+              </ul>
+            </dd>
+          </div>
+          <div class="fact"><dt>Status</dt><dd>Phase 1 complete, Phase 2 in development</dd></div>
           <div class="fact"><dt>Scope</dt><dd>Tokens · kit · docs · code · Code Connect</dd></div>
         </dl>
+
+        <div class="status-callout">
+          <span class="status-callout-label">Project status</span>
+          <ul>
+            <li><strong>Phase 1 · complete.</strong> Figma component kit and foundations: color, typography, spacing, elevation, iconography.</li>
+            <li><strong>Phase 2 · in development.</strong> React port and Code Connect, targeting the Hub platform's task management proof of concept first.</li>
+            <li><strong>Adoption · not yet live in production.</strong> A design-to-code proof of concept hit an 80% accurate LLM component conversion rate. Phased adoption is what that result makes the case for, not something that's happened yet.</li>
+          </ul>
+        </div>
       </div>
     </section>
 
@@ -76,37 +101,206 @@
         <p class="nda-note">Detailed UI masked per NDA. Process artifacts and metrics shared with permission. <!-- PLACEHOLDER: confirm written sign-off covering the published (not just interview-walkthrough) version before this goes live — see Master Profile §11.15.1 --></p>
 
         <h2>Context</h2>
-        <p>Wipfli Hub is the firm's unified client-and-associate portal for finance and compliance work. As the product grew, so did visual drift: every squad shipped its own buttons, spacing, and states, and design-to-development handoffs relied on screenshots and goodwill rather than a shared source of truth.</p>
+        <p>Wipfli's brand system was built for print and editorial — nobody had thought much about product. Into that gap, engineering teams filled in their own interpretations, on whatever stack they were already on, with nothing to check their work against.</p>
 
-        <h2>Problem</h2>
-        <p>Three symptoms kept recurring: inconsistent components across sections, slow handoffs because developers rebuilt what already existed elsewhere, and accessibility fixes that didn't propagate because there was no single place to fix them. Anything built to solve this had to hold up across products with different teams, timelines, and — eventually — an AI tool reading the same source.</p>
+        <p>I saw the trigger up close. Inside a single project, the same button showed up four different ways, built by four different developers who'd each made their own reasonable call. No shared framework, no single source of truth — teams that should have been building the same thing were quietly building four different things instead.</p>
 
-        <figure>
-          <!-- PLACEHOLDER image -->
-          <img src="../assets/images/placeholder-blueprint.svg" width="1200" height="900" alt="Audit board showing duplicated component variants across the Hub portal" loading="lazy" decoding="async" />
-          <figcaption>Fig 1 — The audit that started it: duplicated variants across sections.</figcaption>
-        </figure>
+        <p>That's when it stopped being a nice-to-have and turned into a real problem worth fixing. I took it to Wipfli's internal IT Director and pitched building a design system. The pitch got approved, with hours assigned per sprint — that's what actually funded the work.</p>
 
-        <h2>Process</h2>
-        <p>I started with an inventory of every component in production, then designed a token architecture with three tiers: <strong>Primitives</strong> (raw values — e.g. <code>tg-700</code> at <code>#3D4A64</code>, <code>blue-500</code> at <code>#004DFF</code>), <strong>Semantic</strong> tokens that name a role rather than a value (<code>text/body</code>, <code>action/primary</code>), and <strong>Component</strong> tokens that consume semantic tokens only (<code>button/label</code>, <code>button/bg-default</code>). Components never reference primitives directly — that's what lets the system re-theme without touching a single component.</p>
+        <h2>Why a style guide wouldn't have fixed this</h2>
+        <p>Multiple versions of the same component meant nobody had unified control over how it looked or worked. A single bug fix meant hunting down every page it touched and fixing it there too, one at a time — simple problems turned tedious fast.</p>
 
-        <p>The color system itself uses a tinted grey rather than a neutral one, for perceptual warmth that sits coherently with the blue accent palette, built on <strong>OKLCH</strong> for perceptual uniformity, a better dark-mode gamut, and Tailwind v4 compatibility. Six semantic intents — Info, Success, Critical, Warning, Neutral, and AI — each map to a specific hue, and a surface-layering model (<code>surface/base → layer-1 → layer-2</code>) creates elevation through shadow rather than darkening, so light and dark mode share the same token names with different values and zero component rewrites.</p>
-
-        <p>Tokens ship through a <strong>Style Dictionary</strong> pipeline: one platform-agnostic source emits CSS custom properties, a Tailwind <code>@theme</code> block, and JSON, in two build passes. Before Blueprint, the same intent existed as 47 hardcoded hex values spread across 3 files; after, it's one source of truth. Components themselves are built as <strong>CVA</strong> (class-variance-authority) variants — the Button component alone covers primary/secondary/ghost/destructive variants, a full interaction-state set, a size scale, icon support, and ARIA/keyboard/focus-ring accessibility built in rather than bolted on per instance.</p>
+        <p>Documentation alone wouldn't have fixed that. Documentation describes drift, it doesn't stop it. What the team actually needed was something structural: one source every team could point to by intent, and a way to push updates without asking anyone to rewrite their code.</p>
 
         <figure>
           <!-- PLACEHOLDER image -->
-          <img src="../assets/images/placeholder-blueprint.svg" width="1200" height="900" alt="Three-tier token model diagram: primitives, semantic tokens, component tokens" loading="lazy" decoding="async" />
-          <figcaption>Fig 2 — Token architecture: Primitives → Semantic → Component. Components consume Tier 2 only.</figcaption>
+          <img src="../assets/images/placeholder-blueprint.svg" width="1200" height="900" alt="Audit board showing four different button implementations from the same project, side by side" loading="lazy" decoding="async" />
+          <figcaption>Fig 1 — The audit that started it: the same button, built four different ways.</figcaption>
         </figure>
 
-        <h2>Solution</h2>
-        <p>Blueprint shipped as three connected artifacts: the Figma component kit (built with Variables, Auto Layout, and Dev Mode), the usage documentation, and the linked component code. Code Connect ties each Figma component to its code counterpart, so Dev Mode shows the real, current implementation rather than an approximation — and the same links later gave an LLM a precise, structured target to build against (see the AI-generated frontend POC).</p>
+        <h2>Two phases, and the pivot between them</h2>
+        <p>Phase 1 was Figma and documentation, nothing else. The task was to audit the most heavily used components inside the Hub platform, then rebuild them from scratch as a proper component kit — starting underneath the components entirely: color, typography, spacing, elevation, iconography, all the atomic pieces, before a single component got touched.</p>
 
-        <h2>Outcome</h2>
-        <p>Adopted by the Wipfli Hub product team, then extended to 5 additional projects — 3 internal, 2 client-facing — for 6 products running on the same system. Blueprint became the foundation that made AI-generated frontend work possible: the same token coverage and Code Connect mapping that kept designers and engineers aligned turned out to be exactly what an LLM needed to generate a compliant frontend on its own.</p>
+        <p>The pivot to Phase 2 happened partway through, almost by accident. It became clear that a well-documented design system doesn't just keep Figma tidy — it makes a design-to-code workflow possible. Once I saw that, Phase 2 more or less defined itself. A frontend engineer with real depth in React, Base UI, Radix UI, and Tailwind CSS joined the team, which wasn't a random hire either: upcoming projects, and pieces of the ones already running, were headed toward React anyway. So the plan became simple — move fast, get components into real code, and prove it out on the task management work inside the Hub platform first.</p>
 
-        <div class="draft-note">Placeholder — expand with the full narrative (specific squad-by-squad rollout story, governance model for the 5 onboarding projects, and any resistance/adoption friction worth naming) once source notes are on hand.</div>
+        <div class="case-quote">
+          <p>I owned the design decisions: definitions, documentation, the foundational architecture. The frontend engineer owned how it all came together in code, Code Connect included, with just as much say in his half as I had in mine. That's peer collaboration — nobody was directing anybody.</p>
+        </div>
+
+        <h2>Foundations</h2>
+
+        <h3>Typography: brand identity meets product legibility</h3>
+        <p>Phase 1 launched with the brand's own editorial fonts: Anton, Montserrat, Lora. On a product screen, none of them held up. Anton is all caps with thick strokes, built for huge display sizes, and it turns into a mess at title scale in a real interface. Montserrat's characters run wide, so anything data-dense started to feel cramped.</p>
+
+        <p>The fix was <strong>Inter Tight</strong> for display and headings — the condensed cut specifically, since it stays legible at large sizes without losing authority — <strong>Roboto Flex</strong> for body text, a variable font built for dense data, and <strong>Roboto Mono</strong> for IDs, code, and anything meant to be read by a machine as much as a person.</p>
+
+        <p>One more typeface is worth calling out on its own, because it's a real accessibility feature rather than a legibility fix. <strong>Atkinson Hyperlegible Next</strong> sits in the system as a user-facing preference — turn it on, and it swaps the body font across every text style in the product, with nothing else changing: not scale, not size, not line-height.</p>
+
+        <p>That swap works cleanly because of a decision made one layer down. Font family and weight live only in the primitive layer, never touched directly by a text style — change one primitive and every text style that depends on it follows automatically. It's the same idea the token system uses at Tier 2: keep the thing most likely to change isolated, so changing it doesn't mean touching fifty other things by hand.</p>
+
+        <h3>Iconography: a system the brand never specified</h3>
+        <p>This one had the same shape as the typography problem. Brand hadn't specified anything, because icons weren't really part of how the firm's identity showed up anywhere. But the visual identity itself is sharp, no soft curves in it at all, and whatever icon set I picked needed to carry that same character — legible, paired cleanly with the new type system, and sourced from something open and well-built rather than custom I'd have to maintain forever.</p>
+
+        <p><strong>Material Symbols</strong>, in the Outline style, checked every box. I locked the variable axes into the spec so the family can't quietly drift as different people pull icons into their files.</p>
+
+        <dl class="prop-list">
+          <dt>Weight</dt><dd>300</dd>
+          <dt>Grade</dt><dd>0</dd>
+          <dt>Optical size</dt><dd>20</dd>
+          <dt>Fill</dt><dd>0 (outlined). Fill 1 is reserved for active or selected states — it never gets swapped in for outlined on the same action.</dd>
+          <dt>Hosting</dt><dd>Self-hosted. Icon assets change when the team deliberately updates them, not whenever an external CDN feels like it.</dd>
+        </dl>
+
+        <p>Icon sizing pairs to <em>line-height</em>, not font size — an icon lives inside the text's vertical rhythm, so matching its bounding frame to that line-height is what makes it sit flush instead of looking stapled on. Interactive icons always get a 44&nbsp;×&nbsp;44&nbsp;px hit area, built with padding, never by inflating the icon itself; decorative icons sitting next to a label don't need that treatment.</p>
+
+        <h3>Token architecture: three tiers, one direction of flow</h3>
+        <p>Blueprint runs on a three-tier token model. Primitive values sit at the bottom. Semantic tokens, named for what they mean rather than what they look like, sit in the middle. Component tokens sit on top, and those are what a React component actually reads. Everything flows one direction, primitive to semantic to component — a component never reaches down and grabs a primitive directly.</p>
+
+        <p>The worked example is worth walking through as an actual decision, not just a chain of values. The brand guidelines list the primary blue as <code>#0050FF</code>. Blueprint doesn't use that value — it uses <code>#004DFF</code> instead, substituted right at the primitive layer, because <code>#0050FF</code> doesn't clear WCAG&nbsp;2.2&nbsp;AA sitting behind white body text. That's not a rounding error, and it isn't a quiet workaround either — it's a stated correction: the brand's own primary color, adjusted on purpose, with the reasoning written down. Marketing keeps the guideline value; the product ships the accessible one.</p>
+
+        <figure>
+          <!-- PLACEHOLDER image -->
+          <img src="../assets/images/placeholder-blueprint.svg" width="1200" height="900" alt="Blueprint token architecture diagram: brand guideline #0050FF is substituted to #004DFF at the primitive layer for accessibility, then aliased to a semantic Brand/Primary token, which is consumed by a Button/Solid/Brand/BG component token" loading="lazy" decoding="async" />
+          <figcaption>Fig 2 — The three-tier token model, with the brand-to-accessible substitution shown at the point where it actually happens.</figcaption>
+        </figure>
+
+        <ul class="detail-list">
+          <li><strong>Tinted grey instead of neutral grey.</strong> A cooler slate ties visually to a palette that's mostly blue — plain neutral grey doesn't do much for an interface on its own.</li>
+          <li><strong>OKLCH over HSL.</strong> Perceptually uniform, better gamut for dark mode, and directly compatible with Tailwind v4.</li>
+          <li><strong>Components consume only the semantic tier.</strong> Theming for a new brand or product reroutes at Tier 2 without touching a single component — the same isolation trick typography uses for font family.</li>
+          <li><strong>Style Dictionary for the build.</strong> One source of truth emits CSS custom properties, Tailwind <code>@theme</code>, and JSON, so nothing downstream gets locked into one vendor's format.</li>
+          <li><strong>Two spacing scales instead of one 8&nbsp;px grid.</strong> A <em>component</em> scale for padding and gaps inside a component (4, 8, 12, 16, 20), and a separate <em>layout</em> scale for the space between components and sections (16, 24, 32, 40, 48). Both build on the same 4&nbsp;px base, but kept apart on purpose, so a component's internal density can change without dragging the whitespace around it along for the ride.</li>
+        </ul>
+
+        <h3>Color system: a method, applied consistently, broken once on purpose</h3>
+        <p>The order I built these in matters — it's really the whole story. I started with the brand's blue, converted it to OKLCH, and stretched it into an 11-stop ramp. Then, holding lightness constant at every stop, I built red, green, and yellow off that same structure, so all four families would behave the same way moving from light to dark. For slate, I took a desaturated version of the brand blue and grew it into a full grey scale, using Adobe Spectrum as a reference rather than guessing.</p>
+
+        <p>Yellow broke the pattern. Holding lightness constant, the way I had for every other color, gave me a yellow that looked muddy and dark — nothing like a warning color should look. So I didn't force it: I moved yellow's anchor up to the 600 stop instead, while blue, red, and green kept theirs at 500. Every color, from its anchor stop down to the darkest step, is AA-marked for white backgrounds. One method, used everywhere, broken on purpose in the one place it stopped working, with the reason written down next to it.</p>
+
+        <figure>
+          <!-- PLACEHOLDER image -->
+          <img src="../assets/images/placeholder-blueprint.svg" width="1200" height="900" alt="Four semantic color ramps — blue, red, green, and yellow — anchored at stop 500, except yellow which anchors at stop 600 as a marked, intentional exception" loading="lazy" decoding="async" />
+          <figcaption>Fig 3 — Four intents, one 11-stop structure, one deliberate exception. APCA Lc scores at anchor: Blue 76, Red 77, Green 72, Yellow 72.</figcaption>
+        </figure>
+
+        <p>Every color in the system means something specific. Blue is action, brand, anything in-process. Green is success. Yellow is warning. Red I named <strong>Critical</strong>, and that word choice was deliberate — not "destructive," not "danger." Red in this system isn't only for destructive actions; it's for anything that needs a user's immediate attention, and destructive is just one flavor of that. Critical says the whole truth; the other two words only say part of it.</p>
+
+        <p>Info never got its own hue — it's folded into blue on purpose, because when a brand's main color is already blue, people read blue as informational anyway. I wrote that reasoning straight into the token descriptions, so it reads as a decision, not something that just happened to work out that way.</p>
+
+        <h3>Elevation: corrected once it read wrong</h3>
+        <p>The first version of this used background tint to show elevation — every step up the stack got a little darker, layer-1 at tg-50, layer-2 at tg-100, layer-3 at tg-150. It was consistent, easy to build, and wrong. Things that were supposed to float above the page, dropdowns, modals, ended up looking darker than the page itself. Darker reads as heavier; heavier reads as further away. That's backwards — something floating above an interface should feel lighter, not weighed down.</p>
+
+        <p>So I rebuilt it. Every elevated surface now caps out at tg-50 or white, full stop, and shadow depth alone does the work of showing how high something sits. An inset ring shadow took over from the CSS <code>border</code> property too, since it holds up against any background and transitions smoothly in a way a flat border never could.</p>
+
+        <figure>
+          <!-- PLACEHOLDER image -->
+          <img src="../assets/images/placeholder-blueprint.svg" width="1200" height="900" alt="Side-by-side comparison of the elevation model: version 1 used progressively darker background tint per layer; version 2 keeps every surface light and uses shadow depth alone to signal elevation" loading="lazy" decoding="async" />
+          <figcaption>Fig 4 — Same nesting, two elevation models. v1 was internally consistent but perceptually wrong; v2 fixed it by moving the depth cue from tint to shadow.</figcaption>
+        </figure>
+
+        <p>Every non-inset shadow in the system stacks three layers into one <code>box-shadow</code> declaration: a 1&nbsp;px ring does the job a border used to do, a tight contact shadow anchors the element to whatever's underneath it, and a soft ambient shadow does the actual work of suggesting lift, getting larger and softer the higher something sits. The color behind all three is the brand's own navy, not a generic neutral grey — that one choice is why shadows in this system read as part of the palette instead of just looking muddy.</p>
+
+        <h2>Component: Button</h2>
+        <p>The Button is the component that started all of this. Four different implementations in one project were what got the whole pitch approved in the first place. It's also the clearest place to see the token layers actually working together, since every variant is just a combination of choices across a few independent dimensions.</p>
+
+        <dl class="prop-list">
+          <dt>Style</dt><dd>Solid · Outline · Ghost — controls visual weight and prominence in hierarchy.</dd>
+          <dt>Intent</dt><dd>Positive · Neutral · Critical — maps to semantic color families.</dd>
+          <dt>Size</dt><dd>Medium (36&nbsp;px) · Small (24&nbsp;px) · Icon · Icon-small.</dd>
+          <dt>Shape</dt><dd>Rect (4&nbsp;px radius) · Pill (fully rounded).</dd>
+          <dt>States</dt><dd>Enabled · Hover · Active/Pressed · Focus · Disabled · Loading — six, not five: loading gets its own treatment.</dd>
+        </dl>
+
+        <figure>
+          <!-- PLACEHOLDER image -->
+          <img src="../assets/images/placeholder-blueprint.svg" width="1200" height="900" alt="Anatomy of a Blueprint button showing the container background token, radius token, leading icon slot, label with matched horizontal padding, and trailing icon slot" loading="lazy" decoding="async" />
+          <figcaption>Fig 5 — Solid, Critical, Medium. Every visual property binds to a semantic token; the component itself carries no hardcoded values.</figcaption>
+        </figure>
+
+        <p>Most design systems handle icon padding with a table: one row for leading-icon-only, one for trailing, one for both, one for neither. I skipped the table — the rule here is simpler. The label's own horizontal padding always matches the button's overall padding at that size, half a rem at Medium, a quarter rem at Small, on both sides, no matter which icon slots are filled. Run the math and it lands on the same numbers a four-row table would give you. It's one rule instead of four.</p>
+
+        <p>Disabling a button while it's mid-action sounds right, but it isn't — it pulls the button out of the tab order and tells a screen reader the button is unavailable, when really it's just busy. So the loading state sets <code>aria-busy="true"</code> instead, and blocks interaction through <code>pointer-events</code> and a guarded click handler. The button stays focusable, and screen readers announce it correctly as busy, not gone. The spinner takes over the leading icon's spot, and the label can change to something like "Saving…" if it needs to, though it doesn't have to.</p>
+
+        <p>An icon-only button has no visible text, so it needs help on two fronts at once: an <code>aria-label</code> for screen readers, and a visible tooltip for anyone navigating by keyboard who can see the screen but has no text label to read. I didn't want that to depend on someone remembering to add both, so the TypeScript types won't even compile without them, and the component wraps itself in a Tooltip automatically whenever <code>iconOnly</code> is true. Nobody has to remember the pattern — it's just how the component works.</p>
+
+        <p class="code-caption">React · TypeScript</p>
+        <pre><code>// Two shapes enforced at the type level. A labelled button gets its
+// accessible name from labelText. An icon-only button has no visible
+// text, so this literally won't compile unless aria-label AND tooltip
+// are supplied. It's a rule that can't be forgotten instead of a rule
+// documented in prose.
+
+type LabelledButtonProps = ButtonOwnProps &amp; {
+  iconOnly?: false
+  labelText: string
+}
+
+type IconOnlyButtonProps = ButtonOwnProps &amp; {
+  iconOnly: true
+  labelText?: never
+  "aria-label": string
+  tooltip: string
+}
+
+export type ButtonProps =
+  (LabelledButtonProps | IconOnlyButtonProps) &amp;
+  React.ButtonHTMLAttributes&lt;HTMLButtonElement&gt;</code></pre>
+
+        <h2>Process &amp; governance</h2>
+
+        <h3>Governance: a real intake process, not a placeholder</h3>
+        <p>When a team wants a new component added, it doesn't just get built. Design sits down with dev and whoever's asking for it — could be a BA, a QA, a PO, anyone actually using the system day to day — and we work through three questions together: does something like this already exist? How often would it really get used? Is this a one-project need, or something other teams will want too? That conversation is what decides whether it gets built at all.</p>
+
+        <p>If the answer's yes, it gets designed against the foundational layer already in place, broken down into its smallest parts, and scoped properly before anyone opens a design file. Then it gets built in code and documented the same way everything else is: anatomy, usage, behavior, accessibility. Only after all of that does it become an official part of the system.</p>
+
+        <p>If the answer's no, the team asking gets a real reason, not a brush-off, and a path to make a stronger case later if they still think it belongs. A design system that can say no, and mean it, is a system. Without that, it's just a pile of components nobody's willing to push back on.</p>
+
+        <h3>Versioning: two strategies, not mutually exclusive</h3>
+        <div class="compare-grid">
+          <div class="compare-col">
+            <h4>Token-separated versioning</h4>
+            <p>Tokens and CSS publish on their own, separate from the React component packages. If a team only needs an updated color or a spacing tweak, they bump the token package alone, with no risk of accidentally pulling in a React behavior change they never asked for.</p>
+            <p>Teams not using React — plain HTML and CSS, vanilla JS, mobile eventually — get the same primitives too, without carrying any framework weight. Style Dictionary handles the pipeline from raw JSON tokens to whatever gets distributed.</p>
+          </div>
+          <div class="compare-col">
+            <h4>Figma-synchronous versioning</h4>
+            <p>Version bumps in code tie directly to what happens in Figma. A designer publishes a library update, a webhook fires, and a CI/CD workflow through GitHub Actions picks it up — it pulls the new tokens through the Figma API, opens a pull request, and cuts a beta package a developer can test right away.</p>
+            <p>That's what stops design and code from quietly drifting apart. When someone says "we're on Buttons v2.1," it means the exact same thing whether they're a designer or a developer.</p>
+          </div>
+        </div>
+
+        <h3>Documentation as a first-class artifact</h3>
+        <p>Documentation lives in a custom Docsite, built on the firm's internal DevOps wiki. Every component page follows the exact same structure: definitions, anatomy, properties, a code snippet in both React and plain HTML and CSS, accessibility notes. Read one page, and you already know where to find anything on any other page.</p>
+
+        <p>There's a small discipline in there worth pointing out. The docs separate what's actually built from what's only planned — a split button and a connected button group are both fully designed and written up in the docsite right now, and both are labeled plainly as not yet built. It's the same honesty I used for the Phase 1 and Phase 2 status up top, just applied one level deeper.</p>
+
+        <h3>Cross-functional alignment, built for two consumers</h3>
+        <p>Token naming isn't something we negotiated case by case — it's mechanical. CSS files map directly onto Figma's variable collections, flowing from Primitives to Semantics to Components. Component styles get written into <code>index.css</code> through Tailwind v4's <code>@theme</code> directive, so a raw token like <code>color.blue.900</code> turns into <code>--color-blue-900</code> in CSS without anyone having to think about it twice.</p>
+
+        <p>Design and engineering barely disagreed on naming, and there's a real reason for that: the structure was built for two readers from day one — human developers, and, as it turned out, LLMs too. That's not something bolted on later. It's a big part of why the design-to-code proof of concept hit 80% conversion accuracy. The token structure was never retrofitted for AI; it was built to work for both from the start, alongside the human developer experience, not instead of it.</p>
+
+        <h2>Outcomes</h2>
+        <p>None of this has shipped to end users yet. What follows is what I can actually measure so far, kept honest about which number is which, since it's easy to blur two different kinds of progress into one impressive-sounding stat.</p>
+
+        <ul class="case-stats">
+          <li class="case-stat">
+            <span class="case-stat-number">80%</span>
+            <p class="case-stat-desc">Accurate LLM component conversion rate in the design-to-code proof of concept. The LLM generated these components using Blueprint's structure as its only reference. See the <a href="ai-design-to-code.html">AI-generated frontend POC</a>.</p>
+          </li>
+          <li class="case-stat">
+            <span class="case-stat-number">65%</span>
+            <p class="case-stat-desc">Manual migration progress: 13 of the 20 audited Figma components are migrated and mapped into code so far. Separate from the LLM experiment above — this is the real, human build-out.</p>
+          </li>
+        </ul>
+
+        <ul class="detail-list">
+          <li><strong>No more manual pixel translation.</strong> Developers stopped hand-translating raw values from Figma — they work from mapped semantic tokens now.</li>
+          <li><strong>Less context switching.</strong> Code Connect puts the exact design spec and snippet mapping right next to the code itself.</li>
+          <li><strong>A shared vocabulary.</strong> Variant and property names match between Figma and React, so design and engineering describe the same thing the same way.</li>
+          <li><strong>PR reviews shifted upstream.</strong> Reviewers focus on business logic instead of nitpicking UI, because the primitives are already pre-tested.</li>
+          <li><strong>Faster onboarding.</strong> New developers ship real work sooner, working against predictable props and documentation that's actually complete.</li>
+          <li><strong>Global refreshes are token-only now.</strong> A product-wide visual update happens at the semantic layer, not as a JSX refactor — that's the system delivering on the exact promise its architecture made.</li>
+        </ul>
 
       </div>
     </article>
@@ -134,19 +328,28 @@
       <span class="surface-picker-trigger-swatch" aria-hidden="true"></span>
     </button>
     <div class="surface-picker-panel" id="surface-picker-panel" hidden>
-      <span class="surface-picker-label" id="surface-picker-label">Mat color</span>
-      <div class="surface-picker-swatches" role="radiogroup" aria-labelledby="surface-picker-label">
-        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="true" tabindex="0" data-color="#095848" style="--swatch:#095848" aria-label="Green"></button>
-        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#141414" style="--swatch:#141414" aria-label="Charcoal"></button>
-        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0b3556" style="--swatch:#0b3556" aria-label="Navy"></button>
-        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust"></button>
-        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum"></button>
-        <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal"></button>
+      <div class="surface-picker-group">
+        <span class="surface-picker-label" id="surface-picker-mat-label">Cutting mat</span>
+        <div class="surface-picker-swatches" role="radiogroup" aria-labelledby="surface-picker-mat-label">
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="true" tabindex="0" data-color="#095848" style="--swatch:#095848" aria-label="Green"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#141414" style="--swatch:#141414" aria-label="Charcoal"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0b3556" style="--swatch:#0b3556" aria-label="Navy"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal"></button>
+        </div>
+        <div class="surface-picker-custom">
+          <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>
+          <input type="color" id="surface-picker-custom-input" value="#095848" />
+          <button type="button" class="surface-picker-reset" data-surface-reset>Reset to default</button>
+        </div>
       </div>
-      <div class="surface-picker-custom">
-        <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>
-        <input type="color" id="surface-picker-custom-input" value="#095848" />
-        <button type="button" class="surface-picker-reset" data-surface-reset>Reset to default</button>
+      <div class="surface-picker-group">
+        <span class="surface-picker-label" id="surface-picker-surface-label">Surfaces</span>
+        <div class="surface-picker-swatches" role="radiogroup" aria-labelledby="surface-picker-surface-label">
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="0" data-surface="white-texture" data-fallback="#e9e7e2" data-surface-image="../assets/images/white-texture.jpg" style="background-image:url('../assets/images/white-texture.jpg')" aria-label="White texture"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-surface="wood-grain" data-fallback="#8a6a4a" data-surface-image="../assets/images/wood-grain.jpg" style="background-image:url('../assets/images/wood-grain.jpg')" aria-label="Wood grain"></button>
+        </div>
       </div>
     </div>
   </div>

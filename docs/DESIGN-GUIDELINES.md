@@ -9,7 +9,7 @@ document — if they ever disagree, fix one of them immediately.
 
 | Reference | What we borrow | What we do NOT borrow |
 |---|---|---|
-| Carbon Design System | IBM Plex type pairing, productive type scale, spacing scale, restrained interactions, 8px rhythm | Carbon's full component library, its blue-heavy marketing pages |
+| Carbon Design System | Productive type-pairing discipline (mono for meta, humanist sans for body), productive type scale, spacing scale, restrained interactions, 8px rhythm | Carbon's own IBM Plex Sans pairing (swapped for Inter — see §4), full component library, its blue-heavy marketing pages |
 | gorix.zip | Section flow: hero → work tiles → toolstack → about → contact; numbered mono labels on tools | Dark-only theme, heavy motion/sfx, playful register |
 | karolinaszczur.com | Skip links, generous focus states, accessibility statement in footer, humane tone | Serif display type |
 | jakub.kr | List-first IA, content density, zero chrome | Newsletter section |
@@ -120,24 +120,43 @@ defaults.
 ### Surface picker
 
 A floating control (`.surface-picker`, bottom-inline-end, independent of the
-header toggle row) lets a visitor recolor the mat: six curated swatches plus a
-native `<input type="color">` for anything else. Picking a color persists to
-`localStorage.matColor`. A saved color is intentionally **global across both
-themes** — it overrides the theme-driven default in light and dark alike —
-with a "Reset to default" action that clears the override and lets the
-theme-driven color show again.
+header toggle row) lets a visitor change the background. It's split into two
+labeled groups:
+
+- **Cutting mat** — six curated swatches plus a native `<input type="color">`
+  recolor the ruled grid mat. Picking a color persists to
+  `localStorage.matColor`. A saved color is intentionally **global across
+  both themes** — it overrides the theme-driven default in light and dark
+  alike — with a "Reset to default" action that clears the override and lets
+  the theme-driven color show again.
+- **Surfaces** — two static photo textures (white plaster, wood grain) swap
+  the mat for a photograph instead of the recolorable grid. Picking one
+  persists to `localStorage.matSurface` and clears any saved `matColor` (and
+  vice versa) — only one surface is ever active.
 
 Applying it is split across two moments, deliberately:
 
 - The anti-FOUC `<head>` read on every page (mirroring the existing
   theme/lang pattern) sets only **`--color-mat`** before first paint — no
-  wrong-color flash on reload.
-- The full **`--mat-image`** rebuild (the grid/ruler/protractor generator)
-  runs in the deferred `js/main.js` instead. Duplicating that generator's
-  loops and trigonometry inside 13 pre-paint `<head>` scripts wasn't worth it
-  for a background layer — the flat mat color is already correct instantly,
-  and the detailed texture fills in moments later once the deferred script
-  runs, which is imperceptible in practice.
+  wrong-color flash on reload. For a photo surface this is a representative
+  fallback tone (the photo itself loads a beat later), not the mat's literal
+  fallback color.
+- The full **`--mat-image`** rebuild — the grid/ruler/protractor generator
+  for a mat color, or a photo URL for a surface — runs in the deferred
+  `js/main.js` instead. Duplicating that generator's loops and trigonometry
+  inside 13 pre-paint `<head>` scripts wasn't worth it for a background
+  layer — the flat mat color is already correct instantly, and the detailed
+  texture fills in moments later once the deferred script runs, which is
+  imperceptible in practice.
+
+The mat renders once per page, not tiled: `background-repeat: no-repeat`,
+`background-size: cover`, `background-position: left bottom` (see
+`html::before` in styles.css). The grid's ruled origin — and the protractor
+fanning from it — always sits at the viewport's actual bottom-left corner
+this way, instead of the origin recurring at every tile boundary. Axis
+numbers run along the top and right edges only; the left and bottom edges
+keep their tick marks but drop the digits, since a single cover-scaled
+instance doesn't need the same number repeated on every edge.
 
 This is contrast-safe by construction: the mat sits entirely behind the paper
 on `html::before`, and no paper token (`--color-bg`, `--color-text`, etc.)
@@ -145,19 +164,32 @@ ever references `--color-mat`. Any mat color is guaranteed not to touch text
 contrast — verified by setting an extreme saturated mat color and confirming
 `<body>`'s computed background and color are byte-identical before and after.
 
-The swatch group follows the APG radio-group pattern: roving `tabindex`,
-`aria-checked`, arrow keys move focus *and* select (matching native
-`<input type="radio">`), `Escape` closes the popover and returns focus to the
-trigger. Wood and a plain drafting-desk surface are a deliberate fast-follow,
-not built here — see the project's plan history.
+Each group follows the APG radio-group pattern independently: roving
+`tabindex`, `aria-checked`, arrow keys move focus *and* select within that
+group (matching native `<input type="radio">`), `Escape` closes the popover
+and returns focus to the trigger. The two groups are separate radiogroups —
+each keeps its own roving-tabindex stop — but only one swatch total is ever
+`aria-checked`, since exactly one surface can be active across both.
+
+A relative-URL gotcha worth documenting: a photo surface's image URL cannot
+be stored in `--mat-image` as a bare relative path. A `url()` inside a CSS
+custom property resolves against the *stylesheet* that consumes it via
+`var()` — here, `css/styles.css`'s `html::before` rule — not the HTML page
+that set the property, so a relative path would resolve against `css/` and
+404 regardless of the page's own depth. `js/main.js` resolves each surface's
+path to an absolute URL (`new URL(path, document.baseURI)`) before writing
+it into `--mat-image`. The same reasoning is why the swatch thumbnails set
+their own `background-image` as a plain inline style rather than through a
+`--swatch-image` custom property read by styles.css.
 
 ## 4. Typography
 
 | Role | Family | Notes |
 |---|---|---|
-| Body & headings | IBM Plex Sans | Weights 400, 500, 600 only |
+| Body | InterVariable (Inter), self-hosted from rsms.me/inter/ | Weight 400 (Regular) only; `letter-spacing: -0.02em` (`--tracking-body`) — Inter's own recommended tight tracking for text sizes |
+| Headings (h1–h4) | InterVariable | Weight 600; `letter-spacing: normal` (doesn't inherit body's -2%); `font-feature-settings: var(--font-feature-alt)` enables Inter's full character-variant bundle (single-story a, open digits, alternate 1/3, compact f/t, etc.) — the modern equivalent of the old "Inter UI var alt" cut, which is no longer published as a separate family/file |
 | Eyebrows, meta, tags, code | IBM Plex Mono | Weight 400; uppercase eyebrows with `letter-spacing: 0.08em` (LTR only) |
-| Arabic (RTL) | IBM Plex Sans Arabic | Applied via `[dir="rtl"]`; letter-spacing forced to 0 |
+| Arabic (RTL) | IBM Plex Sans Arabic | Applied via `[dir="rtl"]`; letter-spacing forced to 0; falls back to InterVariable for any Latin text mixed into RTL content |
 
 Type scale — headings are sized in `cqi` (1% of the paper's width), so type
 scales with the sheet rather than the window. The rem values are guard rails,
