@@ -189,9 +189,14 @@
      overrides that default when a visitor actually customizes it.
 
      The SVG template here is byte-for-byte the same shape as the one baked
-     into tokens.css: a 1280x680 "chunk" of ruled mat — 50x25-unit grid at
-     24px pitch, axis numbers, a corner protractor — parameterized only by
-     the base color. color-mix() inside the SVG's own stroke/fill values
+     into tokens.css: a single ruled-mat panel — 50x25-unit grid at 24px
+     pitch, axis numbers along the top and right edges, a corner protractor
+     anchored bottom-left — parameterized only by the base color. It is
+     rendered once per page (`background-repeat: no-repeat`) and scaled to
+     cover the viewport (`background-size: cover`, `background-position:
+     left bottom`, see styles.css), not tiled, so the protractor's origin
+     always sits at the actual bottom-left corner of the screen regardless
+     of viewport size. color-mix() inside the SVG's own stroke/fill values
      resolves at paint time in the image itself, so no CSS custom-property
      inheritance is needed for it to work inside a data URI.
 
@@ -241,7 +246,11 @@
     s += `</g>`;
 
     // rulers: major ticks + numbers only (the grid already shows the fine
-    // subdivisions, so per-unit ticks would just be redundant clutter)
+    // subdivisions, so per-unit ticks would just be redundant clutter).
+    // Numbers run along the top edge and down the right edge only — the
+    // left edge and bottom edge keep their tick marks (they still read as
+    // "this is a ruled mat") but drop the digits, which just duplicated
+    // the top/right numbers at this single-instance, cover-scaled size.
     const tickLen = 8;
     for (let i = 0; i <= MAT_UNITS_W; i += MAT_MAJOR_EVERY) {
       const x = MAT_GX0 + i * MAT_UNIT;
@@ -254,7 +263,6 @@
       const label = MAT_UNITS_H - j; // 25 at top -> 0 at bottom, matches the reference mat
       s += `<line x1='${MAT_GX0 - tickLen}' y1='${y}' x2='${MAT_GX0}' y2='${y}' stroke='${guide}' stroke-width='1'/>`;
       s += `<line x1='${MAT_GX1}' y1='${y}' x2='${MAT_GX1 + tickLen}' y2='${y}' stroke='${guide}' stroke-width='1'/>`;
-      s += `<text x='${MAT_GX0 - tickLen - 6}' y='${y + 5}' text-anchor='end' ${FONT} fill='${guide}'>${label}</text>`;
       s += `<text x='${MAT_GX1 + tickLen + 6}' y='${y + 5}' text-anchor='start' ${FONT} fill='${guide}'>${label}</text>`;
     }
 
@@ -292,58 +300,111 @@
   const matImageValue = (hex) =>
     `url("data:image/svg+xml,${encodeURIComponent(matSvg(hex))}")`;
 
+  /* Two independent surface types share the same --mat-image/--color-mat
+     pair: a recolorable grid (SVG, built above) or a static photo (white
+     texture, wood grain — plain images, never recolored). Only one can be
+     active at a time, so applying either one clears the other's saved
+     choice. The photo swatches carry their own image URL and a
+     representative fallback color as data/inline-style attributes, so this
+     code never has to know the asset path or its depth relative to the
+     current page. */
+  const colorSwatches = Array.prototype.slice.call(
+    document.querySelectorAll(".surface-picker-swatch[data-color]")
+  );
+  const surfaceSwatches = Array.prototype.slice.call(
+    document.querySelectorAll(".surface-picker-swatch[data-surface]")
+  );
+
   function applyMatColor(hex, { persist = true } = {}) {
     root.style.setProperty("--color-mat", hex);
     root.style.setProperty("--mat-image", matImageValue(hex));
-    if (persist) localStorage.setItem("matColor", hex);
+    if (persist) {
+      localStorage.setItem("matColor", hex);
+      localStorage.removeItem("matSurface");
+    }
   }
 
-  function resetMatColor() {
+  function applyMatSurface(key, { persist = true } = {}) {
+    const sw = surfaceSwatches.find((s) => s.dataset.surface === key);
+    if (!sw) return;
+    /* Resolve to an absolute URL before it goes into --mat-image. A
+       relative url() stored in a custom property resolves against the
+       stylesheet that consumes it (css/styles.css's html::before rule),
+       not this page, so a bare relative path here would 404 exactly like
+       it did for the swatch thumbnails (see styles.css's comment on
+       .surface-picker-swatch). new URL() against the page's own URL
+       sidesteps that regardless of which directory depth this page is at. */
+    const absoluteUrl = new URL(sw.dataset.surfaceImage, document.baseURI).href;
+    root.style.setProperty("--mat-image", `url("${absoluteUrl}")`);
+    root.style.setProperty("--color-mat", sw.dataset.fallback);
+    if (persist) {
+      localStorage.setItem("matSurface", key);
+      localStorage.removeItem("matColor");
+    }
+  }
+
+  function resetMat() {
     root.style.removeProperty("--color-mat");
     root.style.removeProperty("--mat-image");
     localStorage.removeItem("matColor");
+    localStorage.removeItem("matSurface");
   }
 
   /* The anti-FOUC <head> script already set --color-mat (so there's no
-     wrong-color flash), but it didn't build the full textured --mat-image —
-     that's this deferred script's job. Do it before wiring the picker UI. */
+     wrong-color flash), but it didn't build the full --mat-image (textured
+     grid, or photo) — that's this deferred script's job. Do it before
+     wiring the picker UI. */
+  const savedMatSurface = localStorage.getItem("matSurface");
   const savedMatColor = localStorage.getItem("matColor");
-  if (savedMatColor) applyMatColor(savedMatColor, { persist: false });
+  if (savedMatSurface) applyMatSurface(savedMatSurface, { persist: false });
+  else if (savedMatColor) applyMatColor(savedMatColor, { persist: false });
 
   const picker = document.querySelector(".surface-picker");
   if (picker) {
     const trigger = picker.querySelector(".surface-picker-trigger");
     const panel = picker.querySelector(".surface-picker-panel");
-    const swatches = Array.prototype.slice.call(
-      picker.querySelectorAll(".surface-picker-swatch")
-    );
     const colorInput = picker.querySelector('input[type="color"]');
     const resetBtn = picker.querySelector("[data-surface-reset]");
+    const allSwatches = colorSwatches.concat(surfaceSwatches);
 
     const currentMat = () =>
       getComputedStyle(root).getPropertyValue("--color-mat").trim();
 
-    /* Reflect a color across the swatch radiogroup and the native input,
-       without touching --mat-image (used on init, and after every change). */
-    function syncPickerUI(hex) {
-      let matched = false;
-      swatches.forEach((sw) => {
-        const isMatch = sw.dataset.color.toLowerCase() === hex.toLowerCase();
+    /* Reflect the active selection across BOTH swatch radiogroups (Cutting
+       mat, Surfaces) and the native color input, without touching
+       --mat-image (used on init, and after every change). The two groups
+       are separate ARIA radiogroups — each keeps its own roving-tabindex
+       stop — but only one swatch total is ever aria-checked, since exactly
+       one surface can be active. */
+    function syncPickerUI(selection) {
+      let colorMatched = false;
+      colorSwatches.forEach((sw) => {
+        const isMatch =
+          selection.mode === "color" &&
+          sw.dataset.color.toLowerCase() === selection.value.toLowerCase();
         sw.setAttribute("aria-checked", String(isMatch));
         sw.tabIndex = isMatch ? 0 : -1;
-        if (isMatch) matched = true;
+        if (isMatch) colorMatched = true;
       });
-      // No curated swatch matches (a custom pick) — keep the group
-      // keyboard-reachable by giving the first swatch the roving stop.
-      if (!matched) swatches[0].tabIndex = 0;
-      if (colorInput) colorInput.value = hex;
+      if (!colorMatched && colorSwatches.length) colorSwatches[0].tabIndex = 0;
+
+      let surfaceMatched = false;
+      surfaceSwatches.forEach((sw) => {
+        const isMatch = selection.mode === "surface" && sw.dataset.surface === selection.value;
+        sw.setAttribute("aria-checked", String(isMatch));
+        sw.tabIndex = isMatch ? 0 : -1;
+        if (isMatch) surfaceMatched = true;
+      });
+      if (!surfaceMatched && surfaceSwatches.length) surfaceSwatches[0].tabIndex = 0;
+
+      if (colorInput && selection.mode === "color") colorInput.value = selection.value;
     }
 
     function openPanel() {
       panel.hidden = false;
       trigger.setAttribute("aria-expanded", "true");
-      const target = swatches.find((sw) => sw.getAttribute("aria-checked") === "true");
-      (target || swatches[0]).focus();
+      const target = allSwatches.find((sw) => sw.getAttribute("aria-checked") === "true");
+      (target || colorSwatches[0]).focus();
     }
 
     function closePanel({ returnFocus = true } = {}) {
@@ -368,24 +429,45 @@
       }
     });
 
-    swatches.forEach((sw, i) => {
+    // Roving-tabindex radiogroups: arrow keys move focus AND select within
+    // their own group, matching native <input type="radio"> behavior.
+    colorSwatches.forEach((sw, i) => {
       sw.addEventListener("click", () => {
         applyMatColor(sw.dataset.color);
-        syncPickerUI(sw.dataset.color);
+        syncPickerUI({ mode: "color", value: sw.dataset.color });
       });
-      // Roving-tabindex radiogroup: arrow keys move focus AND select,
-      // matching native <input type="radio"> behavior.
       sw.addEventListener("keydown", (e) => {
         const dirs = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
         let nextIndex = null;
-        if (e.key in dirs) nextIndex = (i + dirs[e.key] + swatches.length) % swatches.length;
+        if (e.key in dirs) nextIndex = (i + dirs[e.key] + colorSwatches.length) % colorSwatches.length;
         else if (e.key === "Home") nextIndex = 0;
-        else if (e.key === "End") nextIndex = swatches.length - 1;
+        else if (e.key === "End") nextIndex = colorSwatches.length - 1;
         if (nextIndex === null) return;
         e.preventDefault();
-        const next = swatches[nextIndex];
+        const next = colorSwatches[nextIndex];
         applyMatColor(next.dataset.color);
-        syncPickerUI(next.dataset.color);
+        syncPickerUI({ mode: "color", value: next.dataset.color });
+        next.focus();
+      });
+    });
+
+    surfaceSwatches.forEach((sw, i) => {
+      sw.addEventListener("click", () => {
+        applyMatSurface(sw.dataset.surface);
+        syncPickerUI({ mode: "surface", value: sw.dataset.surface });
+      });
+      sw.addEventListener("keydown", (e) => {
+        const dirs = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+        let nextIndex = null;
+        if (e.key in dirs)
+          nextIndex = (i + dirs[e.key] + surfaceSwatches.length) % surfaceSwatches.length;
+        else if (e.key === "Home") nextIndex = 0;
+        else if (e.key === "End") nextIndex = surfaceSwatches.length - 1;
+        if (nextIndex === null) return;
+        e.preventDefault();
+        const next = surfaceSwatches[nextIndex];
+        applyMatSurface(next.dataset.surface);
+        syncPickerUI({ mode: "surface", value: next.dataset.surface });
         next.focus();
       });
     });
@@ -393,19 +475,23 @@
     if (colorInput) {
       colorInput.addEventListener("input", () => {
         applyMatColor(colorInput.value);
-        syncPickerUI(colorInput.value);
+        syncPickerUI({ mode: "color", value: colorInput.value });
       });
     }
 
     if (resetBtn) {
       resetBtn.addEventListener("click", () => {
-        resetMatColor();
-        syncPickerUI(currentMat());
+        resetMat();
+        syncPickerUI({ mode: "color", value: currentMat() });
         closePanel();
       });
     }
 
-    syncPickerUI(currentMat());
+    syncPickerUI(
+      savedMatSurface
+        ? { mode: "surface", value: savedMatSurface }
+        : { mode: "color", value: currentMat() }
+    );
   }
 
   /* ------------------------------------------------------------------

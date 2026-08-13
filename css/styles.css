@@ -3,6 +3,27 @@
    Rules: tokens only (no raw values), logical properties only (RTL-safe).
    ========================================================================== */
 
+/* ------ Fonts: self-hosted Inter ------
+   Downloaded from rsms.me/inter/ rather than served via Google Fonts —
+   one variable file covers the full weight range (100–900) instead of
+   separate static files per weight. Italic is included for the handful of
+   <em> uses in case-study copy; it's not preloaded (see the <link> in each
+   page's <head>) since it's rarely the first thing painted. */
+@font-face {
+  font-family: "InterVariable";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../assets/fonts/InterVariable.woff2") format("woff2");
+}
+@font-face {
+  font-family: "InterVariable";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../assets/fonts/InterVariable-Italic.woff2") format("woff2");
+}
+
 /* ------ Reset & base ------ */
 *,
 *::before,
@@ -21,13 +42,16 @@
    then stretches a `cover` image down the full document height. This is a
    static layer, not parallax — parallax is banned in DESIGN-GUIDELINES §8.
 
-   --mat-image is a ruled-mat SVG "chunk" (see tokens.css) — grid, axis
-   numbers, corner protractor — not a photograph, so it repeats at its own
-   intrinsic 1280x680px size rather than stretching to cover. That keeps the
-   grid at a consistent scale regardless of viewport width, instead of a
-   `cover`-fit image reading differently at 768px vs 2560px. js/main.js
-   overwrites this same custom property with a freshly-colored version of the
-   identical template when a visitor picks a custom mat color. */
+   --mat-image is a single surface image — either the ruled-mat SVG (grid,
+   axis numbers, corner protractor — see tokens.css) or one of the
+   photographic surfaces from the picker (white texture, wood grain). It
+   renders once (`no-repeat`) and is scaled to fully cover the viewport
+   (`background-size: cover`), anchored `left bottom` so the mat's ruled
+   origin — or, for a photo surface, just the anchor corner — always sits
+   at the actual bottom-left of the screen instead of tiling in repeated
+   chunks. js/main.js overwrites this custom property with a freshly-built
+   version of the grid (recolored) or a photo surface's URL when a visitor
+   picks something in the surface picker. */
 html {
   scroll-behavior: smooth;
   background-color: var(--color-mat);
@@ -44,7 +68,9 @@ html::before {
   inset: 0;
   z-index: -1;
   background-image: var(--mat-image);
-  background-repeat: repeat;
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: cover;
 }
 /* Below 48em the paper is full-bleed and the mat can never be seen — it's
    already inlined in this stylesheet either way (no separate request to
@@ -73,6 +99,8 @@ body {
   color: var(--color-text);
   font-family: var(--font-sans);
   font-size: var(--text-body);
+  font-weight: 400;
+  letter-spacing: var(--tracking-body);
   line-height: var(--leading-body);
   transition: background var(--duration-base) var(--ease),
     color var(--duration-base) var(--ease);
@@ -84,16 +112,39 @@ img {
   block-size: auto;
 }
 
+/* Headings opt into Inter's full character-variant bundle (see
+   --font-feature-alt) — the modern stand-in for the old "Inter UI var alt"
+   cut — and run their own -2.5% tracking (--tracking-heading) rather than
+   inheriting body's -2%. Weight steps down the hierarchy: Medium (500) for
+   h1/h2, Semibold (600) for h3 and everything smaller. */
 h1,
 h2,
-h3 {
+h3,
+h4,
+h5,
+h6 {
   line-height: var(--leading-tight);
   text-wrap: balance;
   font-weight: 600;
+  letter-spacing: var(--tracking-heading);
+  font-feature-settings: var(--font-feature-alt);
+}
+h1,
+h2 {
+  font-weight: 500;
 }
 
 p {
   max-inline-size: var(--measure);
+}
+
+/* Monospace text (inline code, code blocks, the .mono utility) shouldn't
+   inherit body's -2% tracking — negative letter-spacing on a fixed-width
+   face just cramps character spacing that's supposed to stay uniform. */
+code,
+pre,
+.mono {
+  letter-spacing: normal;
 }
 
 /* ------ Focus: visible everywhere, both themes ------ */
@@ -716,6 +767,200 @@ p {
   margin-block-start: var(--space-06);
 }
 
+/* ------ Case study: status callout (phase / adoption summary) ------ */
+.status-callout {
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-06);
+}
+.status-callout-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-secondary);
+  display: block;
+  margin-block-end: var(--space-04);
+}
+[dir="rtl"] .status-callout-label {
+  letter-spacing: 0;
+}
+.status-callout ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-03);
+}
+.status-callout li {
+  font-size: var(--text-small);
+  color: var(--color-text-secondary);
+}
+.status-callout li strong {
+  color: var(--color-text);
+}
+
+/* ------ Case study: team list (used inside facts-bar dd) ------ */
+.team-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-01);
+  font-size: var(--text-small);
+  font-weight: 500;
+}
+
+/* ------ Case study: pull quote ------ */
+.case-quote {
+  border-inline-start: 3px solid var(--color-accent);
+  padding-inline-start: var(--space-05);
+  padding-block: var(--space-02);
+}
+.case-quote p {
+  font-size: var(--text-h3);
+  font-weight: 400;
+  color: var(--color-text);
+  max-inline-size: none;
+}
+
+/* ------ Case study: property list (icon / token / button property
+   definitions). Named .prop-list, not .spec-list — that name is already
+   taken by the About page's specializations layout. ------ */
+.prop-list {
+  display: grid;
+  gap: var(--space-03) var(--space-06);
+  grid-template-columns: 1fr;
+}
+@container (min-width: 34em) {
+  .prop-list {
+    grid-template-columns: 11ch 1fr;
+  }
+}
+.prop-list dt {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  color: var(--color-text-secondary);
+}
+.prop-list dd {
+  margin: 0;
+  font-size: var(--text-small);
+  color: var(--color-text);
+}
+
+/* ------ Case study: detail list (bold lead-in bullets) ------ */
+.detail-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0;
+}
+.detail-list li {
+  padding-block: var(--space-04);
+  border-block-end: 1px solid var(--color-border);
+  font-size: var(--text-small);
+  color: var(--color-text-secondary);
+}
+.detail-list li:first-child {
+  border-block-start: 1px solid var(--color-border);
+}
+.detail-list li strong {
+  display: block;
+  color: var(--color-text);
+  font-weight: 600;
+  margin-block-end: var(--space-01);
+}
+
+/* ------ Case study: code block ------
+   Code is inherently LTR (identifiers, punctuation) even inside an RTL
+   article, so direction is pinned regardless of page direction. */
+.code-caption {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-secondary);
+  margin-block-end: var(--space-03);
+}
+[dir="rtl"] .code-caption {
+  letter-spacing: 0;
+}
+.prose pre {
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-05);
+  overflow-x: auto;
+  direction: ltr;
+  text-align: start;
+}
+.prose pre code {
+  background: transparent;
+  padding: 0;
+  font-size: var(--text-mono);
+  line-height: var(--leading-body);
+}
+
+/* ------ Case study: two-column comparison ------ */
+.compare-grid {
+  display: grid;
+  gap: var(--space-05);
+}
+@container (min-width: 40em) {
+  .compare-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.compare-col {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-05);
+  display: grid;
+  gap: var(--space-03);
+  align-content: start;
+}
+/* Weight, tracking, and the alt character-variant bundle already come from
+   the base h1–h6 rule — this only overrides size and margin for the card
+   context. */
+.compare-col h4 {
+  font-size: var(--text-body);
+  margin: 0;
+}
+.compare-col p {
+  font-size: var(--text-small);
+  color: var(--color-text-secondary);
+}
+
+/* ------ Case study: outcome stats ------ */
+.case-stats {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-05);
+  grid-template-columns: 1fr;
+}
+@container (min-width: 34em) {
+  .case-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.case-stat {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-06);
+  display: grid;
+  gap: var(--space-02);
+}
+.case-stat-number {
+  font-size: var(--text-display);
+  font-weight: 600;
+  color: var(--color-text);
+}
+.case-stat-desc {
+  font-size: var(--text-small);
+  color: var(--color-text-secondary);
+  max-inline-size: none;
+}
+
 /* ------ More Work grid ------ */
 .more-work-grid {
   list-style: none;
@@ -870,11 +1115,13 @@ p {
 }
 
 /* ------ Surface picker ------
-   A floating control, independent of the header toggle row, for recoloring
-   the cutting mat. Lives outside <body> in reading order conceptually (it's
-   chrome, not content) but is placed just before </body> in the DOM on every
-   page so it never interrupts the primary reading/tab order — visitors reach
-   it only after the page's real content. */
+   A floating control, independent of the header toggle row, for changing
+   the background: recolor the cutting mat's grid, or swap it for a static
+   photo surface (white texture, wood grain). Lives outside <body> in
+   reading order conceptually (it's chrome, not content) but is placed just
+   before </body> in the DOM on every page so it never interrupts the
+   primary reading/tab order — visitors reach it only after the page's real
+   content. */
 .surface-picker {
   position: fixed;
   inset-block-end: var(--space-05);
@@ -931,6 +1178,15 @@ p {
   display: none;
 }
 
+/* Two groups share the panel: "Cutting mat" (recolorable grid swatches +
+   custom color) and "Surfaces" (static photo textures). Each is its own
+   labeled ARIA radiogroup — see js/main.js — with a rule between them. */
+.surface-picker-group + .surface-picker-group {
+  margin-block-start: var(--space-04);
+  padding-block-start: var(--space-04);
+  border-block-start: 1px solid var(--color-border);
+}
+
 .surface-picker-label {
   display: block;
   font-family: var(--font-mono);
@@ -949,6 +1205,15 @@ p {
   margin: 0;
 }
 
+/* Color swatches set --swatch (a plain hex) here, which url() resolution
+   never touches. Photo-surface swatches set their own background-image
+   directly via an inline style attribute instead of a --custom-property
+   url() — relative url()s inside a custom property resolve against the
+   stylesheet that *consumes* the var(), not the HTML page that authored
+   it, so routing a relative asset path through a var() here would resolve
+   it against this file's own folder (css/) and 404. An inline
+   background-image has no such indirection: it resolves against the page,
+   same as a plain <img src>. */
 .surface-picker-swatch {
   appearance: none;
   inline-size: 2rem;
@@ -957,7 +1222,9 @@ p {
   border: 2px solid transparent;
   padding: 2px;
   cursor: pointer;
-  background-color: var(--swatch);
+  background-color: var(--swatch, transparent);
+  background-size: cover;
+  background-position: center;
   background-clip: content-box;
   transition: border-color var(--duration-fast) var(--ease);
 }
