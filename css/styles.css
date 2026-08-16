@@ -258,6 +258,13 @@ pre,
   font-weight: 600;
   text-decoration: none;
   color: var(--color-text);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-02);
+}
+
+.site-logo img {
+  inline-size: 2.5rem;
 }
 .site-nav ul {
   display: flex;
@@ -271,12 +278,12 @@ pre,
   min-block-size: 2.75rem;
   color: var(--color-text);
   text-decoration: none;
-  font-size: var(--text-small);
+  font-size: var(--text-body);
 }
 .site-nav a:hover {
   color: var(--color-accent);
   text-decoration: underline;
-  text-underline-offset: 0.15em;
+  text-underline-offset: 0.2em;
 }
 
 .header-controls {
@@ -297,9 +304,11 @@ pre,
   border-radius: var(--radius-sm);
   color: var(--color-text);
   font-family: var(--font-mono);
-  font-size: var(--text-mono);
+  font-size: var(--text-body);
   cursor: pointer;
   transition: background var(--duration-fast) var(--ease);
+  padding-right: var(--space-04);
+  padding-left: var(--space-04);
 }
 .toggle-btn:hover {
   background: var(--color-bg-subtle);
@@ -369,7 +378,6 @@ pre,
    wavy-vs-solid style is the non-color signal). */
 .concept-design,
 .concept-engineering {
-  text-underline-offset: 0.15em;
   text-decoration-thickness: 0.08em;
   text-decoration-line: underline;
   -webkit-text-decoration-skip-ink: none;
@@ -377,11 +385,14 @@ pre,
 }
 .concept-design {
   text-decoration-style: wavy;
-  text-decoration-color: var(--color-concept-design);
+  color: var(--color-concept-design);
+  text-underline-offset: 0.2em;
 }
 .concept-engineering {
-  text-decoration-style: solid;
-  text-decoration-color: var(--color-concept-engineering);
+  text-decoration-style: dashed;
+  color: var(--color-concept-engineering);
+  text-underline-offset: 0.25em;
+  text-decoration-thickness: 0.1em;
 }
 
 /* Page-lead: intro paragraph under a section-title, reused across
@@ -408,7 +419,7 @@ pre,
   min-block-size: 2.75rem;
   border-radius: var(--radius-sm);
   font-family: var(--font-heading);
-  font-size: var(--text-small);
+  font-size: var(--text-body);
   font-weight: 500;
   text-decoration: none;
   transition: background var(--duration-fast) var(--ease),

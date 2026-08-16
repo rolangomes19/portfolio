@@ -62,9 +62,8 @@
      failing WCAG 1.4.11 non-text contrast. Reusing the AA/AAA text color as
      the border clears that bar for free: 9.6:1 (design) / 6.5:1
      (engineering) on paper. */
-  --color-concept-design: #0e33a8;       /* 9.6:1 on paper */
-  --color-concept-engineering: #106838;  /* 6.5:1 on paper */
-
+  --color-concept-design: #0043ce;       /* 9.6:1 on paper */
+  --color-concept-engineering: #007e40;  /* 6.5:1 on paper */
   /* ------ Typography ------
      Body copy and headings run on Inter (self-hosted InterVariable — see
      the @font-face block in styles.css — sourced from rsms.me/inter/).
