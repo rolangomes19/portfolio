@@ -939,75 +939,103 @@ pre,
   }
 }
 
-/* ------ Skills ------ */
-.skills-grid {
-  display: grid;
-  gap: var(--space-08);
+/* ------ Tools sticker board ------
+   Replaces the old text skill lists: each tool is a logo sticker, scattered
+   and made draggable by js/main.js §9 (positions/rotation set there, reset
+   on every reload — nothing is persisted). DOM order in index.html stays
+   grouped by category so a screen reader still gets a sensible list even
+   though the visual layout is randomized. See "Draggable objects" above
+   .about-photo for the shared drag/hover mechanics.
+
+   Sized for 19 stickers at their current ~2x scale — bigger than the
+   board's first pass, since the scatter grid in js/main.js
+   (scatterStickers()) sizes its cells only from the sticker COUNT, not
+   their pixel size, so a taller/wider board is what actually gives
+   bigger stickers more room per cell (verified in the browser, not just
+   calculated — see the DESIGN-GUIDELINES note on this component). */
+.sticker-board {
+  position: relative;
+  min-block-size: clamp(32rem, 80cqi, 46rem);
 }
-@container (min-width: 34em) {
-  .skills-grid {
-    grid-template-columns: repeat(2, 1fr);
+/* Absolute positioning with physical left/top (not logical
+   inset-inline-start) is deliberate here, unlike everywhere else on this
+   site: these coordinates come from a random scatter with no inherent
+   reading direction, so there's nothing for RTL to mirror.
+
+   .tool-sticker is a real <button> (see index.html), not a bare <img> —
+   it's keyboard-focusable and opens the tool-info popover (js/main.js
+   §11) on click/Enter/Space, unlike .about-photo below, which stays
+   purely decorative. The reset properties here (appearance/border/
+   background/padding/font) make it render identically to the plain
+   image it replaced; :focus-visible needs no extra rule since the
+   site's global one already covers any newly-focusable element. */
+.tool-sticker {
+  position: absolute;
+  inline-size: clamp(7rem, 18cqi, 11rem);
+  block-size: auto;
+  display: block;
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  --dx: 0px;
+  --dy: 0px;
+  --base-rot: 0deg;
+  --hover-rot: 0deg;
+  --hover-scale: 1;
+  transform: translate3d(var(--dx), var(--dy), 0)
+    rotate(calc(var(--base-rot) + var(--hover-rot))) scale(var(--hover-scale));
+}
+.tool-sticker-img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  pointer-events: none; /* clicks/taps always resolve to the button, never the image */
+}
+
+/* ------ Draggable objects ------
+   Shared pointer-drag affordance for the About photos below and the Tools
+   stickers above — js/main.js §9 wires both up with the same engine. Only
+   the interaction states live here; each component supplies its own
+   resting tilt/position via --base-rot/--dx/--dy and a `transform` on its
+   own base class (.about-photo, .tool-sticker above), so that still
+   renders correctly with no JS. `.draggable` itself is added by script
+   only once dragging actually gets wired up, so the cursor/hover cues
+   never promise an interaction that isn't there — the same "nothing extra
+   without JS" rule the lightbox further down already follows.
+   z-index sits below the header (8) and surface picker (9) so a dragged
+   item never covers either. */
+.draggable {
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  transition: transform var(--duration-fast) var(--ease);
+}
+.draggable.is-detached {
+  z-index: 6;
+}
+/* Same specificity as .is-detached (both are ".draggable" + one modifier
+   class) — declared second so source order breaks the tie in its favor,
+   since an item actively being dragged should sit above any other already-
+   dropped item, not tie with it. */
+.draggable.is-dragging {
+  transition: none;
+  cursor: grabbing;
+  z-index: 7;
+}
+@media (hover: hover) {
+  .draggable:hover {
+    --hover-rot: 3deg;
+    --hover-scale: 1.06;
   }
 }
-
-.skill-group h3 {
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 400;
-  color: var(--color-text-secondary);
-  margin-block-end: var(--space-05);
-}
-[dir="rtl"] .skill-group h3 {
-  letter-spacing: 0;
-}
-
-.skill-list {
-  list-style: none;
-  padding: 0;
-}
-.skill-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-04);
-  padding-block: var(--space-03);
-  /* Row separator, not a section divider — the soft border keeps a
-     sixteen-row list from reading as sixteen boxes. */
-  border-block-end: 1px solid var(--color-border-soft);
-}
-.skill-index {
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
-  color: var(--color-text-secondary);
-  min-inline-size: 2ch;
-}
-.skill-chip {
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-sm);
-  inline-size: 2rem;
-  block-size: 2rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.skill-name {
-  font-size: var(--text-small);
-}
-/* 14px, not the 12px mono step. The 12px floor carries uppercase micro-labels
-   and badges — eyebrows, tags, index numbers, chips. This note runs to ten
-   words of sentence-case text ("Variables · Auto Layout · Dev Mode · Code
-   Connect"), which is prose, and prose stops at 14. Same reasoning for
-   .cert-meta and .colophon below. */
-.skill-note {
-  font-size: var(--text-small);
-  font-family: var(--font-mono);
-  line-height: var(--leading-dense);
-  color: var(--color-text-secondary);
-  margin-inline-start: auto;
+@media (prefers-reduced-motion: reduce) {
+  .draggable {
+    transition: none;
+  }
 }
 
 /* ------ About ------ */
@@ -1055,16 +1083,14 @@ pre,
 
 /* Below 64em (tablet AND mobile — deliberately grouped, not split at the
    48em tablet line): a single implicit column. .about-text and
-   .about-photos are .prose's only two direct children, so they simply stack
-   — text first, full width, then photos below it. justify-self: end pushes
-   the photo block to the inline-end side of that row (only meaningful when
-   the container isn't already alone in a single track); margin-inline-end
-   is what lets it bleed past the paper's edge in EITHER mode — the value is
-   identical at every width, only margin-block-start (the gap above it)
-   changes once it moves from "below the text" to "beside it". A negative
-   margin overflows its grid track the same way a negative inset overflows a
-   containing block — no clipping either way unless something upstream
-   clips it, which is exactly what body's overflow: clip below 48em is for.
+   .about-photos are .prose's only two direct children, so they simply
+   stack — text first, full width, then photos below it, centered
+   (justify-self: center + margin-inline: auto) rather than bled to the far
+   edge: with no text running beside it at this width, an edge-bled stack
+   just reads as stranded space rather than composition, so it sits in the
+   middle of the space the text leaves behind instead. The bleed-past-the-
+   paper treatment is desktop-only now (below), where the two-column grid
+   gives it real text to sit beside.
 
    The photo stack itself is a flex column, not absolute-positioned
    percentages — an earlier version pinned the second photo at a fixed 62%
@@ -1077,10 +1103,10 @@ pre,
   display: flex;
   flex-direction: column;
   gap: var(--space-03);
-  justify-self: end;
+  justify-self: center;
   margin-block-start: var(--space-05);
-  margin-inline-end: calc(-1 * var(--paper-margin-inline) - var(--space-09));
-  inline-size: clamp(11rem, 20cqi, 15rem);
+  margin-inline: auto;
+  inline-size: clamp(16rem, 30cqi, 22rem);
   z-index: 1; /* under .site-header (8) and the surface picker (9) */
 }
 @media (min-width: 64em) {
@@ -1090,14 +1116,25 @@ pre,
      height. column-gap is wider than the vertical rhythm gap (--space-05)
      used elsewhere in .prose — text and photos are two different ideas
      sitting side by side, not two paragraphs in a reading sequence, and
-     wants more air between them than that implies. */
+     wants more air between them than that implies.
+
+     justify-self flips to end and the stack bleeds past the paper's own
+     edge onto the mat — margin-inline-end cancels .container's own inline
+     padding (--paper-margin-inline) and pushes further by --space-09. A
+     negative margin overflows its grid track the same way a negative inset
+     overflows a containing block — no clipping either way unless something
+     upstream clips it, which nothing does at this width (the mobile-only
+     `body { overflow: clip }` a bit above only applies below 48em). */
   #about .prose {
     grid-template-columns: 60% 1fr;
     align-items: start;
     column-gap: var(--space-07);
   }
   .about-photos {
+    justify-self: end;
     margin-block-start: 0; /* was the gap above a below-text block; beside the text, that gap isn't wanted */
+    margin-inline-start: 0;
+    margin-inline-end: calc(-1 * var(--paper-margin-inline) - var(--space-09));
   }
 }
 
@@ -1105,24 +1142,88 @@ pre,
    printed photo, which doesn't turn dark just because the page's own theme
    did. Padding is uneven on purpose — thicker at the block-end — the
    classic instant-print proportions that make it read as a photo and not
-   just a card with a picture in it. */
+   just a card with a picture in it. --dx/--dy/--base-rot etc. and the
+   transform composing them are the same pattern .tool-sticker uses above —
+   see "Draggable objects" just above this block for why the formula lives
+   here rather than on .draggable. */
 .about-photo {
   background: #faf9f5;
   padding: var(--space-03) var(--space-03) var(--space-07);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-paper);
+  --dx: 0px;
+  --dy: 0px;
+  --base-rot: 0deg;
+  --hover-rot: 0deg;
+  --hover-scale: 1;
+  transform: translate3d(var(--dx), var(--dy), 0)
+    rotate(calc(var(--base-rot) + var(--hover-rot))) scale(var(--hover-scale));
 }
 .about-photo img {
   inline-size: 100%;
   block-size: auto;
 }
 .about-photo--one {
-  transform: rotate(4deg);
+  --base-rot: 4deg;
   z-index: 1; /* sits in front of --two where the tilt overlaps slightly */
 }
 .about-photo--two {
-  transform: rotate(-5deg);
+  --base-rot: -5deg;
   margin-block-start: calc(-1 * var(--space-04)); /* slight tuck, not a full gap — reads as one stack, not two separate cards */
+}
+
+/* ------ Play hint ------
+   One-time dismissible tip introducing the drag-anywhere feature and the
+   mat color picker — js/main.js §10 inserts this only if the visitor
+   hasn't already dismissed it (a single localStorage flag), right after
+   the About heading, the first draggable surface on the page. Reuses the
+   site's existing [data-reveal]/.reveal machinery for its entrance (see
+   the Reveal animation block further down) rather than inventing a new
+   transition, so it fades in exactly like every other below-the-fold
+   element and is skipped entirely under reduced motion. */
+.play-hint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-04);
+  margin-block-start: var(--space-06);
+  padding: var(--space-04) var(--space-05);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+  color: var(--color-text);
+}
+.play-hint p {
+  margin: 0;
+  max-inline-size: none;
+  font-size: var(--text-small);
+  line-height: var(--leading-dense);
+}
+.play-hint-close {
+  appearance: none;
+  flex-shrink: 0;
+  inline-size: 2rem;
+  block-size: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease);
+}
+@media (hover: hover) {
+  .play-hint-close:hover {
+    color: var(--color-text);
+  }
+}
+.play-hint-close:active {
+  transform: scale(0.96);
+}
+@media (prefers-reduced-motion: reduce) {
+  .play-hint-close:active {
+    transform: none;
+  }
 }
 
 /* ------ Footer ------ */
@@ -1380,6 +1481,111 @@ pre,
 @keyframes lightbox-figure-in {
   from { opacity: 0; transform: scale(0.96); }
   to { opacity: 1; transform: scale(1); }
+}
+
+/* ------ Tool info popover ------
+   js/main.js §11 builds one shared `.tool-popover` <dialog>, appended
+   once to <body>, that any .tool-sticker button opens (click, tap, or
+   Enter/Space) with that tool's name/description/proficiency. Same
+   open/close mechanics as the lightbox above (showModal, backdrop click,
+   Escape, focus return) but a compact centered CARD rather than a
+   full-bleed image scrim — a floating surface ON the scrim, not a viewer
+   replacing the page, so it reuses --color-bg/--color-text (the site's
+   own card tokens) instead of the lightbox's on-scrim ones. */
+.tool-popover {
+  position: fixed;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  max-inline-size: 100%;
+  max-block-size: 100%;
+  margin: 0;
+  padding: var(--space-06);
+  border: 0;
+  background: var(--color-scrim);
+}
+.tool-popover[open] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tool-popover::backdrop {
+  background: transparent;
+}
+
+.tool-popover-card {
+  position: relative;
+  inline-size: 100%;
+  max-inline-size: 24rem;
+  padding: var(--space-07);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  box-shadow: var(--shadow-float);
+}
+
+.tool-popover-icon {
+  display: block;
+  inline-size: 3.5rem;
+  block-size: 3.5rem;
+  margin-block-end: var(--space-05);
+}
+
+.tool-popover-name {
+  font-size: var(--text-h3);
+  margin-block-end: var(--space-03);
+}
+
+/* Reuses .tag-pill as-is (see "Concept tags" above) rather than a new
+   badge component — same shape/fill contract every other badge on this
+   site follows, already contrast-verified in both themes. */
+.tool-popover-proficiency {
+  margin-block-end: var(--space-04);
+}
+
+.tool-popover-description {
+  color: var(--color-text-secondary);
+  line-height: var(--leading-body);
+}
+
+.tool-popover-close {
+  appearance: none;
+  position: absolute;
+  inset-block-start: var(--space-04);
+  inset-inline-end: var(--space-04);
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease), background var(--duration-fast) var(--ease);
+}
+@media (hover: hover) {
+  .tool-popover-close:hover {
+    color: var(--color-text);
+    background: var(--color-bg-subtle);
+  }
+}
+.tool-popover-close:active {
+  transform: scale(0.96);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tool-popover-close:active {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tool-popover[open] {
+    animation: lightbox-scrim-in var(--duration-base) var(--ease);
+  }
+  .tool-popover-card {
+    animation: lightbox-figure-in var(--duration-base) var(--ease-entrance);
+  }
 }
 
 .case-nav {
@@ -1874,6 +2080,38 @@ pre,
   border-radius: 50%;
   background: var(--color-mat);
   border: 1px solid var(--color-paper-edge);
+}
+
+/* Discoverability nudge, not the accessible name — the trigger button's own
+   aria-label already carries that, so this is aria-hidden and purely
+   visual. Logical inset-inline-end mirrors to the correct side under
+   [dir="rtl"] automatically, same as everything else on this site. */
+.surface-picker-hint {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-end: calc(100% + var(--space-03));
+  transform: translateY(-50%);
+  padding: var(--space-02) var(--space-03);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-float);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+}
+[dir="rtl"] .surface-picker-hint {
+  letter-spacing: 0;
+}
+@media (hover: hover) {
+  .surface-picker-hint {
+    transition: opacity var(--duration-fast) var(--ease);
+  }
+  .surface-picker:hover .surface-picker-hint {
+    opacity: 1;
+  }
 }
 
 .surface-picker-panel {

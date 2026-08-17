@@ -338,6 +338,23 @@ The swatch group follows the APG radio-group pattern: roving `tabindex`,
 `<input type="radio">`), `Escape` closes the popover and returns focus to
 the trigger.
 
+**Discoverability**: the trigger is a small floating circle with no visible
+label, so a `.surface-picker-hint` span ("Recolor mat") fades in on hover of
+the whole `.surface-picker`, `aria-hidden` since the button's own
+`aria-label` already carries the accessible name — purely a sighted-mouse
+nudge, gated `@media (hover: hover)`. The one-time "Play hint" banner (see
+below) mentions this control too, for visitors who never hover it.
+
+### Play hint (`.play-hint`)
+A small dismissible tip, inserted once by `js/main.js` §10 right after the
+About heading — the first draggable surface a visitor reaches — introducing
+both the drag-anywhere feature (Draggable objects, above) and the surface
+picker. Dismissal is a single `localStorage.hintDismissed` flag; once set,
+the banner never appears again. Fades in via the site's existing
+`[data-reveal]`/`.reveal` machinery (§8) rather than a bespoke transition,
+so it's skipped entirely under reduced motion, exactly like every other
+below-the-fold reveal.
+
 ### Surface texture
 
 Both the mat and the paper carry a second, independent background layer: a
@@ -440,7 +457,7 @@ registers as noise rather than hierarchy. Audit with
 `grep 'font-size:' css/styles.css | sort | uniq -c`.
 
 **The 12px step is for uppercase micro-labels and badges only — prose stops at
-14.** `.colophon`, `.cert-meta`, and `.skill-note` were moved off 12px for
+14.** `.colophon`, `.cert-meta`, and `.play-hint p` were moved off 12px for
 exactly this reason; they carry sentence-case text up to 29 words.
 
 Body is deliberately excluded from the scale. 16px is the floor for readable
@@ -472,7 +489,7 @@ Carbon-style scale (tokens `--space-01` … `--space-12`):
   |---|---|---|
   | `.highlight-list` | 48em | 2 cols → 5 cols |
   | `.work-item`, `.about-grid`, `.facts-bar`, `.footer-grid` | 40em | stacked → side-by-side |
-  | `.skills-grid`, `.more-work-grid` | 34em | 1 col → 2 cols |
+  | `.more-work-grid` | 34em | 1 col → 2 cols |
 
 - 8px rhythm: everything snaps to the scale. No magic numbers.
 
@@ -483,8 +500,10 @@ Carbon-style scale (tokens `--space-01` … `--space-12`):
 [header: name/logo · nav (Work, Skills, About) · dir toggle · theme toggle]  — sticky, see §7
 01 hero        — eyebrow, one-line intro (h1), sub-line, two actions (View work / Download CV)
 02 selected work — 4 rows: image + (index, year, title, description, tags, arrow)
-03 skills & tools — grouped categories, numbered mono list items (gorix pattern)
-04 about       — short bio + scrapbook photo stack (bleeds off the paper), see §7
+03 skills & tools — scattered, draggable logo stickers (replaced the grouped
+   text lists), see §7
+04 about       — short bio + scrapbook photo stack, draggable, bleeds off
+   the paper at desktop, see §7
 [footer: contact email · social links · a11y & RTL statement · colophon]
 ```
 
@@ -578,11 +597,80 @@ verify the mat-driven accent derivation.
   cert in `index.html` carries a commented `<!-- PLACEHOLDER -->` pair ready
   to uncomment once a credential ID/URL exists — never fabricate one.
 
-### Skill item (`.skill-item`)
-- `index (mono) · two-letter chip · name` per row; grouped under category
-  headings (Design / Systems & code / Accessibility / AI & workflow).
-- Chip: 2ch mono in bordered square — the gorix nod, kept static (no filter
-  JS in v1; add later if wanted).
+### Tools sticker board (`.sticker-board` / `.tool-sticker`)
+Replaced the earlier grouped text lists (`.skill-item` et al. — the gorix
+"index · chip · name" pattern) with one board of logo stickers, one per
+tool, on request. Each is a real `<button>` wrapping an `<img.tool-sticker-img>`
+(the image's `alt` carries the tool name and doubles as the button's
+accessible name), scattered and made draggable by `js/main.js` §9 — see
+"Draggable objects" below for the shared drag mechanics and "Tool info
+popover" for what the button *does*.
+
+- **A real button, not a bare `<img>`, on purpose.** Clicking/tapping a
+  sticker — without dragging it — opens a popover with its name,
+  description, and proficiency (§ below). That's real content, so unlike
+  the drag gesture itself (mouse/touch/pen only, by design) the button
+  must be keyboard-focusable and answer Enter/Space like any other
+  control on this site — a plain, non-interactive `<img>` couldn't. This
+  is the one deliberate divergence from `.about-photo`, which stays
+  exactly as decorative and keyboard-inert as before: it was never asked
+  to carry a click-revealed payload, so it doesn't need to become
+  interactive to satisfy WCAG 2.2 AA.
+- **Size is ~2x the original** (`clamp(7rem, 18cqi, 11rem)`, was
+  `clamp(3.5rem, 9cqi, 5.5rem)`) on request, with `.sticker-board`'s own
+  `min-block-size` grown to `clamp(32rem, 80cqi, 46rem)` to match — the
+  scatter grid below sizes its cells only from the sticker *count*, not
+  their pixel size, so a bigger board is what actually gives bigger
+  stickers more room per cell without touching the JS.
+- **DOM order stays grouped by category** (design & UI, accessibility,
+  AI/dev workflow, creative & process) even though the visual layout is
+  randomized, so a screen reader still gets a sensible list. Adding a
+  sticker later is just another `<button class="tool-sticker">` in the
+  right category position — the scatter algorithm sizes itself off the
+  sticker count, no code change needed.
+- **Scatter, not a real layout system**: a loose N-cell grid sized to the
+  sticker count, cell order shuffled (so DOM/category order doesn't leak
+  into a left-to-right visual order), each sticker jittered to a random
+  point inside its own cell plus a random `±12deg` tilt. Cheap
+  collision-avoidance without physics. Regenerated fresh on every load —
+  no seed, matching the no-persistence rule the drag feature itself
+  follows.
+- **The SVGs already bake in their own drop shadow** (a three-layer
+  `feDropShadow`-style filter, verified by reading the source files) — no
+  extra `box-shadow` needed here, unlike `.about-photo`'s `--shadow-paper`.
+- **One reveal for the whole board** (`data-reveal` on `.sticker-board`
+  itself), not one per sticker — these aren't a reading sequence, so a
+  17-way stagger would just be noise.
+- **Content is placeholder.** Every sticker's `data-description`/
+  `data-proficiency` is literal placeholder text (`<!-- PLACEHOLDER -->`,
+  same convention as the certifications section) — proficiency is a
+  factual claim about Rolan, not something to invent. Replace all before
+  publishing.
+
+### Tool info popover (`.tool-popover`)
+One shared `<dialog>`, built lazily on first use and appended to `<body>`
+— same "purely additive" shape as the case-study image lightbox
+(`js/main.js` §6), and its open/close mechanics are copied from that
+lightbox one-for-one (`showModal()`, manual `Escape` handler alongside the
+native one, backdrop-click-to-close, focus returned to the trigger on
+close) rather than re-solved. A compact centered *card*, though, not a
+full-bleed scrim replacing the page — it floats ON `--color-scrim` using
+the site's own card tokens (`--color-bg`/`--color-text`), not the
+lightbox's on-scrim ones.
+
+- **`aria-labelledby`, not `aria-label`.** The dialog has a visible
+  heading (the tool name), so its accessible name points at that heading
+  by id rather than duplicating the string in an attribute — the WAI-ARIA
+  APG's recommended pattern for a dialog with a visible title.
+- **Proficiency reuses `.tag-pill` as-is** (see "Concept tags" below) —
+  the same shape/fill contract every other badge on this site follows,
+  already contrast-verified in both themes, not a new component.
+- **Description/proficiency text stays English-only**, matching this
+  project's existing "long-form content stays English in v1" rule for
+  bios and case studies (`docs/CONTENT-GUIDE.md`) — only the close
+  button (chrome) is bilingual, reusing `STRINGS[lang]["lightbox.close"]`
+  rather than a duplicate key, since the label text is identical either
+  way.
 
 ### Buttons & links
 Two button variants, no third, both pill-shaped (`--radius-pill`):
@@ -645,13 +733,22 @@ cards *within* it.
   space, regardless of how the paper's fluid width happens to land — rather
   than something to keep re-verifying against a padding hack.
 - **Below `64em` (tablet *and* mobile, deliberately grouped — not split at
-  the `48em` tablet line): single implicit column.** `.about-text` and
-  `.about-photos` are `.prose`'s only two children, so with no
+  the `48em` tablet line): single implicit column, centered.** `.about-text`
+  and `.about-photos` are `.prose`'s only two children, so with no
   `grid-template-columns` set they simply stack — full-width text, then the
-  photos below it, `justify-self: end` pulled to the far edge.
-  `margin-inline-end` (the bleed) is identical in both modes; only
-  `margin-block-start` (the gap above the photo block) changes between
-  "below the text" and "beside it".
+  photos below it, `justify-self: center` + `margin-inline: auto`. This
+  used to bleed to the far edge here too (the desktop treatment, below,
+  reused verbatim) — changed on request: with no text running beside the
+  stack at this width, an edge-bled block just reads as stranded space
+  rather than composition, so it now sits in the middle of the room the
+  text leaves behind instead. The **bleed-past-the-paper treatment is
+  desktop-only now** — `justify-self: end` + the negative
+  `margin-inline-end` bleed both move inside the `64em`+ media query, where
+  the two-column grid gives the stack real text to sit beside.
+- **Size**: `.about-photos { inline-size: clamp(16rem, 30cqi, 22rem) }` —
+  raised from an earlier `clamp(11rem, 20cqi, 15rem)` on request, for more
+  presence. Capped well under the source photos' real 800×800px so it never
+  upscales past their native resolution.
 - **The photo stack is a flex column** (`.about-photos { display: flex;
   flex-direction: column }`), not absolute-positioned percentages — an
   earlier version pinned the second photo at a fixed 62% down the first
@@ -661,13 +758,19 @@ cards *within* it.
   out to be. `.about-photo--two` carries a small negative
   `margin-block-start` on top of the flex `gap` for a slight tuck/overlap —
   reads as one stack, not two separate cards.
-- **Anchoring needs no `position: relative` anywhere anymore.** Once nothing
-  in this component is `position: absolute`, `.prose` doesn't need to be a
-  containing block for it — a stray comment on `<body>` in `styles.css` used
-  to claim `container-type: inline-size` alone makes it one for positioned
-  descendants; checked directly with a throwaway absolutely-positioned
-  probe, and it doesn't (the probe landed at the document origin, not
-  body's box). Comment's fixed now; don't rely on that shortcut elsewhere.
+- **Anchoring needs no `position: relative` anywhere in the base layout.**
+  Nothing here is `position: absolute` at rest, so `.prose` doesn't need to
+  be a containing block for it — a stray comment on `<body>` in
+  `styles.css` used to claim `container-type: inline-size` alone makes it
+  one for positioned descendants; checked directly with a throwaway
+  absolutely-positioned probe, and it doesn't (the probe landed at the
+  document origin, not body's box). This is exactly what makes the drag
+  feature below work: a dragged photo switches to `position: absolute`
+  and still resolves against the real document (the initial containing
+  block), not some accidental ancestor containing block.
+- **Draggable.** Each photo can be picked up (mouse/touch/pen) and moved
+  anywhere on screen, including past the paper's edge onto the mat — see
+  "Draggable objects" below, which the Tools sticker board (§7) shares.
 - **Bleed offset**: `margin-inline-end:
   calc(-1 * var(--paper-margin-inline) - var(--space-09))` — the same token
   `.container` already spends on its own inline padding, cancelled out and
@@ -683,6 +786,103 @@ cards *within* it.
 - **Content**: real photos now (`rolan-sq.jpg`, `rolan-extend.webp`, both
   genuinely 800×800 — `width`/`height` attributes match, no layout shift).
   Alt text describes what's actually in each photo.
+
+### Draggable objects (`.draggable` / `--dx` / `--dy` / `--base-rot`)
+Shared pointer-drag mechanics behind both the About photos and the Tools
+sticker board, added by `js/main.js` §9. Pointer Events, not HTML5
+drag-and-drop — the latter is built for reorder/dropzone patterns and
+fights free-form dragging.
+
+- **Composition, not literal `transform` writes.** Each component's own
+  base class (`.about-photo`, `.tool-sticker`) declares
+  `--dx`/`--dy`/`--base-rot`/`--hover-rot`/`--hover-scale` and one
+  `transform` combining all five via `calc()`. JS only ever touches
+  `--dx`/`--dy` (drag) or `left`/`top` (the pickup anchor); CSS only ever
+  touches `--hover-rot`/`--hover-scale` (`:hover`). This is what lets the
+  resting tilt still render with zero JS, and lets a CSS `:hover` cue and a
+  JS-driven drag translate coexist without one clobbering the other — an
+  inline `style.transform` string would have made hover impossible to
+  layer on top.
+- **`.draggable` is added by script, not authored in HTML.** Same "nothing
+  promised that doesn't work" rule as the lightbox: cursor/hover affordances
+  only appear once dragging has actually been wired up, gated behind
+  `"PointerEvent" in window`.
+- **Dragging itself has no keyboard equivalent, on purpose** — it's
+  mouse/touch/pen only for both consumers. `.about-photo` gets no
+  `tabindex`/role change at all, so it's fully keyboard-inert.
+  `.tool-sticker` IS keyboard-focusable, but only because it's a real
+  `<button>` for an unrelated reason (opening its info popover — see
+  "Tool info popover" above); the drag gesture layered on top of that
+  button still has no keyboard path, matching `.about-photo`.
+- **Click vs. drag** (`.tool-sticker` only — `.about-photo` never passes
+  `onClick`, so none of this runs for it): `pointerdown` no longer starts
+  a drag by itself, only records the start position. The real pickup
+  (measure, reparent, detach — everything below) runs lazily, the first
+  time `pointermove` crosses an 8px threshold, so a plain tap never
+  touches the DOM and the browser's own `click` fires normally afterward
+  — which is also how keyboard Enter/Space reaches `onClick`, since
+  activating a focused button produces a `click` with no pointer events
+  at all, so the threshold logic simply never applies to that path. If
+  the threshold *was* crossed, a `justDragged` flag swallows the one
+  trailing `click` a browser still fires right after a real drag's
+  `pointerup` — the standard technique any drag library uses to coexist
+  with a native click.
+- **`position: absolute`, not `fixed` — a dropped item scrolls with the
+  page.** Fixed was tried first and was wrong: a dropped item stayed
+  pinned to its spot on the *screen* as the page scrolled underneath it,
+  so it visibly vanished the moment you scrolled away from wherever you'd
+  dropped it. `position: absolute` against the viewport-sized initial
+  containing block still allows a bleed past the paper onto the mat, but,
+  being `absolute` rather than `fixed`, scrolls normally with the
+  document instead.
+- **Reparented to `<body>` on pickup, before repositioning.** `.about-photo`
+  has no positioned ancestor, so `absolute` on it already resolves against
+  the document — but `.tool-sticker`'s own parent, `.sticker-board`, is
+  `position: relative` (needed for its base scatter layout's percentage
+  `left`/`top`), which would make *that* the containing block instead,
+  producing a large, disorienting jump on pickup (measured: ~300px) since
+  the drag math assumes document-relative coordinates throughout.
+  Reparenting to `<body>` (itself unpositioned) — done AFTER measuring the
+  current rect but BEFORE switching `position` — sidesteps the whole
+  category of "does some ancestor happen to be positioned" bug for every
+  current and future draggable, rather than special-casing the sticker
+  board. Every `.about-photo`/`.tool-sticker` rule is an unqualified class
+  selector (no ancestor scoping), so nothing depends on where in the DOM
+  the element actually lives.
+- **Pickup**: `getBoundingClientRect()` at that instant (the first
+  over-threshold move, per above — not pointerdown), converted from
+  viewport-relative to document-relative by adding the current scroll
+  offset (captured once per drag — `touch-action: none` + the
+  in-progress `preventDefault()` keep the page from scrolling mid-drag,
+  so it can't go stale) → `left`/`top` set to it (no jump, and correct
+  regardless of whether the element started in flow or was already
+  dropped elsewhere) → `--dx`/`--dy` reset to `0px`. All in one
+  synchronous update alongside `.is-dragging` (`transition: none`), so
+  nothing animates the jump.
+- **Move**: `--dx`/`--dy` only, clamped so the element's rendered box
+  stays fully inside the *current viewport* — reasoned in viewport space
+  (using the position captured at pickup, before the document-relative
+  conversion) since that's what's actually meant to stay on screen during
+  the gesture itself.
+- **Move tracking listens on `document`, not the dragged element.** Pointer
+  capture is still requested as a secondary aid, but the real fix for a
+  drag that visibly lagged behind the cursor: once an element left its own
+  (now possibly tiny, now-elsewhere) bounds, an element-scoped listener
+  could stop receiving events. `document`-level listeners always fire
+  regardless of where the pointer is, filtered by `pointerId` so
+  simultaneous multi-touch drags don't cross-talk.
+- **Drop**: `.is-dragging` removed; no "bake into `left`/`top`" step —
+  the next pickup just reads a fresh rect again.
+- **No persistence.** Position is never written to `localStorage`; a
+  refresh is the reset, by design (simpler, and avoids a returning visitor
+  ever seeing a stale layout).
+- **Resize safety**: a `resize` listener re-clamps every `.is-detached`
+  element back inside the current viewport (adjusting `left`/`top` by
+  whatever delta the *rendered* position needs — coordinate-system
+  agnostic, so this needed no change when pickup switched from fixed to
+  absolute), so a resize/rotation can't strand one somewhere unreachable.
+- **z-index**: dragged/dropped items sit at `6`–`7`, under the header (`8`)
+  and surface picker (`9`) — see §7's z-index note there.
 
 ## 8. Motion
 

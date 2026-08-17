@@ -155,7 +155,9 @@
               </div>
             </div>
             <!-- PLACEHOLDER: cover image comes later — see item 6 of the redesign brief -->
-            <div class="work-card-media" aria-hidden="true"></div>
+            <div class="work-card-media" aria-hidden="true">
+              <img src="assets/images/bds-tile.svg" alt="Blueprint Design System cover image" loading="lazy" decoding="async" />
+            </div>
           </li>
 
           <!-- Card 2 — AI-generated frontend POC -->
@@ -173,7 +175,7 @@
               </div>
             </div>
             <div class="work-card-media" aria-hidden="true">
-              <img src="assets/images/rolan-write-2.gif" alt="Writing in process..." loading="lazy" decoding="async" />
+              <img src="assets/images/wrkfeed-poc.svg" alt="Design-to-code POC" loading="lazy" decoding="async" />
             </div>
           </li>
 
@@ -191,7 +193,7 @@
               </div>
             </div>
             <div class="work-card-media" aria-hidden="true">
-              <img src="assets/images/rolan-write-2.gif" alt="Writing in process..." loading="lazy" decoding="async" />
+              <img src="assets/images/inc-tile.svg" alt="Incridea title slide" loading="lazy" decoding="async" />
             </div>
           </li>
 
@@ -210,7 +212,7 @@
               </div>
             </div>
             <div class="work-card-media" aria-hidden="true">
-              <img src="assets/images/rolan-write-2.gif" alt="Writing in process..." loading="lazy" decoding="async" />
+              <img src="assets/images/hub-mod-tile.svg" alt="Wipfli Hub modernization tile" loading="lazy" decoding="async" />
             </div>
           </li>
 
@@ -252,48 +254,86 @@
         <span class="eyebrow" data-reveal>Tools &amp; skills</span>
         <h2 id="skills-title" class="section-title" data-reveal>What each case study is built with.</h2>
 
-        <div class="skills-grid" data-reveal-children>
+        <!-- Each sticker's on-screen position/rotation is scattered by
+             js/main.js §9 on load, then made draggable by §9's shared
+             pointer-drag engine (same one the About photos use). DOM order
+             is still grouped by category — design, accessibility, AI/dev
+             workflow, creative & process — so a screen reader gets a
+             sensible list even though the visual layout is random.
 
-          <div class="skill-group">
-            <h3>Design systems &amp; UI engineering</h3>
-            <ul class="skill-list">
-              <li class="skill-item"><span class="skill-index">1</span><span class="skill-chip" aria-hidden="true">Fi</span><span class="skill-name">Figma</span><span class="skill-note">Variables · Auto Layout · Dev Mode · Code Connect</span></li>
-              <li class="skill-item"><span class="skill-index">2</span><span class="skill-chip" aria-hidden="true">Fj</span><span class="skill-name">FigJam &amp; Figma Make</span></li>
-              <li class="skill-item"><span class="skill-index">3</span><span class="skill-chip" aria-hidden="true">Dt</span><span class="skill-name">Design tokens</span><span class="skill-note">3-tier · OKLCH · Style Dictionary</span></li>
-              <li class="skill-item"><span class="skill-index">4</span><span class="skill-chip" aria-hidden="true">Ca</span><span class="skill-name">Component architecture</span><span class="skill-note">CVA variants</span></li>
-            </ul>
-          </div>
+             Each sticker is a real <button> (not a bare <img>): clicking
+             or tapping it — without dragging it — opens a popover with its
+             name, description and proficiency (js/main.js §11). That's
+             real content, so unlike the drag gesture itself (mouse/touch/
+             pen only, by design) the button IS keyboard-focusable and
+             answers Enter/Space, same as any other control on this site.
 
-          <div class="skill-group">
-            <h3>Accessibility</h3>
-            <ul class="skill-list">
-              <li class="skill-item"><span class="skill-index">5</span><span class="skill-chip" aria-hidden="true">Wc</span><span class="skill-name">WCAG 2.2 compliance &amp; remediation</span></li>
-              <li class="skill-item"><span class="skill-index">6</span><span class="skill-chip" aria-hidden="true">Aa</span><span class="skill-name">Accessibility audits</span></li>
-              <li class="skill-item"><span class="skill-index">7</span><span class="skill-chip" aria-hidden="true">Fa</span><span class="skill-name">Focus state &amp; ARIA standardization</span></li>
-              <li class="skill-item"><span class="skill-index">8</span><span class="skill-chip" aria-hidden="true">In</span><span class="skill-name">Inclusive design</span></li>
-            </ul>
-          </div>
+             PLACEHOLDER: every data-description / data-proficiency value
+             below is a placeholder — Rolan, replace all 19 with your own
+             real description + proficiency before publishing. Nothing
+             here is invented content; it's marked so it can't be mistaken
+             for real copy. -->
+        <div class="sticker-board" data-reveal>
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/Figma.svg" alt="Figma" width="169" height="209" loading="lazy" decoding="async" />
+          </button>
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/Adobe_Illustrator.svg" alt="Adobe Illustrator" width="184" height="184" loading="lazy" decoding="async" />
+          </button>
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/Adobe_Photoshop.svg" alt="Adobe Photoshop" width="184" height="182" loading="lazy" decoding="async" />
+          </button>
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/Paper.svg" alt="Paper" width="189" height="189" loading="lazy" decoding="async" />
+          </button>
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/Tailwind%20CSS.svg" alt="Tailwind CSS" width="198" height="158" loading="lazy" decoding="async" />
+          </button>
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/HTML.svg" alt="HTML" width="186" height="199" loading="lazy" decoding="async" />
+          </button>
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/CSS.svg" alt="CSS" width="184" height="196" loading="lazy" decoding="async" />
+          </button>
 
-          <div class="skill-group">
-            <h3>AI-assisted &amp; front-end workflows</h3>
-            <ul class="skill-list">
-              <li class="skill-item"><span class="skill-index">9</span><span class="skill-chip" aria-hidden="true">Ll</span><span class="skill-name">LLM-directed code generation</span></li>
-              <li class="skill-item"><span class="skill-index">10</span><span class="skill-chip" aria-hidden="true">Gc</span><span class="skill-name">GitHub Copilot</span></li>
-              <li class="skill-item"><span class="skill-index">11</span><span class="skill-chip" aria-hidden="true">Pe</span><span class="skill-name">Prompt engineering</span></li>
-              <li class="skill-item"><span class="skill-index">12</span><span class="skill-chip" aria-hidden="true">B5</span><span class="skill-name">Bootstrap 5 &amp; HTML/CSS architecture</span></li>
-            </ul>
-          </div>
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/a11y.svg" alt="Accessibility (a11y)" width="198" height="198" loading="lazy" decoding="async" />
+          </button>
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/a11y-text.svg" alt="Accessibility (a11y) logotype" width="205" height="132" loading="lazy" decoding="async" />
+          </button>
 
-          <div class="skill-group">
-            <h3>Creative suite &amp; process</h3>
-            <ul class="skill-list">
-              <li class="skill-item"><span class="skill-index">13</span><span class="skill-chip" aria-hidden="true">Ps</span><span class="skill-name">Adobe Photoshop &amp; Illustrator</span></li>
-              <li class="skill-item"><span class="skill-index">14</span><span class="skill-chip" aria-hidden="true">Pr</span><span class="skill-name">Adobe Premiere Pro</span></li>
-              <li class="skill-item"><span class="skill-index">15</span><span class="skill-chip" aria-hidden="true">Ag</span><span class="skill-name">Agile/Scrum &amp; cross-functional collaboration</span></li>
-              <li class="skill-item"><span class="skill-index">16</span><span class="skill-chip" aria-hidden="true">Dc</span><span class="skill-name">Design critique facilitation</span></li>
-            </ul>
-          </div>
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/Claude.svg" alt="Claude" width="185" height="186" loading="lazy" decoding="async" />
+          </button>
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/Github%20Copilot.svg" alt="GitHub Copilot" width="206" height="185" loading="lazy" decoding="async" />
+          </button>
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/Midjourney.svg" alt="Midjourney" width="184" height="168" loading="lazy" decoding="async" />
+          </button>
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/VSCode.svg" alt="Visual Studio Code" width="196" height="196" loading="lazy" decoding="async" />
+          </button>
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/github.svg" alt="GitHub" width="184" height="184" loading="lazy" decoding="async" />
+          </button>
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/DevOps.svg" alt="DevOps" width="184" height="188" loading="lazy" decoding="async" />
+          </button>
 
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/Adobe_Premiere_Pro.svg" alt="Adobe Premiere Pro" width="184" height="182" loading="lazy" decoding="async" />
+          </button>
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/Microsoft%20Office.svg" alt="Microsoft Office" width="182" height="207" loading="lazy" decoding="async" />
+          </button>
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/Notion.svg" alt="Notion" width="180" height="184" loading="lazy" decoding="async" />
+          </button>
+          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+            <img class="tool-sticker-img" src="assets/images/tools/Power%20Pages.svg" alt="Power Pages" width="184" height="184" loading="lazy" decoding="async" />
+          </button>
         </div>
       </div>
     </section>
@@ -387,6 +427,7 @@
   </footer>
 
   <div class="surface-picker">
+    <span class="surface-picker-hint" aria-hidden="true">Recolor mat</span>
     <button type="button" class="surface-picker-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="surface-picker-panel" aria-label="Customize mat color">
       <span class="surface-picker-trigger-swatch" aria-hidden="true"></span>
     </button>

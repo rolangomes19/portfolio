@@ -912,4 +912,509 @@
       { passive: true }
     );
   }
+
+  /* ------------------------------------------------------------------
+     9. Drag-anywhere — About photos + Tools stickers.
+     Pointer Events (not HTML5 drag-and-drop, which is built for
+     reorder/dropzone patterns and fights free-form dragging).
+
+     .about-photo stays purely decorative — dragging it is mouse/touch/pen
+     only, nothing added to the tab order, exactly as before. .tool-sticker
+     is different: it's a real <button> (index.html) that opens the tool
+     info popover (§11) on click/tap/Enter/Space, so IT needs the standard
+     "was this a click or a drag" threshold every drag-and-drop library
+     uses — a plain tap has to keep working as a click and reach keyboard
+     users too, while an actual drag must not also pop the popover open.
+     makeDraggable(el, { onClick }) takes an optional callback for this;
+     .about-photo's call site passes none and is completely unaffected.
+
+     `position: absolute` against the initial containing block, NOT
+     `position: fixed` — deliberately. None of .about-photo's or
+     .tool-sticker's ancestors are themselves positioned (see the
+     "Draggable objects" comment in styles.css), so an absolutely
+     positioned one resolves against the same viewport-sized initial
+     containing block a fixed element would — which is what still lets a
+     dropped item bleed past the paper onto the mat — but, unlike fixed,
+     it SCROLLS WITH THE PAGE instead of staying glued to the viewport.
+     Fixed positioning was tried first and was wrong: a dropped item
+     stayed pinned to wherever it was on SCREEN as the page scrolled
+     underneath it, so it looked like it had vanished the moment you
+     scrolled away from where you dropped it.
+
+     Pickup converts the current rendered position to `left`/`top` (a
+     fresh getBoundingClientRect() at that instant, converted from
+     viewport-relative to document-relative by adding the current
+     scroll offset — captured once per drag, since touch-action: none
+     and preventDefault() keep the page from scrolling mid-drag) and then
+     moves purely via the --dx/--dy custom properties that feed each
+     component's own `transform` (see "Draggable objects" in styles.css)
+     — never by rewriting left/top every frame, which would be layout
+     work instead of a compositor-only transform update. The viewport
+     clamp (below) still reasons in viewport space, since that's what's
+     actually meant to stay on screen during the gesture; it's the same
+     math either way, just measured against the position at drag start
+     rather than an ever-moving document offset.
+
+     `.is-dragging` (transition: none, set in the SAME synchronous update
+     as the position/--dx/--dy reset) is what keeps pickup instant with no
+     animated jump; removing it afterward is safe precisely because nothing
+     else changes in that same moment, so no transition fires
+     retroactively. There is no "bake into left/top on drop" step: the next
+     pickup just reads a fresh rect again, which already accounts for
+     whatever --dx/--dy currently is.
+
+     pointermove/pointerup listen on `document`, not `el` — even with
+     pointer capture requested below, relying on it alone left a real gap:
+     once the element leaves its own (now tiny, now-elsewhere) bounds,
+     events could stop reaching an el-scoped listener, and the drag would
+     visibly lag behind the cursor/finger until they crossed back over it.
+     Document-level listeners always receive the event regardless of
+     where the pointer physically is, filtered by pointerId so multiple
+     simultaneous drags (two-finger touch) don't cross-talk.
+
+     Click vs. drag: pointerdown alone no longer starts a drag — it only
+     records the start position. The actual pickup (measure, reparent,
+     detach) runs lazily, the first time pointermove crosses
+     DRAG_THRESHOLD px, so a plain tap never touches the DOM at all and
+     the browser's own `click` fires normally afterward (this is also how
+     a keyboard Enter/Space activates onClick: no pointer events are
+     involved in that path at all, so none of this logic is even in play).
+     If the threshold WAS crossed, `justDragged` flags the next `click`
+     event to be swallowed — browsers still fire one right after a real
+     drag's pointerup, and onClick must not fire for that.
+
+     Positions are never persisted (no localStorage) — a refresh is the
+     reset, by design.
+  ------------------------------------------------------------------ */
+  if ("PointerEvent" in window) {
+    const DRAG_THRESHOLD = 8; // px of movement before a pointerdown counts as a drag, not a click
+
+    function makeDraggable(el, options) {
+      const onClick = options && options.onClick;
+      el.classList.add("draggable");
+      el.setAttribute("draggable", "false"); // no native image drag-ghost fighting pointer capture
+
+      let baseViewportLeft = 0;
+      let baseViewportTop = 0;
+      let elWidth = 0;
+      let elHeight = 0;
+      let padX = 0;
+      let padY = 0;
+      let startX = 0;
+      let startY = 0;
+      let dragScrollX = 0;
+      let dragScrollY = 0;
+      let activePointerId = null;
+      let isDragging = false; // true only once DRAG_THRESHOLD has been crossed this gesture
+      let justDragged = false; // consumed by the very next `click` to suppress it
+
+      // The actual pickup — everything pointerdown used to do unconditionally,
+      // now deferred until movement proves this is a drag, not a click.
+      function beginDrag(e) {
+        isDragging = true;
+
+        const rect = el.getBoundingClientRect();
+        elWidth = el.offsetWidth;
+        elHeight = el.offsetHeight;
+        // Anchor from the rendered box's CENTER, not its top-left.
+        // getBoundingClientRect() on a rotated element returns the rotated
+        // bounding box — rotation happens around the element's own center
+        // (the default transform-origin), so the center is the only point
+        // that stays put; reconstructing left/top from the bbox corner
+        // instead would re-apply the same rotation around a shifted point
+        // and visibly jump on pickup.
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        baseViewportLeft = centerX - elWidth / 2;
+        baseViewportTop = centerY - elHeight / 2;
+        // Half the extra width/height the RENDERED (rotated) box has over
+        // the unrotated one (0 for an unrotated element) — the viewport
+        // clamp needs this on top of elWidth/elHeight or a tilted element
+        // could clamp a few px past the edge, since the clamp constrains
+        // what's actually painted, not the smaller unrotated box.
+        padX = (rect.width - elWidth) / 2;
+        padY = (rect.height - elHeight) / 2;
+        dragScrollX = window.scrollX;
+        dragScrollY = window.scrollY;
+
+        // Reparent to <body> — AFTER measuring, BEFORE repositioning, so
+        // nothing visually jumps. .tool-sticker's own parent (.sticker-board)
+        // is `position: relative` (it has to be, for the base scatter
+        // layout's percentage left/top), which would make it — not the
+        // document — the containing block for `position: absolute` below.
+        // <body> itself is unpositioned, so reparenting there guarantees
+        // the same document-relative containing block for every draggable
+        // regardless of where it started, without special-casing stickers.
+        if (el.parentElement !== document.body) {
+          document.body.appendChild(el);
+        }
+
+        el.classList.add("is-dragging", "is-detached");
+        // Freeze the measured width before leaving flow — the About photos
+        // get their width from flex-stretching inside .about-photos, so
+        // without this they'd collapse to a shrink-to-fit sliver the
+        // instant `position: absolute` pulls them out of that layout.
+        el.style.inlineSize = elWidth + "px";
+        el.style.position = "absolute";
+        el.style.margin = "0";
+        el.style.left = baseViewportLeft + dragScrollX + "px";
+        el.style.top = baseViewportTop + dragScrollY + "px";
+        el.style.setProperty("--dx", "0px");
+        el.style.setProperty("--dy", "0px");
+
+        // Best-effort: capture is a secondary aid alongside the
+        // document-level listeners above, not a requirement for them —
+        // don't let a rare capture failure (already-released pointer, OS
+        // quirk) throw past preventDefault().
+        try {
+          el.setPointerCapture(e.pointerId);
+        } catch (err) {}
+      }
+
+      function onPointerMove(e) {
+        if (e.pointerId !== activePointerId) return;
+
+        if (!isDragging) {
+          const moved = Math.hypot(e.clientX - startX, e.clientY - startY);
+          if (moved < DRAG_THRESHOLD) return;
+          beginDrag(e);
+        }
+
+        e.preventDefault();
+        const dx = clamp(e.clientX - startX, -baseViewportLeft + padX, window.innerWidth - elWidth - baseViewportLeft - padX);
+        const dy = clamp(e.clientY - startY, -baseViewportTop + padY, window.innerHeight - elHeight - baseViewportTop - padY);
+        el.style.setProperty("--dx", dx + "px");
+        el.style.setProperty("--dy", dy + "px");
+      }
+
+      function onPointerUp(e) {
+        if (e.pointerId !== activePointerId) return;
+        activePointerId = null;
+        document.removeEventListener("pointermove", onPointerMove);
+        document.removeEventListener("pointerup", onPointerUp);
+        document.removeEventListener("pointercancel", onPointerUp);
+        if (el.hasPointerCapture(e.pointerId)) {
+          try {
+            el.releasePointerCapture(e.pointerId);
+          } catch (err) {}
+        }
+        if (isDragging) {
+          el.classList.remove("is-dragging");
+          justDragged = true;
+        }
+        isDragging = false;
+      }
+
+      el.addEventListener("pointerdown", (e) => {
+        if (e.pointerType === "mouse" && e.button !== 0) return;
+        if (activePointerId !== null) return; // already mid-drag from another pointer
+
+        startX = e.clientX;
+        startY = e.clientY;
+        activePointerId = e.pointerId;
+
+        document.addEventListener("pointermove", onPointerMove);
+        document.addEventListener("pointerup", onPointerUp);
+        document.addEventListener("pointercancel", onPointerUp);
+      });
+
+      // The single source of truth for "open the popover": fires naturally
+      // for a real click/tap AND for keyboard Enter/Space (which produces a
+      // click with no pointer events at all), so there's nothing keyboard-
+      // specific to wire up separately. The one thing it has to filter out
+      // is the trailing click a browser still fires right after a real
+      // drag's pointerup.
+      if (onClick) {
+        el.addEventListener("click", (e) => {
+          if (justDragged) {
+            justDragged = false;
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+          }
+          onClick(el);
+        });
+      }
+    }
+
+    /* Scatter the tool stickers on load: a loose N-cell grid sized to the
+       sticker count, jittered so it doesn't look like a grid — cheap
+       collision-avoidance without real physics. Cell assignment is
+       shuffled so the DOM's category order doesn't leak into a
+       left-to-right visual order. Re-run fresh on every load (see the
+       no-persistence note above), so this needs no seed.
+
+       Placement accounts for each sticker's OWN rendered footprint
+       (wPct/hPct below), not just its cell — at the 2x size pass this
+       stopped being optional: a sticker placed near a cell's far edge
+       with no regard for its own width could render partly outside
+       .sticker-board, which below 48em means partly clipped by body's
+       overflow: clip (measured: a sticker's right edge landing 66px past
+       a 375px viewport, invisibly cut off, with no scrollbar to reveal
+       it).
+
+       That footprint also has to account for the random ±12deg rotation
+       (--base-rot, set below) each sticker gets: a rotated box's bounding
+       box is bigger than the unrotated one — the same "rendered vs
+       unrotated size" distinction the drag engine's own padX/padY handles
+       (see the "Draggable objects" pickup comment) — so growthX/growthY
+       here is the worst case at a full 12deg, split evenly since rotation
+       grows the box symmetrically around its own center. The final
+       clamp() is a hard backstop regardless of the cell math, so a
+       sticker's rendered edge can never exceed the board's. */
+    function scatterStickers(board) {
+      const stickers = Array.prototype.slice.call(board.querySelectorAll(".tool-sticker"));
+      const count = stickers.length;
+      if (!count) return;
+
+      const boardWidth = board.offsetWidth;
+      const boardHeight = board.offsetHeight;
+
+      const cols = Math.max(1, Math.ceil(Math.sqrt(count * 1.6)));
+      const rows = Math.ceil(count / cols);
+      const cells = [];
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) cells.push({ c, r });
+      }
+      for (let i = cells.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = cells[i];
+        cells[i] = cells[j];
+        cells[j] = tmp;
+      }
+
+      const cellW = 100 / cols;
+      const cellH = 100 / rows;
+      const pad = 0.15; // small margin off the cell's own edge, when there's room to spare
+      const MAX_ROT = (12 * Math.PI) / 180;
+      const cosMax = Math.cos(MAX_ROT);
+      const sinMax = Math.sin(MAX_ROT);
+
+      stickers.forEach((el, i) => {
+        const cell = cells[i];
+        const wPx = el.offsetWidth;
+        const hPx = el.offsetHeight;
+        const wPct = (wPx / boardWidth) * 100;
+        const hPct = (hPx / boardHeight) * 100;
+        // Half the worst-case bounding-box growth from rotation, per axis
+        // — computed in PIXELS first (wPx/hPx share one scale; wPct/hPct
+        // don't, since one's relative to boardWidth and the other to
+        // boardHeight, and this board is rarely square) and only
+        // converted to each axis's own percentage at the end.
+        const growthX = (Math.max(0, wPx * cosMax + hPx * sinMax - wPx) / 2 / boardWidth) * 100;
+        const growthY = (Math.max(0, hPx * cosMax + wPx * sinMax - hPx) / 2 / boardHeight) * 100;
+        const cellLeft = cell.c * cellW;
+        const cellTop = cell.r * cellH;
+        // Room left in the cell once the sticker's own (rotation-grown)
+        // footprint is reserved — floors at 0 rather than going negative
+        // if the sticker is bigger than its cell (only possible at very
+        // cramped widths).
+        const roomX = Math.max(0, cellW - wPct - 2 * growthX);
+        const roomY = Math.max(0, cellH - hPct - 2 * growthY);
+        const x = clamp(cellLeft + growthX + roomX * (pad + Math.random() * (1 - 2 * pad)), growthX, 100 - wPct - growthX);
+        const y = clamp(cellTop + growthY + roomY * (pad + Math.random() * (1 - 2 * pad)), growthY, 100 - hPct - growthY);
+        el.style.left = x + "%";
+        el.style.top = y + "%";
+        el.style.setProperty("--base-rot", (Math.random() * 24 - 12).toFixed(1) + "deg");
+      });
+    }
+
+    document.querySelectorAll(".about-photo").forEach((el) => makeDraggable(el));
+
+    const stickerBoard = document.querySelector(".sticker-board");
+    if (stickerBoard) {
+      scatterStickers(stickerBoard);
+      // openToolPopover is declared later, in §11 — safe to reference here
+      // because `function` declarations hoist, and this callback only
+      // ever actually RUNS later, from a click, by which point §11's
+      // setup has already finished (everything in this file runs
+      // synchronously, top to bottom, well before any user interaction).
+      stickerBoard.querySelectorAll(".tool-sticker").forEach((el) => makeDraggable(el, { onClick: openToolPopover }));
+    }
+
+    // A viewport resize/rotation shouldn't be able to strand a dropped item
+    // off-screen — nudge left/top (not --dx/--dy, which is session-local to
+    // an active drag) back inside bounds for anything currently detached.
+    let resizeQueued = false;
+    function reclampDetached() {
+      document.querySelectorAll(".is-detached").forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        const clampedLeft = clamp(rect.left, 0, window.innerWidth - rect.width);
+        const clampedTop = clamp(rect.top, 0, window.innerHeight - rect.height);
+        if (clampedLeft !== rect.left) {
+          el.style.left = (parseFloat(el.style.left) || 0) + (clampedLeft - rect.left) + "px";
+        }
+        if (clampedTop !== rect.top) {
+          el.style.top = (parseFloat(el.style.top) || 0) + (clampedTop - rect.top) + "px";
+        }
+      });
+      resizeQueued = false;
+    }
+    window.addEventListener("resize", () => {
+      if (!resizeQueued) {
+        resizeQueued = true;
+        requestAnimationFrame(reclampDetached);
+      }
+    });
+  }
+
+  /* ------------------------------------------------------------------
+     10. Play hint
+     One-time dismissible tip introducing §9's drag-anywhere feature and
+     the surface picker (section 4). Purely additive chrome, same pattern
+     as the lightbox above: with this script absent, or once already
+     dismissed, there's simply no tip — nothing else depends on it.
+  ------------------------------------------------------------------ */
+  if (!localStorage.getItem("hintDismissed")) {
+    const aboutTitle = document.getElementById("about-title");
+    if (aboutTitle) {
+      const hint = document.createElement("div");
+      hint.className = "play-hint";
+
+      const text = document.createElement("p");
+      text.textContent =
+        "Photos and tool stickers can be dragged anywhere on the page — even past the paper, onto the mat. The mat's own color is yours to change too, from the swatch in the corner.";
+
+      const closeBtn = document.createElement("button");
+      closeBtn.type = "button";
+      closeBtn.className = "play-hint-close";
+      closeBtn.setAttribute("aria-label", "Dismiss tip");
+      closeBtn.innerHTML =
+        '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M2 2 L12 12 M12 2 L2 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+      closeBtn.addEventListener("click", () => {
+        localStorage.setItem("hintDismissed", "1");
+        hint.remove();
+      });
+
+      hint.append(text, closeBtn);
+      aboutTitle.insertAdjacentElement("afterend", hint);
+
+      // Reuses §3's `.reveal`/`.is-visible` classes and `show()` (its own
+      // IntersectionObserver is block-scoped to §3, so this gets a small
+      // dedicated one rather than reaching into that scope) — same fade,
+      // same stagger token, skipped entirely under reduced motion.
+      if (motionQuery.matches && "IntersectionObserver" in window) {
+        hint.classList.add("reveal");
+        const hintIo = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                show(entry.target);
+                hintIo.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.1, rootMargin: "0px 0px -12% 0px" }
+        );
+        hintIo.observe(hint);
+      }
+    }
+  }
+
+  /* ------------------------------------------------------------------
+     11. Tool info popover
+     One shared <dialog> (built lazily, on first use, and appended to
+     <body> — same "purely additive, no build cost if never opened"
+     shape as the case-study lightbox in §6, whose open/close mechanics
+     this copies one-for-one: showModal(), a manual Escape handler
+     alongside the native one, backdrop-click-to-close, focus returned to
+     the trigger button on close). Declared as plain top-level functions
+     (not nested inside an `if`) specifically so `openToolPopover` stays
+     accessible from §9's sticker wiring above, which runs earlier in the
+     file but only actually CALLS it later, from a click.
+  ------------------------------------------------------------------ */
+  let toolPopoverEl = null;
+  let toolPopoverTrigger = null;
+  let toolPopoverParts = null;
+
+  function buildToolPopover() {
+    if (toolPopoverEl || !("HTMLDialogElement" in window)) return;
+
+    const popover = document.createElement("dialog");
+    popover.className = "tool-popover";
+
+    const card = document.createElement("div");
+    card.className = "tool-popover-card";
+
+    // Decorative repeat of the sticker's own image — the heading right
+    // below it already carries the tool's name as real text, so a screen
+    // reader doesn't need this image announced too.
+    const icon = document.createElement("img");
+    icon.className = "tool-popover-icon";
+    icon.alt = "";
+    icon.setAttribute("aria-hidden", "true");
+
+    const name = document.createElement("h3");
+    name.className = "tool-popover-name";
+    name.id = "tool-popover-name";
+
+    // Reuses .tag-pill as-is (styles.css "Concept tags") — the same
+    // shape/fill every other badge on this site uses, not a new component.
+    const proficiency = document.createElement("span");
+    proficiency.className = "tool-popover-proficiency tag-pill";
+
+    const description = document.createElement("p");
+    description.className = "tool-popover-description";
+
+    const closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.className = "tool-popover-close";
+    closeBtn.innerHTML =
+      '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 2 L14 14 M14 2 L2 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+
+    card.append(icon, name, proficiency, description);
+    popover.append(card, closeBtn);
+    document.body.appendChild(popover);
+
+    // aria-labelledby, not aria-label — the dialog already has a visible
+    // heading (the tool name), so the accessible name should point at it
+    // rather than duplicate its text in an attribute (WAI-ARIA APG's
+    // recommended pattern for a dialog with a visible title).
+    popover.setAttribute("aria-labelledby", "tool-popover-name");
+
+    function handleClosed() {
+      if (toolPopoverTrigger) toolPopoverTrigger.focus();
+    }
+    // Single explicit-close path (close button, backdrop click, the
+    // Escape handler below) — same reasoning as the lightbox's
+    // closeLightbox(): don't wait on the dialog's own "close" event,
+    // which isn't guaranteed to fire promptly for every closure method
+    // in every environment. Idempotent, so it's safe if "close" also
+    // fires afterward.
+    function closePopover() {
+      if (popover.hasAttribute("open")) popover.close();
+      handleClosed();
+    }
+    popover.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closePopover();
+    });
+    popover.addEventListener("close", handleClosed);
+    // A click lands on the dialog element itself only when it isn't on a
+    // descendant (the card or close button) — i.e. the backdrop.
+    popover.addEventListener("click", (e) => {
+      if (e.target === popover) closePopover();
+    });
+    closeBtn.addEventListener("click", closePopover);
+
+    toolPopoverEl = popover;
+    toolPopoverParts = { icon, name, proficiency, description, closeBtn };
+  }
+
+  function openToolPopover(sticker) {
+    buildToolPopover();
+    if (!toolPopoverEl) return; // no <dialog> support — degrades silently, same as the lightbox
+
+    toolPopoverTrigger = sticker;
+    const img = sticker.querySelector(".tool-sticker-img");
+    toolPopoverParts.icon.src = img.src;
+    toolPopoverParts.name.textContent = img.alt;
+    toolPopoverParts.proficiency.textContent = sticker.dataset.proficiency || "";
+    toolPopoverParts.description.textContent = sticker.dataset.description || "";
+    toolPopoverParts.closeBtn.setAttribute(
+      "aria-label",
+      STRINGS[root.lang === "ar" ? "ar" : "en"]["lightbox.close"]
+    );
+    toolPopoverEl.showModal();
+    toolPopoverParts.closeBtn.focus();
+  }
 })();
