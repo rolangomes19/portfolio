@@ -18,6 +18,23 @@
       }
       var mc = localStorage.getItem("matColor");
       if (mc) document.documentElement.style.setProperty("--color-mat", mc);
+      // Apply a cached mat-driven accent too, so a returning visitor with a
+      // customised mat never sees a flash of the default accent before
+      // js/main.js re-derives it. See main.js section 4b for how this blob
+      // is produced; this block only ever reads it.
+      var at = localStorage.getItem("accentTokens");
+      if (at) {
+        try {
+          var set = JSON.parse(at)[document.documentElement.dataset.theme === "dark" ? "dark" : "light"];
+          if (set) {
+            var s = document.documentElement.style;
+            s.setProperty("--color-accent", set.accent);
+            s.setProperty("--color-accent-hover", set.hover);
+            s.setProperty("--color-on-accent", set.on);
+            s.setProperty("--color-tint-brand", set.tint);
+          }
+        } catch (e) {}
+      }
     })();
   </script>
 
@@ -169,6 +186,11 @@
           <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust"></button>
           <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum"></button>
           <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#1B365D" style="--swatch:#1B365D" aria-label="Ink blue"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#30302e" style="--swatch:#30302e" aria-label="Graphite"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#3d3d3a" style="--swatch:#3d3d3a" aria-label="Slate"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#504e49" style="--swatch:#504e49" aria-label="Olive"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#6b6a64" style="--swatch:#6b6a64" aria-label="Smoke grey"></button>
         </div>
         <div class="surface-picker-custom">
           <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>

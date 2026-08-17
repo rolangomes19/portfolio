@@ -18,6 +18,23 @@
       }
       var mc = localStorage.getItem("matColor");
       if (mc) document.documentElement.style.setProperty("--color-mat", mc);
+      // Apply a cached mat-driven accent too, so a returning visitor with a
+      // customised mat never sees a flash of the default accent before
+      // js/main.js re-derives it. See main.js section 4b for how this blob
+      // is produced; this block only ever reads it.
+      var at = localStorage.getItem("accentTokens");
+      if (at) {
+        try {
+          var set = JSON.parse(at)[document.documentElement.dataset.theme === "dark" ? "dark" : "light"];
+          if (set) {
+            var s = document.documentElement.style;
+            s.setProperty("--color-accent", set.accent);
+            s.setProperty("--color-accent-hover", set.hover);
+            s.setProperty("--color-on-accent", set.on);
+            s.setProperty("--color-tint-brand", set.tint);
+          }
+        } catch (e) {}
+      }
     })();
   </script>
 
@@ -67,19 +84,19 @@
       <div class="container">
         <ul class="writing-list" data-reveal-children>
 
-          <li class="writing-item" data-reveal>
+          <li class="writing-item is-liftable" data-reveal>
             <p class="writing-meta mono"><span>1,200–1,500 words</span><span>·</span><span>Design leads · design system owners</span><span class="tag">Draft in progress</span></p>
             <h2 class="writing-title"><a href="design-system-ai-instruction-manual.html">The Design System Is the AI's Instruction Manual</a></h2>
             <p class="writing-thesis">A well-structured design system with token coverage and Code Connect is what makes AI-generated frontend reliable — not the prompt alone.</p>
           </li>
 
-          <li class="writing-item" data-reveal>
+          <li class="writing-item is-liftable" data-reveal>
             <p class="writing-meta mono"><span>1,000–1,300 words</span><span>·</span><span>PMs · enterprise UX · engineering leads</span><span class="tag">Not yet started</span></p>
             <h2 class="writing-title"><a href="35-violations-to-zero.html">35 Violations to Zero: What Enterprise Accessibility Actually Looks Like</a></h2>
             <p class="writing-thesis">Accessibility remediation is a compliance delivery with triage logic and a re-test protocol, not a design-polish task.</p>
           </li>
 
-          <li class="writing-item" data-reveal>
+          <li class="writing-item is-liftable" data-reveal>
             <p class="writing-meta mono"><span>1,200–1,500 words</span><span>·</span><span>Designers exploring AI · recruiters</span><span class="tag">Not yet started</span></p>
             <h2 class="writing-title"><a href="directing-an-llm-to-build-a-frontend.html">What I Learned Directing an LLM to Build a Frontend</a></h2>
             <p class="writing-thesis">AI-generated frontend quality is determined by the quality of your direction and the system it's built from — not delegation.</p>
@@ -148,6 +165,11 @@
           <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust"></button>
           <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum"></button>
           <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#1B365D" style="--swatch:#1B365D" aria-label="Ink blue"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#30302e" style="--swatch:#30302e" aria-label="Graphite"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#3d3d3a" style="--swatch:#3d3d3a" aria-label="Slate"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#504e49" style="--swatch:#504e49" aria-label="Olive"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#6b6a64" style="--swatch:#6b6a64" aria-label="Smoke grey"></button>
         </div>
         <div class="surface-picker-custom">
           <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>

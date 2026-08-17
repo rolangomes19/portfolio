@@ -25,6 +25,23 @@
       }
       var mc = localStorage.getItem("matColor");
       if (mc) document.documentElement.style.setProperty("--color-mat", mc);
+      // Apply a cached mat-driven accent too, so a returning visitor with a
+      // customised mat never sees a flash of the default accent before
+      // js/main.js re-derives it. See main.js section 4b for how this blob
+      // is produced; this block only ever reads it.
+      var at = localStorage.getItem("accentTokens");
+      if (at) {
+        try {
+          var set = JSON.parse(at)[document.documentElement.dataset.theme === "dark" ? "dark" : "light"];
+          if (set) {
+            var s = document.documentElement.style;
+            s.setProperty("--color-accent", set.accent);
+            s.setProperty("--color-accent-hover", set.hover);
+            s.setProperty("--color-on-accent", set.on);
+            s.setProperty("--color-tint-brand", set.tint);
+          }
+        } catch (e) {}
+      }
     })();
   </script>
 
@@ -91,23 +108,23 @@
       <div class="container">
         <h2 id="highlights-title" class="visually-hidden">Highlights</h2>
         <ul class="highlight-list" data-reveal-children>
-          <li class="highlight-card">
+          <li class="highlight-card is-liftable">
             <span class="highlight-number">6 products</span>
             <a class="highlight-label" href="work/blueprint-design-system.html">Blueprint Design System adoption</a>
           </li>
-          <li class="highlight-card">
+          <li class="highlight-card is-liftable">
             <span class="highlight-number">80% match · 7 days</span>
             <a class="highlight-label" href="work/ai-design-to-code.html">AI-generated frontend POC</a>
           </li>
-          <li class="highlight-card">
+          <li class="highlight-card is-liftable">
             <span class="highlight-number">35 → 0</span>
             <a class="highlight-label" href="work/hub-accessibility.html">WCAG 2.2 violations remediated</a>
           </li>
-          <li class="highlight-card">
+          <li class="highlight-card is-liftable">
             <span class="highlight-number">14 → 1</span>
             <a class="highlight-label" href="work/hub-migration.html">CSS files consolidated</a>
           </li>
-          <li class="highlight-card">
+          <li class="highlight-card is-liftable">
             <span class="highlight-number">$35k</span>
             <a class="highlight-label" href="work/incridea-2022-branding.html">Sponsorship driven, Incridea 2022</a>
           </li>
@@ -124,7 +141,7 @@
         <ul class="work-list" data-reveal-children>
 
           <!-- Card 1 — Blueprint Design System -->
-          <li class="work-card">
+          <li class="work-card is-liftable">
             <div class="work-card-content">
               <div>
                 <h3 class="work-card-title"><a href="work/blueprint-design-system.html">Blueprint Design System</a></h3>
@@ -142,7 +159,7 @@
           </li>
 
           <!-- Card 2 — AI-generated frontend POC -->
-          <li class="work-card">
+          <li class="work-card is-liftable">
             <div class="work-card-content">
               <div>
                 <h3 class="work-card-title"><a href="work/ai-design-to-code.html">AI-generated frontend POC</a></h3>
@@ -155,11 +172,13 @@
                 <span class="tag-pill tag-pill--engineering">shadcn</span>
               </div>
             </div>
-            <div class="work-card-media" aria-hidden="true"></div>
+            <div class="work-card-media" aria-hidden="true">
+              <img src="assets/images/rolan-write-2.gif" alt="Writing in process..." loading="lazy" decoding="async" />
+            </div>
           </li>
 
           <!-- Card 3 — Incridea 2022 -->
-          <li class="work-card">
+          <li class="work-card is-liftable">
             <div class="work-card-content">
               <div>
                 <h3 class="work-card-title"><a href="work/incridea-2022-branding.html">Incridea 2022 - Branding and Creative Direction</a></h3>
@@ -171,11 +190,13 @@
                 <span class="tag-pill tag-pill--design">Creative Design</span>
               </div>
             </div>
-            <div class="work-card-media" aria-hidden="true"></div>
+            <div class="work-card-media" aria-hidden="true">
+              <img src="assets/images/rolan-write-2.gif" alt="Writing in process..." loading="lazy" decoding="async" />
+            </div>
           </li>
 
           <!-- Card 4 — Wipfli Hub modernization -->
-          <li class="work-card">
+          <li class="work-card is-liftable">
             <div class="work-card-content">
               <div>
                 <h3 class="work-card-title"><a href="work/hub-migration.html">Wipfli Hub modernization</a></h3>
@@ -188,7 +209,9 @@
                 <span class="tag-pill tag-pill--engineering">Token architecture</span>
               </div>
             </div>
-            <div class="work-card-media" aria-hidden="true"></div>
+            <div class="work-card-media" aria-hidden="true">
+              <img src="assets/images/rolan-write-2.gif" alt="Writing in process..." loading="lazy" decoding="async" />
+            </div>
           </li>
 
         </ul>
@@ -202,12 +225,23 @@
         <h2 id="about-title" class="section-title">Hey there, I'm Rolan!</h2>
 
         <div class="prose">
-          <p>I'm a Creative Designer who thinks in systems. I work at the intersection of Design and Engineering, and focus on solutions that make good business. I love bringing making sense of messes, and figuring how to make it work. My mentor, Nabarun always says that "The space of ambiguity is a designer's best friend, as anything and everything is possible!"</p>
-          <p>I've been designing since 2019. In the beginning, it was all about creating logos, crafting brand identities, social media, posters, etc. Alongside freelancing as a Graphic Designer and running a business and leading the design team of the college fest, I was pursuing my Bachelors Degree in Mechanical Engineering. So building CAD models in college and then designing posters, both felt right at home to me. One thing about me, is that I don't restrict myself inside a box, and I don't shy away from a challenge. You might realize that when you see my academic and career history.</p>
-          <p>In my final year of Engineering, I was intrigued by the field of UX Design, learning about user experience, accessibility, usability, and all the other concepts. I could relate it to my experience with brand design, but realized that this is something very interesting and was also the best of both my worlds, Design and Engineering. Since then, I never really looked back. I started as a UI and Visual Designer, and quickly progressed to learning more and more about the experience side of things. I also delved into basic front-end development (brushing aside my code-phobia) and all these experiences only added to my understanding of design.</p>
-          <p>I love working with people. My journey as a designer is nothing if not a testament to the fact that good people make good impact, and can propel you to unseen heights. I believe in being a force multiplier in teams that I'm a part of, and by bringing out the best in everyone and collaborating, teams can deliver beyond the sum of their parts.</p>
-          <p>From starting out in the small temple town of Udupi, to dreaming big in the bustling city of Bengaluru. I'm now dreaming bigger and bringing my expertise to Dubai and the United Arab Emirates. I'm looking forward to add value to your team and grow in my career.</p>
-          <p>I guess that's enough about me. Let's talk about how I can help you!</p>
+          <div class="about-text">
+            <p>I'm a Creative Designer who thinks in systems. I work at the intersection of Design and Engineering, and focus on solutions that make good business. I love bringing making sense of messes, and figuring how to make it work. My mentor, Nabarun always says that "The space of ambiguity is a designer's best friend, as anything and everything is possible!"</p>
+            <p>I've been designing since 2019. In the beginning, it was all about creating logos, crafting brand identities, social media, posters, etc. Alongside freelancing as a Graphic Designer and running a business and leading the design team of the college fest, I was pursuing my Bachelors Degree in Mechanical Engineering. So building CAD models in college and then designing posters, both felt right at home to me. One thing about me, is that I don't restrict myself inside a box, and I don't shy away from a challenge. You might realize that when you see my academic and career history.</p>
+            <p>In my final year of Engineering, I was intrigued by the field of UX Design, learning about user experience, accessibility, usability, and all the other concepts. I could relate it to my experience with brand design, but realized that this is something very interesting and was also the best of both my worlds, Design and Engineering. Since then, I never really looked back. I started as a UI and Visual Designer, and quickly progressed to learning more and more about the experience side of things. I also delved into basic front-end development (brushing aside my code-phobia) and all these experiences only added to my understanding of design.</p>
+            <p>I love working with people. My journey as a designer is nothing if not a testament to the fact that good people make good impact, and can propel you to unseen heights. I believe in being a force multiplier in teams that I'm a part of, and by bringing out the best in everyone and collaborating, teams can deliver beyond the sum of their parts.</p>
+            <p>From starting out in the small temple town of Udupi, to dreaming big in the bustling city of Bengaluru. I'm now dreaming bigger and bringing my expertise to Dubai and the United Arab Emirates. I'm looking forward to add value to your team and grow in my career.</p>
+            <p>I guess that's enough about me. Let's talk about how I can help you!</p>
+          </div>
+
+          <div class="about-photos">
+            <div class="about-photo about-photo--one">
+              <img src="assets/images/rolan-sq.jpg" width="800" height="800" alt="Rolan smiling outdoors, sitting on a stone ledge in front of a small potted tree" loading="lazy" decoding="async" />
+            </div>
+            <div class="about-photo about-photo--two">
+              <img src="assets/images/rolan-extend.webp" width="800" height="800" alt="Rolan indoors, a close selfie-style portrait" loading="lazy" decoding="async" />
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -261,7 +295,6 @@
           </div>
 
         </div>
-        <p class="draft-note">Placeholder — this list will be re-issued once the expanded skills inventory (research methods, additional tools, PM/collaboration software) is finalized.</p>
       </div>
     </section>
 
@@ -275,35 +308,46 @@
           <li class="cert-item">
             <span class="cert-name">Accessibility: How to Design for All</span>
             <span class="cert-meta">Interaction Design Foundation · Jul 2025</span>
+            <!-- PLACEHOLDER: add the real credential URL, then delete this comment and the one below -->
+            <!-- <a class="cert-link" href="https://…" target="_blank" rel="noopener noreferrer">View credential</a> -->
             <span class="cert-status" data-status="completed">Completed</span>
           </li>
           <li class="cert-item">
             <span class="cert-name">AI for Designers</span>
             <span class="cert-meta">Interaction Design Foundation · Jul 2025</span>
+            <!-- PLACEHOLDER: add the real credential URL, then delete this comment and the one below -->
+            <!-- <a class="cert-link" href="https://…" target="_blank" rel="noopener noreferrer">View credential</a> -->
             <span class="cert-status" data-status="completed">Completed</span>
           </li>
           <li class="cert-item">
             <span class="cert-name">Enterprise Design Thinking Practitioner</span>
             <span class="cert-meta">IBM · Sep 2025</span>
+            <!-- PLACEHOLDER: add the real credential URL, then delete this comment and the one below -->
+            <!-- <a class="cert-link" href="https://…" target="_blank" rel="noopener noreferrer">View credential</a> -->
             <span class="cert-status" data-status="completed">Completed</span>
           </li>
           <li class="cert-item">
             <span class="cert-name">AI Ethics</span>
             <span class="cert-meta">IBM · May 2026</span>
+            <!-- PLACEHOLDER: add the real credential URL, then delete this comment and the one below -->
+            <!-- <a class="cert-link" href="https://…" target="_blank" rel="noopener noreferrer">View credential</a> -->
             <span class="cert-status" data-status="completed">Completed</span>
           </li>
           <li class="cert-item">
             <span class="cert-name">Introduction to Web Accessibility</span>
             <span class="cert-meta">W3Cx</span>
+            <!-- PLACEHOLDER: add the real credential URL, then delete this comment and the one below -->
+            <!-- <a class="cert-link" href="https://…" target="_blank" rel="noopener noreferrer">View credential</a> -->
             <span class="cert-status" data-status="ongoing">Ongoing</span>
           </li>
           <li class="cert-item">
             <span class="cert-name">One Million Prompters</span>
             <span class="cert-meta">Dubai Future Foundation / Dubai Centre for Artificial Intelligence · Jul 2026</span>
+            <!-- PLACEHOLDER: add the real credential URL, then delete this comment and the one below -->
+            <!-- <a class="cert-link" href="https://…" target="_blank" rel="noopener noreferrer">View credential</a> -->
             <span class="cert-status" data-status="completed">Completed</span>
           </li>
         </ul>
-        <p class="draft-note">Placeholder — add "show credential" links once Credential IDs/URLs are ready to publish here (already on LinkedIn).</p>
       </div>
     </section>
 
@@ -356,6 +400,11 @@
           <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust"></button>
           <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum"></button>
           <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#1B365D" style="--swatch:#1B365D" aria-label="Ink blue"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#30302e" style="--swatch:#30302e" aria-label="Graphite"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#3d3d3a" style="--swatch:#3d3d3a" aria-label="Slate"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#504e49" style="--swatch:#504e49" aria-label="Olive"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#6b6a64" style="--swatch:#6b6a64" aria-label="Smoke grey"></button>
         </div>
         <div class="surface-picker-custom">
           <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>
