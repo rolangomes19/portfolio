@@ -6,12 +6,15 @@
 /* ------ Fonts: self-hosted Inter ------
    Downloaded from rsms.me/inter/ rather than served via Google Fonts —
    one variable file covers the full weight range (100–900) instead of
-   separate static files per weight. No italic face: site-wide usage was
-   exactly one <em> (a case study) and one temporary .draft-note style,
-   neither worth a second ~380KB file — font-style: italic on this
-   family now resolves to the browser's synthetic/faux oblique, which is
-   indistinguishable at this usage's size and frequency. See
-   docs/FONT-LOADING-PERF-PLAN.md for the full before/after.
+   separate static files per weight. There is deliberately no italic face,
+   and nothing in the stylesheet asks for one any more: the two former users
+   (.draft-note, and <em> in a case study) now carry their emphasis through
+   a real instance of the variable font instead of the browser's synthetic
+   oblique — see the `em` rule below and .draft-note further down. A faux
+   oblique is a mechanically slanted upright, and slanting a grotesque that
+   was never drawn slanted is exactly the artefact a portfolio built on
+   self-hosted variable fonts should not be showing.
+   See docs/FONT-LOADING-PERF-PLAN.md for the full before/after.
 
    InterVariable.woff2, Commissioner-Variable.woff2, and
    GeistMono-Variable.woff2 below are all Latin-subsetted (fontTools
@@ -99,6 +102,11 @@
 html {
   scroll-behavior: smooth;
   background-color: var(--color-mat);
+  /* Set once on the root so every surface inherits it. On macOS the default
+     subpixel rendering draws Inter heavier than drawn, which on a warm
+     parchment sheet reads as smudged ink rather than crisp type. */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -125,13 +133,37 @@ html::before {
   html::before {
     background-image: none;
   }
+  /* Below this same width the paper runs edge-to-edge with the viewport
+     (--paper-inline: 100%) — the scrapbook photos in the About section
+     (below) deliberately bleed past the paper's edge at wider breakpoints,
+     and with no margin left for that here, "past the edge" means "past the
+     viewport". `overflow: clip` on both axes crops it rather than opening
+     horizontal scroll. `clip`, not `hidden`: hidden creates a scrollable
+     overflow region (and can trigger the visible/non-visible axis
+     mismatch rule turning the other axis into auto); clip has no scroll
+     semantics at all, which is what a page that's meant to scroll only via
+     <html> actually wants. Both axes are set even though only inline
+     overflow is expected, because leaving block on `visible` while inline
+     is non-visible forces UAs to compute the visible one as auto instead —
+     exactly the accidental-scroll-container failure mode this is here to
+     avoid. */
+  body {
+    overflow: clip;
+  }
 }
 
 /* ------ The paper ------
    <body> is the sheet. `container-type: inline-size` is what lets headings and
    page margins be sized in cqi against the paper rather than the viewport.
-   Note this makes <body> the containing block for positioned descendants —
-   which is why the mat above hangs off <html> and not <body>. */
+   It does NOT make <body> a containing block for positioned descendants —
+   verified directly (an absolutely-positioned probe with inset 0/0 lands at
+   the document origin, not body's own box, despite container-type being
+   set) — so anything that needs to reach the paper's own edges (the About
+   section's scrapbook photos, below, bleed past it with a negative margin)
+   must place itself relative to a real ancestor in the normal flow, not
+   assume <body> will catch it. The mat hangs off <html> rather than <body>
+   for an unrelated reason: it's a fixed backdrop meant to fill the viewport
+   regardless of where the paper itself scrolls to. */
 /* The paper's own fibre grain (--paper-texture, see tokens.css) is a second
    background layer over the flat --color-bg fill, tiled at its own size.
    Unlike the mat, the paper flips from near-white (light theme) to
@@ -192,8 +224,25 @@ h2 {
   font-weight: 500;
 }
 
+/* `pretty` keeps a paragraph from ending on a single orphaned word. It is
+   applied to paragraphs only — headings get `balance` above, and long-form
+   prose gets neither, since browsers stop balancing past a few lines anyway. */
 p {
   max-inline-size: var(--measure);
+  text-wrap: pretty;
+}
+
+/* Emphasis without an italic face. Inter ships here as a single variable
+   file covering 100–900, so a weight step is a genuine instance of the
+   typeface; `font-style: italic` would instead have the browser synthesize a
+   slant. Weight also survives better at the sizes <em> actually appears at
+   here (14–16px body copy), where a faux oblique mostly reads as blur.
+   kami's own answer is brand-coloured normal-style emphasis, which is not
+   reused here: on this site brand colour means "link", and spending it on
+   non-links would break that contract. */
+em {
+  font-style: normal;
+  font-weight: 500;
 }
 
 /* Monospace text (inline code, code blocks, the .mono utility) shouldn't
@@ -210,6 +259,42 @@ pre,
   outline: var(--focus-ring);
   outline-offset: var(--focus-offset);
   border-radius: var(--radius-sm);
+}
+
+/* The lightbox scrim is deliberately theme-invariant (near-opaque black in
+   both themes — see --color-scrim in tokens.css), so the theme's own focus
+   colour is the wrong one to use inside it. In light theme that is ink blue,
+   which measures 1.52:1 against the scrim: a keyboard user tabbing to the
+   close button would get a ring they cannot see. The scrim's own foreground
+   token is the right colour here, and it is theme-invariant for the same
+   reason the scrim is. */
+.lightbox :focus-visible {
+  outline-color: var(--color-on-scrim);
+}
+
+/* ------ Forced colours (Windows High Contrast) ------
+   In forced-colors mode the OS overrides background-color and drops
+   box-shadow, so a card carried purely by its fill — which is how every card
+   on this site now works — would lose all definition and read as loose text
+   on the page. Borders survive the override, so they are restored here and
+   only here. This is the one place the no-closed-border rule is traded away,
+   because in this mode the fill it depends on does not exist. */
+@media (forced-colors: active) {
+  .card-surface,
+  .highlight-card,
+  .writing-item,
+  .case-stat,
+  .compare-col,
+  .status-callout,
+  .tag-pill,
+  .tag,
+  .cert-status {
+    border: 1px solid CanvasText;
+  }
+  /* Keep the ring visible against whatever the OS paints behind it. */
+  :focus-visible {
+    outline-color: Highlight;
+  }
 }
 
 /* ------ Utilities ------ */
@@ -271,9 +356,44 @@ pre,
   transform: translateY(0);
 }
 
-/* ------ Header ------ */
+/* ------ Header: sticky, hides on scroll-down, reveals on scroll-up ------
+   Standard pattern (docs sites, Medium, GitHub): pinned to the viewport top,
+   slides away on downward scroll to give content the screen back, and
+   reappears the instant the visitor scrolls up even slightly — an upward
+   scroll is read as "I want to get back to nav/search", so there's no
+   distance threshold on that direction. js/main.js only starts hiding it
+   once the visitor is a full viewport height down the page (`--reveal`
+   below is unrelated — this is the "first fold" gate mentioned in its own
+   comment there); above that, the header just sits pinned with no jitter
+   from small scroll adjustments near the top.
+
+   Needs an opaque background now that page content scrolls beneath it —
+   the header used to be a normal in-flow block with the paper's own
+   background showing through by inheritance; now it has to paint its own. */
 .site-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 8; /* below .skip-link (10); above ordinary page content */
+  background: var(--color-bg);
   border-block-end: 1px solid var(--color-border);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .site-header {
+    transition: transform var(--duration-base) var(--ease),
+      box-shadow var(--duration-fast) var(--ease);
+  }
+}
+.site-header.is-header-hidden {
+  transform: translateY(-100%);
+}
+/* "Stuck" (scrolled at all, scrollY > 0) gets the same whisper lift a card
+   gets on hover — the one depth cue this site allows itself — so the header
+   reads as floating above content rather than as a hard line dropped on top
+   of it. Absent at the very top of the page, where the header sits flush in
+   its natural resting position and a shadow would have nothing to justify
+   it. */
+.site-header.is-header-stuck {
+  box-shadow: var(--shadow-whisper);
 }
 .site-header .container {
   display: flex;
@@ -309,18 +429,28 @@ pre,
   text-decoration: none;
   font-size: var(--text-body);
 }
-.site-nav a:hover {
-  color: var(--color-accent);
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
+@media (hover: hover) {
+  .site-nav a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
 }
 
+/* 12px, not 8px. These two toggles used to be transparent outlines, where a
+   tight gap read fine; now they carry a warm-sand fill, and two filled pills
+   8px apart start to read as one segmented control rather than two
+   independent buttons. */
 .header-controls {
   display: flex;
-  gap: var(--space-03);
+  gap: var(--space-04);
 }
 
-/* Toggle buttons: 44px hit area, real buttons, state via aria-pressed */
+/* Toggle buttons: 44px hit area, real buttons, state via aria-pressed.
+   Pill-shaped like the page's other actions (see .btn) so the header chrome
+   and the hero CTAs read as one button vocabulary. The pressed state inverts
+   to the accent rather than to plain ink — this is the site's one chromatic
+   colour, and "on" is exactly what it is for. */
 .toggle-btn {
   min-inline-size: 2.75rem;
   min-block-size: 2.75rem;
@@ -328,24 +458,36 @@ pre,
   align-items: center;
   justify-content: center;
   gap: var(--space-02);
-  background: transparent;
+  background: var(--color-surface-interactive);
   border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   color: var(--color-text);
   font-family: var(--font-mono);
   font-size: var(--text-body);
   cursor: pointer;
-  transition: background var(--duration-fast) var(--ease);
-  padding-right: var(--space-04);
-  padding-left: var(--space-04);
+  /* padding-inline, not padding-left/right — physical properties do not
+     mirror under [dir="rtl"]. */
+  padding-inline: var(--space-04);
+  transition: background var(--duration-fast) var(--ease),
+    color var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease);
 }
-.toggle-btn:hover {
-  background: var(--color-bg-subtle);
+@media (hover: hover) {
+  .toggle-btn:hover {
+    background: var(--color-tint-brand);
+    border-color: var(--color-accent);
+  }
 }
 .toggle-btn[aria-pressed="true"] {
-  background: var(--color-text);
-  color: var(--color-bg);
-  border-color: var(--color-text);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  border-color: var(--color-accent);
+}
+@media (hover: hover) {
+  .toggle-btn[aria-pressed="true"]:hover {
+    background: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+  }
 }
 
 /* ------ Sections ------ */
@@ -394,34 +536,45 @@ pre,
 .hero h1 {
   font-size: var(--text-display);
 }
+/* Intro copy sits on the lead tier (17px), one clear step under h3 (19px)
+   and one over body (16px) — it is prose, not a heading. */
 .hero .sub {
   margin-block-start: var(--space-06);
   color: var(--color-text-secondary);
-  font-size: var(--text-h3);
+  font-size: var(--text-lead);
   font-weight: 400;
 }
 
-/* Concept underlines: blue/wavy = design, green/solid = engineering. Text
-   color stays inherited — only the underline carries the meaning, so it
-   still reads correctly for anyone who can't distinguish the hues (the
-   wavy-vs-solid style is the non-color signal). */
+/* Concept highlight: a light wash of the mat-driven tint behind the word,
+   like a highlighter bleeding into the paper — not underlined, not
+   recoloured text. This replaced an underline+colour treatment (wavy vs
+   dashed, ink-coloured text) once "design" and "engineering" were unified to
+   a single shared accent (see --color-concept in tokens.css): with both
+   spans reading the identical colour, an underline pattern was the only
+   thing left telling them apart, which was more machinery than the current
+   design calls for. Colour reverts to `inherit` — the surrounding heading or
+   paragraph's own ink — so the highlight is the entire signal, the same way
+   a real highlighter never changes the colour of the ink beneath it.
+
+   var(--color-tint-brand) already IS "the accent mixed lightly into the
+   current paper" (kami's own quietest-fill pattern, re-derived by
+   js/main.js every time the mat changes) — exactly the "bleeding into the
+   paper" look asked for, with zero new tokens.
+
+   Padding/margin are em, not the spacing scale: a highlight mark needs to
+   scale with the font size it sits inside (17px body copy vs a 40px h1), and
+   a fixed spacing-scale step can't do that. The negative inline margin pulls
+   the highlighted box back in by the same amount the padding pushed it out,
+   so adjacent words don't shift position — only the tint appears. Both words
+   are single, unbreakable tokens ("design", "engineering"), so there's no
+   multi-line inline-background artifacting to guard against. */
 .concept-design,
 .concept-engineering {
-  text-decoration-thickness: 0.08em;
-  text-decoration-line: underline;
-  -webkit-text-decoration-skip-ink: none;
-  text-decoration-skip-ink: none;
-}
-.concept-design {
-  text-decoration-style: wavy;
-  color: var(--color-concept-design);
-  text-underline-offset: 0.2em;
-}
-.concept-engineering {
-  text-decoration-style: dashed;
-  color: var(--color-concept-engineering);
-  text-underline-offset: 0.25em;
-  text-decoration-thickness: 0.1em;
+  background: var(--color-tint-brand);
+  border-radius: var(--radius-sm);
+  padding-inline: 0.15em;
+  margin-inline: -0.15em;
+  color: inherit;
 }
 
 /* Page-lead: intro paragraph under a section-title, reused across
@@ -429,7 +582,7 @@ pre,
 .lead {
   margin-block-start: var(--space-06);
   color: var(--color-text-secondary);
-  font-size: var(--text-h3);
+  font-size: var(--text-lead);
   font-weight: 400;
   max-inline-size: var(--measure);
 }
@@ -440,33 +593,131 @@ pre,
   margin-block-start: var(--space-08);
 }
 
+/* Two variants, no third: filled and ghost, both pill-shaped. A ghost button
+   carries the accent on its border and its label rather than a neutral
+   outline, so "this is an action" is signalled by the same ink that signals
+   "this is a link" everywhere else on the page.
+
+   The 1.5px ghost border is matched by a 1.5px transparent border on the
+   filled variant, so the two sit at identical heights in the same row. */
 .btn {
   display: inline-flex;
   align-items: center;
   gap: var(--space-03);
   padding: var(--space-04) var(--space-06);
   min-block-size: 2.75rem;
-  border-radius: var(--radius-sm);
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-pill);
   font-family: var(--font-heading);
   font-size: var(--text-body);
   font-weight: 500;
   text-decoration: none;
   transition: background var(--duration-fast) var(--ease),
-    color var(--duration-fast) var(--ease);
+    color var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease);
 }
 .btn-primary {
   background: var(--color-accent);
   color: var(--color-on-accent);
-}
-.btn-primary:hover {
-  background: var(--color-accent-hover);
+  border-color: var(--color-accent);
 }
 .btn-secondary {
-  border: 1px solid var(--color-border-strong);
-  color: var(--color-text);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
-.btn-secondary:hover {
+/* Hover is gated: on a touch screen :hover latches after a tap, so an
+   ungated rule leaves a button stuck in its hover colour after it is
+   pressed. */
+@media (hover: hover) {
+  .btn-primary:hover {
+    background: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+  }
+  .btn-secondary:hover {
+    background: var(--color-tint-brand);
+  }
+}
+
+/* Press feedback. Every pressable element on the site gets it, not just the
+   two obvious buttons — a control that stays perfectly still under the finger
+   reads as one that did not register the press, and having it on some
+   controls but not others is worse than not having it at all.
+   `.surface-picker-trigger` carries its own scale rule (it also has a hover
+   scale) and is not repeated here.
+
+   Motion-safe only, and transform is listed explicitly — never
+   `transition: all`, which would also animate layout properties. */
+@media (prefers-reduced-motion: no-preference) {
+  .btn,
+  .toggle-btn,
+  .surface-picker-swatch,
+  .surface-picker-reset,
+  .lightbox-close {
+    transition: background var(--duration-fast) var(--ease),
+      color var(--duration-fast) var(--ease),
+      border-color var(--duration-fast) var(--ease),
+      transform var(--duration-fast) var(--ease);
+  }
+  .btn:active,
+  .toggle-btn:active,
+  .surface-picker-swatch:active,
+  .surface-picker-reset:active,
+  .lightbox-close:active {
+    transform: scale(0.96);
+  }
+}
+
+/* ------ Card contract ------
+   Cards are a vocabulary, not a per-section choice, so every card on the site
+   shares one resting treatment and one hover treatment. Two sections with
+   different card physics read as two different products.
+
+   Resting: ivory fill, no closed border. The lift IS the fill — ivory is
+   brighter than the parchment it sits on, which is how paper behaves, and it
+   avoids stacking an outline on top of a surface change. Cards that are not
+   themselves interactive (.case-stat, .compare-col, .status-callout) stop
+   here.
+
+   Hover: whisper shadow plus a 1px rise, motion-safe and pointer-gated.
+   Interactive cards (.work-card, .highlight-card, .writing-item) opt in via
+   .is-liftable. Keyboard users get the same treatment through :focus-within,
+   on top of the focus ring itself. */
+.card-surface,
+.highlight-card,
+.writing-item,
+.case-stat,
+.compare-col,
+.status-callout {
   background: var(--color-bg-subtle);
+  border-radius: var(--radius-md);
+}
+
+.is-liftable {
+  transition: box-shadow var(--duration-fast) var(--ease),
+    background var(--duration-fast) var(--ease);
+}
+.is-liftable:focus-within {
+  box-shadow: var(--shadow-whisper);
+}
+@media (hover: hover) {
+  .is-liftable:hover {
+    box-shadow: var(--shadow-whisper);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .is-liftable {
+    transition: box-shadow var(--duration-fast) var(--ease),
+      background var(--duration-fast) var(--ease),
+      transform var(--duration-fast) var(--ease);
+  }
+  .is-liftable:focus-within {
+    transform: translateY(-1px);
+  }
+  @media (hover: hover) {
+    .is-liftable:hover {
+      transform: translateY(-1px);
+    }
+  }
 }
 
 /* ------ Work list ------ */
@@ -486,13 +737,22 @@ pre,
    places content first — the inline-start track — so it mirrors to the
    right automatically under [dir="rtl"] with no extra rule, same mechanism
    the old .work-item relied on for its arrow-only RTL override. */
+/* A divided list row rather than a boxed card, so it keeps its divider and
+   stays transparent at rest — but it takes the card fill and the card's
+   whisper-and-rise on hover (via .is-liftable in the markup), so the site
+   still has exactly one hover physics.
+
+   Padding lives on .work-card-content, not here — the row itself is
+   padding-free so .work-card-media can reach every edge of the row (full
+   height via align-items: stretch, flush to the outer inline edge, since
+   it's the grid's last track and there's nothing left inset around it). The
+   text column still gets exactly the same inset it always did; it just
+   supplies its own now instead of inheriting it from the row. */
 .work-card {
   position: relative; /* containment for the card-link ::after */
   display: grid;
   gap: var(--space-05);
-  padding: var(--space-07) var(--space-05);
   border-block-end: 1px solid var(--color-border);
-  transition: background var(--duration-fast) var(--ease);
 }
 @container (min-width: 40em) {
   .work-card {
@@ -501,29 +761,65 @@ pre,
     gap: var(--space-07);
   }
 }
-.work-card:hover,
 .work-card:focus-within {
   background: var(--color-bg-subtle);
 }
+@media (hover: hover) {
+  .work-card:hover {
+    background: var(--color-bg-subtle);
+  }
+}
 
+/* Inline padding is space-06, not space-05: once the row adopts a fill on
+   hover, 16px reads as text pressed against the edge of a surface. */
 .work-card-content {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: var(--space-05);
+  padding: var(--space-07) var(--space-06);
 }
 
+/* Edge-to-edge, not inset: no padding of its own, so it fills the row from
+   block-start to block-end and reaches the row's outer inline edge — the
+   image occupies its full half of the card, not a padded island inside it.
+   Corner radius stays var(--radius-md) as a deliberate aesthetic choice
+   (matches the card-fill vocabulary used elsewhere), not a padding-derived
+   one — there's no surrounding inset left to be concentric with.
+
+   At rest this is invisible — opacity: 0, not display: none — so the grid
+   column it occupies still exists (the row doesn't reflow to one column and
+   back when a card is hovered) and a real thumbnail, once one is added here,
+   has somewhere to fade into. Default reading is text only: description and
+   tags, no placeholder box competing for attention. The media surfaces only
+   when a visitor is actually looking at that card, via hover or — since this
+   opacity: 0 box carries no information (aria-hidden, presently empty) and
+   is purely decorative — keyboard focus-within on the row's own link. */
 .work-card-media {
   display: none;
-  border-radius: var(--radius-sm);
-  background: var(--color-bg-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-interactive);
   outline: 1px solid var(--color-image-edge);
   outline-offset: -1px;
   min-block-size: 12rem;
+  opacity: 0;
 }
 @container (min-width: 40em) {
   .work-card-media {
     display: block;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .work-card-media {
+    transition: opacity var(--duration-base) var(--ease);
+  }
+}
+.work-card.is-liftable:focus-within .work-card-media {
+  opacity: 1;
+}
+@media (hover: hover) {
+  .work-card.is-liftable:hover .work-card-media {
+    opacity: 1;
   }
 }
 
@@ -541,13 +837,16 @@ pre,
   position: absolute;
   inset: 0;
 }
-.work-card-title a:hover {
-  color: var(--color-accent);
+@media (hover: hover) {
+  .work-card-title a:hover {
+    color: var(--color-accent);
+  }
 }
 
 .work-card-desc {
   color: var(--color-text-secondary);
   font-size: var(--text-small);
+  line-height: var(--leading-dense);
 }
 
 .work-card-tags {
@@ -556,25 +855,39 @@ pre,
   gap: var(--space-03);
 }
 
-/* Concept tags: blue = design, green = engineering (see tokens.css). A
-   distinct class from the site's existing `.tag` (mono status chips, still
-   used on the Writing index) rather than repurposing it. */
+/* Concept tags: one fill for both. `.tag-pill--design` / `.tag-pill--engineering`
+   are still on the markup (harmless, semantic) but no longer style
+   differently — the work-card row uses the tag's own label text ("Design
+   System" vs "Code Connect") to carry the distinction, not colour. A distinct
+   class from the site's existing `.tag` (mono status chips, still used on the
+   Writing index) rather than repurposing it.
+
+   Solid tint fill, no outline: at 12px an outlined pill puts a hairline
+   around six words in a row and the eye lands on the shapes before the
+   labels.
+
+   Pill-shaped, matching the buttons. Shape is therefore not what separates an
+   action from a label here — fill and weight are: buttons carry the accent as
+   a solid fill or a 1.5px border and sit at body size, badges carry a flat
+   tint at 12px with no border. Keep that distinction when adding either.
+
+   `nowrap` because a two-line tag reads as broken rather than as flowing
+   text; the row wraps between tags instead. */
 .tag-pill {
   display: inline-flex;
   align-items: center;
-  border: 1px solid;
-  border-radius: 9999px;
+  border-radius: var(--radius-pill);
   padding: var(--space-02) var(--space-03);
   font-size: var(--text-mono);
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-concept);
+  background: var(--color-tag-bg);
 }
-.tag-pill--design {
-  color: var(--color-concept-design);
-  border-color: var(--color-concept-design);
-}
-.tag-pill--engineering {
-  color: var(--color-concept-engineering);
-  border-color: var(--color-concept-engineering);
+[dir="rtl"] .tag-pill {
+  letter-spacing: 0;
 }
 
 /* ------ Highlights strip (homepage stat cards) ------ */
@@ -590,27 +903,27 @@ pre,
     grid-template-columns: repeat(5, 1fr);
   }
 }
+/* Fill and hover come from the card contract above; only geometry here. */
 .highlight-card {
   position: relative;
   display: grid;
   gap: var(--space-02);
   padding: var(--space-05);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  transition: background var(--duration-fast) var(--ease);
 }
-.highlight-card:hover,
-.highlight-card:focus-within {
-  background: var(--color-bg-subtle);
-}
+/* tabular-nums so the five stat values line up as a row of figures rather
+   than as five independently-spaced strings. */
 .highlight-number {
+  font-family: var(--font-heading);
   font-size: var(--text-h3);
   font-weight: 600;
+  line-height: var(--leading-tight);
   color: var(--color-text);
+  font-variant-numeric: tabular-nums;
 }
 .highlight-label {
   position: static;
   font-size: var(--text-small);
+  line-height: var(--leading-dense);
   color: var(--color-text-secondary);
   text-decoration: none;
 }
@@ -620,8 +933,10 @@ pre,
   inset: 0;
   border-radius: var(--radius-md);
 }
-.highlight-label:hover {
-  color: var(--color-accent);
+@media (hover: hover) {
+  .highlight-label:hover {
+    color: var(--color-accent);
+  }
 }
 
 /* ------ Skills ------ */
@@ -657,7 +972,9 @@ pre,
   align-items: center;
   gap: var(--space-04);
   padding-block: var(--space-03);
-  border-block-end: 1px solid var(--color-border);
+  /* Row separator, not a section divider — the soft border keeps a
+     sixteen-row list from reading as sixteen boxes. */
+  border-block-end: 1px solid var(--color-border-soft);
 }
 .skill-index {
   font-family: var(--font-mono);
@@ -680,9 +997,15 @@ pre,
 .skill-name {
   font-size: var(--text-small);
 }
+/* 14px, not the 12px mono step. The 12px floor carries uppercase micro-labels
+   and badges — eyebrows, tags, index numbers, chips. This note runs to ten
+   words of sentence-case text ("Variables · Auto Layout · Dev Mode · Code
+   Connect"), which is prose, and prose stops at 14. Same reasoning for
+   .cert-meta and .colophon below. */
 .skill-note {
-  font-size: var(--text-mono);
+  font-size: var(--text-small);
   font-family: var(--font-mono);
+  line-height: var(--leading-dense);
   color: var(--color-text-secondary);
   margin-inline-start: auto;
 }
@@ -694,8 +1017,112 @@ pre,
   text-decoration: underline;
   text-underline-offset: 0.15em;
 }
-.prose a:hover {
-  color: var(--color-accent-hover);
+@media (hover: hover) {
+  .prose a:hover {
+    color: var(--color-accent-hover);
+  }
+}
+
+/* ------ About: text column + scrapbook photos ------
+   Two photos styled like physical prints — tilted, stacked one below the
+   other, taped onto the paper with a corner deliberately bleeding past its
+   edge onto the mat behind it. This is the one place on the site that
+   breaks the "whisper shadow only, never a hard drop" rule on purpose:
+   these are meant to read as objects sitting ON TOP of the page, not as a
+   card within the page's own flat design system — the same "a sheet resting
+   on a surface" logic that gives the page itself --shadow-paper, one level
+   up. Reusing that exact token here (rather than inventing a second
+   dramatic shadow) is deliberate: one idea, applied twice, at two scales.
+
+   #about is scoped throughout — .prose is shared with every case-study body
+   (work/*.html) and shouldn't pick up rules meant for exactly one section on
+   one page.
+
+   Text and photos are two SEPARATE grid tracks at desktop, not one shared
+   space with a photo floated over part of it — an earlier version tried the
+   latter (text left to find its own width, photos floated beside it) and it
+   collided with real paragraph text at the paper's own 44rem floor width
+   (measured: 90px of overlap, not theoretical). Reserving space
+   structurally, in two dedicated columns, makes that collision impossible
+   by construction rather than something to keep re-verifying: .about-text
+   gets a hard 60%, .about-photos gets what's left, and neither one's
+   content can ever reach into the other's track regardless of how the
+   paper's own fluid width happens to land. */
+.about-text {
+  display: grid;
+  gap: var(--space-05); /* same rhythm .prose itself uses everywhere else */
+}
+
+/* Below 64em (tablet AND mobile — deliberately grouped, not split at the
+   48em tablet line): a single implicit column. .about-text and
+   .about-photos are .prose's only two direct children, so they simply stack
+   — text first, full width, then photos below it. justify-self: end pushes
+   the photo block to the inline-end side of that row (only meaningful when
+   the container isn't already alone in a single track); margin-inline-end
+   is what lets it bleed past the paper's edge in EITHER mode — the value is
+   identical at every width, only margin-block-start (the gap above it)
+   changes once it moves from "below the text" to "beside it". A negative
+   margin overflows its grid track the same way a negative inset overflows a
+   containing block — no clipping either way unless something upstream
+   clips it, which is exactly what body's overflow: clip below 48em is for.
+
+   The photo stack itself is a flex column, not absolute-positioned
+   percentages — an earlier version pinned the second photo at a fixed 62%
+   down the first one's own box, which only looked right for whatever aspect
+   ratio the placeholder square happened to have. Flex just stacks each
+   photo under the one before it at its own natural height, so this keeps
+   working once real photos — square, portrait, whatever — replace
+   whatever's there now. */
+.about-photos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-03);
+  justify-self: end;
+  margin-block-start: var(--space-05);
+  margin-inline-end: calc(-1 * var(--paper-margin-inline) - var(--space-09));
+  inline-size: clamp(11rem, 20cqi, 15rem);
+  z-index: 1; /* under .site-header (8) and the surface picker (9) */
+}
+@media (min-width: 64em) {
+  /* The desktop split: text takes a flat 60%, photos get the remaining
+     track. align-items: start keeps the photo column pinned near the top of
+     the row instead of stretching to match all six paragraphs' combined
+     height. column-gap is wider than the vertical rhythm gap (--space-05)
+     used elsewhere in .prose — text and photos are two different ideas
+     sitting side by side, not two paragraphs in a reading sequence, and
+     wants more air between them than that implies. */
+  #about .prose {
+    grid-template-columns: 60% 1fr;
+    align-items: start;
+    column-gap: var(--space-07);
+  }
+  .about-photos {
+    margin-block-start: 0; /* was the gap above a below-text block; beside the text, that gap isn't wanted */
+  }
+}
+
+/* A fixed warm off-white, not a themed token: this represents a physical
+   printed photo, which doesn't turn dark just because the page's own theme
+   did. Padding is uneven on purpose — thicker at the block-end — the
+   classic instant-print proportions that make it read as a photo and not
+   just a card with a picture in it. */
+.about-photo {
+  background: #faf9f5;
+  padding: var(--space-03) var(--space-03) var(--space-07);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-paper);
+}
+.about-photo img {
+  inline-size: 100%;
+  block-size: auto;
+}
+.about-photo--one {
+  transform: rotate(4deg);
+  z-index: 1; /* sits in front of --two where the tilt overlaps slightly */
+}
+.about-photo--two {
+  transform: rotate(-5deg);
+  margin-block-start: calc(-1 * var(--space-04)); /* slight tuck, not a full gap — reads as one stack, not two separate cards */
 }
 
 /* ------ Footer ------ */
@@ -738,17 +1165,20 @@ pre,
   text-underline-offset: 0.15em;
   font-size: var(--text-small);
 }
-.footer-links a:hover {
-  color: var(--color-accent);
+@media (hover: hover) {
+  .footer-links a:hover {
+    color: var(--color-accent);
+  }
 }
 .colophon {
   margin-block-start: var(--space-08);
   padding-block-start: var(--space-05);
   border-block-start: 1px solid var(--color-border);
   color: var(--color-text-secondary);
-  font-size: var(--text-mono);
+  font-size: var(--text-small);
   font-family: var(--font-mono);
-  max-inline-size: none;
+  line-height: var(--leading-dense);
+  max-inline-size: var(--measure);
 }
 
 /* ------ Case study pages ------ */
@@ -758,7 +1188,7 @@ pre,
 }
 .case-summary {
   margin-block-start: var(--space-06);
-  font-size: var(--text-h3);
+  font-size: var(--text-lead);
   font-weight: 400;
   color: var(--color-text-secondary);
 }
@@ -798,10 +1228,14 @@ pre,
   font-size: var(--text-h2);
   margin-block-start: var(--space-07);
 }
+/* Inline code is its own style, not a slice of the code-block palette:
+   brand tint behind brand ink, so an identifier inside a sentence reads as a
+   token rather than as a lifted card fragment. */
 .prose code {
   font-family: var(--font-mono);
   font-size: 0.9em;
-  background: var(--color-bg-subtle);
+  background: var(--color-tint-brand);
+  color: var(--color-accent);
   border-radius: var(--radius-sm);
   padding: 0.1em 0.4em;
 }
@@ -841,9 +1275,15 @@ pre,
 .figure-zoom img {
   transition: opacity var(--duration-fast) var(--ease);
 }
-.figure-zoom:hover img,
+/* :focus-visible stays ungated — a keyboard user needs this cue on every
+   device, and it never latches the way :hover does after a tap. */
 .figure-zoom:focus-visible img {
   opacity: 0.88;
+}
+@media (hover: hover) {
+  .figure-zoom:hover img {
+    opacity: 0.88;
+  }
 }
 
 /* <dialog> ships its own UA styles (centered box, padding, border,
@@ -919,8 +1359,10 @@ pre,
   cursor: pointer;
   transition: background var(--duration-fast) var(--ease);
 }
-.lightbox-close:hover {
-  background: var(--color-on-scrim-muted-hover);
+@media (hover: hover) {
+  .lightbox-close:hover {
+    background: var(--color-on-scrim-muted-hover);
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -947,32 +1389,40 @@ pre,
   flex-wrap: wrap;
 }
 
-/* ------ NDA disclosure callout (case studies) ------ */
+/* ------ NDA disclosure callout (case studies) ------
+   The callout gesture: ivory fill plus one marked edge in the accent. The
+   fill is what makes it a callout rather than a quote, and marking one edge
+   rather than ringing all four keeps it from reading as another card. */
 .nda-note {
-  border-inline-start: 3px solid var(--color-border-strong);
+  border-inline-start: 3px solid var(--color-accent);
   background: var(--color-bg-subtle);
   padding: var(--space-04) var(--space-05);
   border-radius: var(--radius-sm);
   font-size: var(--text-small);
+  line-height: var(--leading-dense);
   color: var(--color-text-secondary);
 }
 
-/* ------ Placeholder note (unwritten narrative sections) ------ */
+/* ------ Placeholder note (unwritten narrative sections) ------
+   No `font-style: italic` here. The site ships no italic face for Inter (see
+   the @font-face note at the top of this file), so italic resolved to the
+   browser's synthetic oblique — a mechanically slanted upright, which is
+   exactly the artefact a portfolio built on self-hosted variable fonts
+   should not be showing. The dashed border and the secondary colour already
+   mark this as provisional. */
 .draft-note {
   border: 1px dashed var(--color-border-strong);
   padding: var(--space-04) var(--space-05);
   border-radius: var(--radius-sm);
   font-size: var(--text-small);
-  font-style: italic;
+  line-height: var(--leading-dense);
   color: var(--color-text-secondary);
   margin-block-start: var(--space-06);
 }
 
-/* ------ Case study: status callout (phase / adoption summary) ------ */
+/* ------ Case study: status callout (phase / adoption summary) ------
+   Fill and radius come from the card contract; only padding here. */
 .status-callout {
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-subtle);
-  border-radius: var(--radius-md);
   padding: var(--space-06);
 }
 .status-callout-label {
@@ -995,6 +1445,7 @@ pre,
 }
 .status-callout li {
   font-size: var(--text-small);
+  line-height: var(--leading-dense);
   color: var(--color-text-secondary);
 }
 .status-callout li strong {
@@ -1057,12 +1508,13 @@ pre,
 }
 .detail-list li {
   padding-block: var(--space-04);
-  border-block-end: 1px solid var(--color-border);
+  border-block-end: 1px solid var(--color-border-soft);
   font-size: var(--text-small);
+  line-height: var(--leading-dense);
   color: var(--color-text-secondary);
 }
 .detail-list li:first-child {
-  border-block-start: 1px solid var(--color-border);
+  border-block-start: 1px solid var(--color-border-soft);
 }
 .detail-list li strong {
   display: block;
@@ -1096,6 +1548,7 @@ pre,
 }
 .prose pre code {
   background: transparent;
+  color: inherit;
   padding: 0;
   font-size: var(--text-mono);
   line-height: var(--leading-body);
@@ -1112,8 +1565,6 @@ pre,
   }
 }
 .compare-col {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
   padding: var(--space-05);
   display: grid;
   gap: var(--space-03);
@@ -1128,6 +1579,7 @@ pre,
 }
 .compare-col p {
   font-size: var(--text-small);
+  line-height: var(--leading-dense);
   color: var(--color-text-secondary);
 }
 
@@ -1145,19 +1597,21 @@ pre,
   }
 }
 .case-stat {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
   padding: var(--space-06);
   display: grid;
   gap: var(--space-02);
 }
 .case-stat-number {
+  font-family: var(--font-heading);
   font-size: var(--text-display);
   font-weight: 600;
+  line-height: var(--leading-tight);
   color: var(--color-text);
+  font-variant-numeric: tabular-nums;
 }
 .case-stat-desc {
   font-size: var(--text-small);
+  line-height: var(--leading-dense);
   color: var(--color-text-secondary);
   max-inline-size: none;
 }
@@ -1179,7 +1633,7 @@ pre,
   inline-size: 100%;
   object-fit: cover;
   border-radius: var(--radius-md);
-  background: var(--color-bg-subtle);
+  background: var(--color-surface-interactive);
   outline: 1px solid var(--color-image-edge);
   outline-offset: -1px;
 }
@@ -1193,6 +1647,7 @@ pre,
   margin-block-start: var(--space-03);
   color: var(--color-text-secondary);
   font-size: var(--text-small);
+  line-height: var(--leading-dense);
 }
 .more-item-link {
   display: inline-block;
@@ -1206,16 +1661,10 @@ pre,
   display: grid;
   gap: var(--space-06);
 }
+/* Fill, radius, and hover come from the card contract; only geometry here. */
 .writing-item {
   position: relative;
   padding: var(--space-06);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  transition: background var(--duration-fast) var(--ease);
-}
-.writing-item:hover,
-.writing-item:focus-within {
-  background: var(--color-bg-subtle);
 }
 .writing-meta {
   display: flex;
@@ -1237,13 +1686,16 @@ pre,
   inset: 0;
   border-radius: var(--radius-md);
 }
-.writing-title a:hover {
-  color: var(--color-accent);
+@media (hover: hover) {
+  .writing-title a:hover {
+    color: var(--color-accent);
+  }
 }
 .writing-thesis {
   margin-block-start: var(--space-03);
   color: var(--color-text-secondary);
   font-size: var(--text-small);
+  line-height: var(--leading-dense);
   max-inline-size: var(--measure);
 }
 
@@ -1291,7 +1743,7 @@ pre,
   align-items: baseline;
   gap: var(--space-04);
   padding-block: var(--space-04);
-  border-block-end: 1px solid var(--color-border);
+  border-block-end: 1px solid var(--color-border-soft);
 }
 .cert-name {
   font-weight: 500;
@@ -1299,19 +1751,58 @@ pre,
 }
 .cert-meta {
   font-family: var(--font-mono);
-  font-size: var(--text-mono);
+  font-size: var(--text-small);
+  line-height: var(--leading-dense);
   color: var(--color-text-secondary);
 }
+/* ------ Certification: credential link ------
+   Optional — present only on certs that have a real, checkable credential
+   URL. Follows the same in-text link treatment as .prose a / .footer-links a
+   (accent colour, underline, gated hover) rather than the .btn or .tag-pill
+   vocabulary: this is a reference to outside proof, not an action this page
+   performs and not a status label. min-block-size matches .footer-links a
+   for the same reason — an inline text link is still a target, and 24px is
+   the WCAG 2.2 AA floor. */
+.cert-link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+@media (hover: hover) {
+  .cert-link:hover {
+    color: var(--color-accent-hover);
+  }
+}
+/* ------ Status chip ------
+   One component, two users: certification state (.cert-status) and the
+   Writing index's per-piece state (.tag). `.tag` was markup with no rule at
+   all — the class was referenced in this stylesheet's own comments and used
+   on three rows of writing/index.html, but never defined, so those chips
+   rendered as bare inline text inside a meta row.
+
+   Takes the same shape and fill treatment as .tag-pill so every badge on the
+   site is one component: solid tint, no outline, pill radius. The label
+   itself is always the non-colour signal, so the tint only reinforces what
+   the words already say. */
+.tag,
 .cert-status {
   font-family: var(--font-mono);
   font-size: var(--text-mono);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  background: var(--color-surface-interactive);
+  border-radius: var(--radius-pill);
   padding: var(--space-01) var(--space-03);
   color: var(--color-text-secondary);
+  white-space: nowrap;
 }
+/* The state worth marking gets the accent tint; everything settled or not yet
+   begun recedes into the neutral surface. */
 .cert-status[data-status="ongoing"] {
-  border-color: var(--color-accent);
+  background: var(--color-tag-bg);
   color: var(--color-accent);
 }
 
@@ -1349,11 +1840,33 @@ pre,
   cursor: pointer;
   transition: transform var(--duration-fast) var(--ease);
 }
-.surface-picker-trigger:hover {
-  transform: scale(1.04);
+@media (hover: hover) {
+  .surface-picker-trigger:hover {
+    transform: scale(1.04);
+  }
 }
 .surface-picker-trigger:active {
   transform: scale(0.96);
+}
+/* The trigger's only feedback is motion, so with motion off it needs a
+   static cue instead. The :hover half still has to be pointer-gated — a
+   reduced-motion preference says nothing about whether the device has a
+   hover-capable pointer, and an ungated rule here would latch the accent
+   border after a tap. :active never latches, so it stays ungated. */
+@media (prefers-reduced-motion: reduce) {
+  .surface-picker-trigger {
+    transition: border-color var(--duration-fast) var(--ease);
+  }
+  .surface-picker-trigger:active {
+    transform: none;
+    border-color: var(--color-accent);
+  }
+  @media (hover: hover) {
+    .surface-picker-trigger:hover {
+      transform: none;
+      border-color: var(--color-accent);
+    }
+  }
 }
 .surface-picker-trigger-swatch {
   inline-size: 1.25rem;
@@ -1378,6 +1891,42 @@ pre,
   display: none;
 }
 
+/* The panel used to appear and vanish instantly, with no connection to the
+   button that opened it. A popover should scale out of its trigger rather
+   than out of its own centre, so the origin is pinned to the corner the panel
+   is anchored from — and mirrored for RTL, since `transform-origin` takes
+   physical keywords and will not flip on its own.
+
+   Entry uses @starting-style with `display` on an allow-discrete transition,
+   so the animation runs off the existing `hidden` attribute with no extra
+   class and no JS change. Browsers without @starting-style simply get the
+   instant show/hide they get today.
+
+   0.97, never 0: nothing in the real world appears from nothing, and a
+   popover that grows from a point reads as a special effect rather than as a
+   panel arriving. */
+@media (prefers-reduced-motion: no-preference) {
+  .surface-picker-panel {
+    transform-origin: bottom right;
+    transition: opacity var(--duration-fast) var(--ease-entrance),
+      transform var(--duration-fast) var(--ease-entrance),
+      display var(--duration-fast) allow-discrete;
+  }
+  [dir="rtl"] .surface-picker-panel {
+    transform-origin: bottom left;
+  }
+  .surface-picker-panel[hidden] {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  @starting-style {
+    .surface-picker-panel {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+  }
+}
+
 .surface-picker-label {
   display: block;
   font-family: var(--font-mono);
@@ -1388,9 +1937,15 @@ pre,
   margin-block-end: var(--space-03);
 }
 
+/* The palette outgrew a single row once the original mat colours came back
+   alongside the kami neutrals. Capped at six per row (6 x 2rem + 5 x 0.5rem)
+   so it wraps to a tidy grid instead of running off the side of the panel on
+   a narrow screen. */
 .surface-picker-swatches {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-03);
+  max-inline-size: 14.5rem;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -1414,11 +1969,13 @@ pre,
 .surface-picker-swatch[aria-checked="true"] {
   border-color: var(--color-accent);
 }
-.surface-picker-swatch:hover {
-  border-color: var(--color-border-strong);
-}
-.surface-picker-swatch[aria-checked="true"]:hover {
-  border-color: var(--color-accent);
+@media (hover: hover) {
+  .surface-picker-swatch:hover {
+    border-color: var(--color-border-strong);
+  }
+  .surface-picker-swatch[aria-checked="true"]:hover {
+    border-color: var(--color-accent);
+  }
 }
 
 .surface-picker-custom {
@@ -1465,14 +2022,17 @@ pre,
   min-block-size: 1.5rem;
   padding: 0;
 }
-.surface-picker-reset:hover {
-  color: var(--color-accent);
+@media (hover: hover) {
+  .surface-picker-reset:hover {
+    color: var(--color-accent);
+  }
 }
 
 /* ------ Contact page ------ */
 .contact-meta {
   color: var(--color-text-secondary);
   font-size: var(--text-small);
+  line-height: var(--leading-dense);
   max-inline-size: var(--measure);
 }
 .contact-row {
@@ -1489,10 +2049,12 @@ pre,
   color: var(--color-text);
   text-decoration: none;
 }
-.contact-row a:hover {
-  color: var(--color-accent);
-  text-decoration: underline;
-  text-underline-offset: 0.15em;
+@media (hover: hover) {
+  .contact-row a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
 }
 .contact-row .sep {
   color: var(--color-text-secondary);
