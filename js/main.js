@@ -6,6 +6,11 @@
 
   const root = document.documentElement;
 
+  /* Reassigned by section 6 (only when the page has zoomable images) so
+     section 2's language toggle can keep the lightbox's per-image labels
+     in sync without section 2 needing to know section 6 exists. */
+  let refreshLightboxLabels = () => {};
+
   /* ------------------------------------------------------------------
      1. Theme toggle
      Order of truth: saved choice > OS preference > light.
@@ -50,6 +55,8 @@
       "footer.contact": "Contact",
       "footer.explore": "Explore",
       "footer.elsewhere": "Elsewhere",
+      "lightbox.expand": "View full-screen",
+      "lightbox.close": "Close",
     },
     ar: {
       skip: "تخطَّ إلى المحتوى الرئيسي",
@@ -65,6 +72,8 @@
       "footer.contact": "تواصل",
       "footer.explore": "استكشف",
       "footer.elsewhere": "أماكن أخرى",
+      "lightbox.expand": "عرض بملء الشاشة",
+      "lightbox.close": "إغلاق",
     },
   };
 
@@ -95,6 +104,7 @@
   if (langBtn) {
     langBtn.addEventListener("click", () => {
       applyLang(root.lang === "ar" ? "en" : "ar");
+      refreshLightboxLabels();
     });
   }
 
@@ -180,9 +190,11 @@
 
   /* ------------------------------------------------------------------
      4. Surface picker — recolor the cutting mat.
-     The default mat (per theme) is pure CSS — see tokens.css — so it
+     The default mat (per theme) is pure CSS — see tokens.css, including
+     the fixed --mat-texture grain this script never touches — so it
      renders correctly with this script absent. Everything below only
-     overrides that default when a visitor actually customizes it.
+     overrides --mat-image/--color-mat when a visitor actually customizes
+     the mat's color.
 
      The SVG template here is byte-for-byte the same shape as the one baked
      into tokens.css: a single ruled-mat panel — 50x25-unit grid at 24px
@@ -296,19 +308,8 @@
   const matImageValue = (hex) =>
     `url("data:image/svg+xml,${encodeURIComponent(matSvg(hex))}")`;
 
-  /* Two independent surface types share the same --mat-image/--color-mat
-     pair: a recolorable grid (SVG, built above) or a static photo (white
-     texture, wood grain — plain images, never recolored). Only one can be
-     active at a time, so applying either one clears the other's saved
-     choice. The photo swatches carry their own image URL and a
-     representative fallback color as data/inline-style attributes, so this
-     code never has to know the asset path or its depth relative to the
-     current page. */
   const colorSwatches = Array.prototype.slice.call(
     document.querySelectorAll(".surface-picker-swatch[data-color]")
-  );
-  const surfaceSwatches = Array.prototype.slice.call(
-    document.querySelectorAll(".surface-picker-swatch[data-surface]")
   );
 
   function applyMatColor(hex, { persist = true } = {}) {
@@ -316,26 +317,6 @@
     root.style.setProperty("--mat-image", matImageValue(hex));
     if (persist) {
       localStorage.setItem("matColor", hex);
-      localStorage.removeItem("matSurface");
-    }
-  }
-
-  function applyMatSurface(key, { persist = true } = {}) {
-    const sw = surfaceSwatches.find((s) => s.dataset.surface === key);
-    if (!sw) return;
-    /* Resolve to an absolute URL before it goes into --mat-image. A
-       relative url() stored in a custom property resolves against the
-       stylesheet that consumes it (css/styles.css's html::before rule),
-       not this page, so a bare relative path here would 404 exactly like
-       it did for the swatch thumbnails (see styles.css's comment on
-       .surface-picker-swatch). new URL() against the page's own URL
-       sidesteps that regardless of which directory depth this page is at. */
-    const absoluteUrl = new URL(sw.dataset.surfaceImage, document.baseURI).href;
-    root.style.setProperty("--mat-image", `url("${absoluteUrl}")`);
-    root.style.setProperty("--color-mat", sw.dataset.fallback);
-    if (persist) {
-      localStorage.setItem("matSurface", key);
-      localStorage.removeItem("matColor");
     }
   }
 
@@ -343,17 +324,14 @@
     root.style.removeProperty("--color-mat");
     root.style.removeProperty("--mat-image");
     localStorage.removeItem("matColor");
-    localStorage.removeItem("matSurface");
   }
 
   /* The anti-FOUC <head> script already set --color-mat (so there's no
-     wrong-color flash), but it didn't build the full --mat-image (textured
-     grid, or photo) — that's this deferred script's job. Do it before
+     wrong-color flash), but it didn't build the full --mat-image (the
+     textured grid) — that's this deferred script's job. Do it before
      wiring the picker UI. */
-  const savedMatSurface = localStorage.getItem("matSurface");
   const savedMatColor = localStorage.getItem("matColor");
-  if (savedMatSurface) applyMatSurface(savedMatSurface, { persist: false });
-  else if (savedMatColor) applyMatColor(savedMatColor, { persist: false });
+  if (savedMatColor) applyMatColor(savedMatColor, { persist: false });
 
   const picker = document.querySelector(".surface-picker");
   if (picker) {
@@ -361,17 +339,13 @@
     const panel = picker.querySelector(".surface-picker-panel");
     const colorInput = picker.querySelector('input[type="color"]');
     const resetBtn = picker.querySelector("[data-surface-reset]");
-    const allSwatches = colorSwatches.concat(surfaceSwatches);
 
     const currentMat = () =>
       getComputedStyle(root).getPropertyValue("--color-mat").trim();
 
-    /* Reflect the active selection across BOTH swatch radiogroups (Cutting
-       mat, Surfaces) and the native color input, without touching
-       --mat-image (used on init, and after every change). The two groups
-       are separate ARIA radiogroups — each keeps its own roving-tabindex
-       stop — but only one swatch total is ever aria-checked, since exactly
-       one surface can be active. */
+    /* Reflect the active selection across the swatch radiogroup and the
+       native color input, without touching --mat-image (used on init, and
+       after every change). */
     function syncPickerUI(selection) {
       let colorMatched = false;
       colorSwatches.forEach((sw) => {
@@ -384,22 +358,13 @@
       });
       if (!colorMatched && colorSwatches.length) colorSwatches[0].tabIndex = 0;
 
-      let surfaceMatched = false;
-      surfaceSwatches.forEach((sw) => {
-        const isMatch = selection.mode === "surface" && sw.dataset.surface === selection.value;
-        sw.setAttribute("aria-checked", String(isMatch));
-        sw.tabIndex = isMatch ? 0 : -1;
-        if (isMatch) surfaceMatched = true;
-      });
-      if (!surfaceMatched && surfaceSwatches.length) surfaceSwatches[0].tabIndex = 0;
-
       if (colorInput && selection.mode === "color") colorInput.value = selection.value;
     }
 
     function openPanel() {
       panel.hidden = false;
       trigger.setAttribute("aria-expanded", "true");
-      const target = allSwatches.find((sw) => sw.getAttribute("aria-checked") === "true");
+      const target = colorSwatches.find((sw) => sw.getAttribute("aria-checked") === "true");
       (target || colorSwatches[0]).focus();
     }
 
@@ -425,8 +390,8 @@
       }
     });
 
-    // Roving-tabindex radiogroups: arrow keys move focus AND select within
-    // their own group, matching native <input type="radio"> behavior.
+    // Roving-tabindex radiogroup: arrow keys move focus AND select,
+    // matching native <input type="radio"> behavior.
     colorSwatches.forEach((sw, i) => {
       sw.addEventListener("click", () => {
         applyMatColor(sw.dataset.color);
@@ -447,27 +412,6 @@
       });
     });
 
-    surfaceSwatches.forEach((sw, i) => {
-      sw.addEventListener("click", () => {
-        applyMatSurface(sw.dataset.surface);
-        syncPickerUI({ mode: "surface", value: sw.dataset.surface });
-      });
-      sw.addEventListener("keydown", (e) => {
-        const dirs = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
-        let nextIndex = null;
-        if (e.key in dirs)
-          nextIndex = (i + dirs[e.key] + surfaceSwatches.length) % surfaceSwatches.length;
-        else if (e.key === "Home") nextIndex = 0;
-        else if (e.key === "End") nextIndex = surfaceSwatches.length - 1;
-        if (nextIndex === null) return;
-        e.preventDefault();
-        const next = surfaceSwatches[nextIndex];
-        applyMatSurface(next.dataset.surface);
-        syncPickerUI({ mode: "surface", value: next.dataset.surface });
-        next.focus();
-      });
-    });
-
     if (colorInput) {
       colorInput.addEventListener("input", () => {
         applyMatColor(colorInput.value);
@@ -483,15 +427,128 @@
       });
     }
 
-    syncPickerUI(
-      savedMatSurface
-        ? { mode: "surface", value: savedMatSurface }
-        : { mode: "color", value: currentMat() }
-    );
+    syncPickerUI({ mode: "color", value: currentMat() });
   }
 
   /* ------------------------------------------------------------------
-     5. Footer year
+     6. Case-study image lightbox
+     Every image inside a case study's prose body (`.prose figure img`)
+     becomes a zoom trigger, opening a single shared <dialog> full-screen
+     over a scrim. Native <dialog>.showModal() supplies focus trapping,
+     Escape-to-close, and top-layer stacking for free, so there's no
+     hand-rolled focus trap here — just the open/close wiring and the
+     bilingual labels. This is purely additive: with this script absent
+     (or before it runs), the images render exactly as they always have,
+     inline at full size, so the base reading experience never depends
+     on it — nothing is hidden by CSS alone.
+  ------------------------------------------------------------------ */
+  const zoomImages = Array.prototype.slice.call(
+    document.querySelectorAll(".prose figure img")
+  );
+
+  if (zoomImages.length && "HTMLDialogElement" in window) {
+    const lightbox = document.createElement("dialog");
+    lightbox.className = "lightbox";
+
+    const figure = document.createElement("figure");
+    figure.className = "lightbox-figure";
+    const lbImg = document.createElement("img");
+    lbImg.className = "lightbox-image";
+    const caption = document.createElement("figcaption");
+    caption.className = "lightbox-caption";
+    figure.append(lbImg, caption);
+
+    const closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.className = "lightbox-close";
+    // Decorative X — the button's accessible name comes from aria-label
+    // (set/refreshed below), not from this icon.
+    closeBtn.innerHTML =
+      '<svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><path d="M2 2 L16 16 M16 2 L2 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+
+    lightbox.append(figure, closeBtn);
+    document.body.appendChild(lightbox);
+
+    let trigger = null; // the .figure-zoom button that opened the dialog
+
+    function currentLang() {
+      return root.lang === "ar" ? "ar" : "en";
+    }
+
+    function openLightbox(btn, img) {
+      trigger = btn;
+      lbImg.src = img.currentSrc || img.src;
+      lbImg.alt = img.alt;
+      const sourceFigcaption = img.closest("figure").querySelector("figcaption");
+      caption.textContent = sourceFigcaption ? sourceFigcaption.textContent : "";
+      // The image's own (English, per docs/CONTENT-GUIDE.md) alt text is a
+      // fine dialog name as-is — it doesn't need the "view full-screen"
+      // framing that the trigger button's label carries.
+      lightbox.setAttribute("aria-label", img.alt);
+      lightbox.showModal();
+      closeBtn.focus();
+    }
+
+    function handleDialogClosed() {
+      lbImg.src = "";
+      if (trigger) trigger.focus();
+    }
+
+    // The single explicit-close path (close button, scrim click, our own
+    // Escape handler below) — always cleans up immediately rather than
+    // waiting on the dialog's "close" event, which not every environment
+    // fires promptly for every closure method. Idempotent, so it's safe
+    // if "close" *also* fires afterward (see the listener right below).
+    function closeLightbox() {
+      if (lightbox.hasAttribute("open")) lightbox.close();
+      handleDialogClosed();
+    }
+
+    // Belt-and-braces alongside <dialog>'s native Escape handling: showModal()
+    // is supposed to close on Escape on its own, but that shouldn't be the
+    // *only* path — matches the surface picker's own manual Escape handler
+    // a few sections up for the same "don't solely trust the platform"
+    // reason.
+    lightbox.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeLightbox();
+    });
+
+    // Covers any native closure path that doesn't go through
+    // closeLightbox() above (i.e. <dialog>'s own Escape/cancel handling,
+    // where it fires promptly).
+    lightbox.addEventListener("close", handleDialogClosed);
+
+    // A click lands on the dialog element itself only when it isn't on a
+    // descendant (the figure or close button) — i.e. the scrim.
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+    closeBtn.addEventListener("click", closeLightbox);
+
+    const zoomButtons = [];
+    zoomImages.forEach((img) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "figure-zoom";
+      img.parentNode.insertBefore(btn, img);
+      btn.appendChild(img);
+      btn.addEventListener("click", () => openLightbox(btn, img));
+      zoomButtons.push({ btn, img });
+    });
+
+    refreshLightboxLabels = () => {
+      const lang = currentLang();
+      closeBtn.setAttribute("aria-label", STRINGS[lang]["lightbox.close"]);
+      const expandLabel = STRINGS[lang]["lightbox.expand"];
+      zoomButtons.forEach(({ btn, img }) => {
+        btn.setAttribute("aria-label", `${expandLabel}: ${img.alt}`);
+      });
+    };
+    refreshLightboxLabels();
+  }
+
+  /* ------------------------------------------------------------------
+     7. Footer year
   ------------------------------------------------------------------ */
   const year = document.querySelector("[data-year]");
   if (year) year.textContent = new Date().getFullYear();

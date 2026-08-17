@@ -120,34 +120,31 @@ defaults.
 ### Surface picker
 
 A floating control (`.surface-picker`, bottom-inline-end, independent of the
-header toggle row) lets a visitor change the background. It's split into two
-labeled groups:
+header toggle row) lets a visitor recolor the mat: six curated swatches plus
+a native `<input type="color">`. Picking a color persists to
+`localStorage.matColor`. A saved color is intentionally **global across both
+themes** — it overrides the theme-driven default in light and dark alike —
+with a "Reset to default" action that clears the override and lets the
+theme-driven color show again.
 
-- **Cutting mat** — six curated swatches plus a native `<input type="color">`
-  recolor the ruled grid mat. Picking a color persists to
-  `localStorage.matColor`. A saved color is intentionally **global across
-  both themes** — it overrides the theme-driven default in light and dark
-  alike — with a "Reset to default" action that clears the override and lets
-  the theme-driven color show again.
-- **Surfaces** — two static photo textures (white plaster, wood grain) swap
-  the mat for a photograph instead of the recolorable grid. Picking one
-  persists to `localStorage.matSurface` and clears any saved `matColor` (and
-  vice versa) — only one surface is ever active.
+(An earlier version also offered two static photo surfaces — white plaster,
+wood grain — as a swap-in for the recolorable grid. They were removed: flat
+stock photography read as pasted-on next to the mat's hand-authored SVG
+grid, and the procedural mat/paper grain below covers the "make it feel
+textured" goal without a photographic asset.)
 
-Applying it is split across two moments, deliberately:
+Applying a color change is split across two moments, deliberately:
 
 - The anti-FOUC `<head>` read on every page (mirroring the existing
   theme/lang pattern) sets only **`--color-mat`** before first paint — no
-  wrong-color flash on reload. For a photo surface this is a representative
-  fallback tone (the photo itself loads a beat later), not the mat's literal
-  fallback color.
+  wrong-color flash on reload.
 - The full **`--mat-image`** rebuild — the grid/ruler/protractor generator
-  for a mat color, or a photo URL for a surface — runs in the deferred
-  `js/main.js` instead. Duplicating that generator's loops and trigonometry
-  inside 13 pre-paint `<head>` scripts wasn't worth it for a background
-  layer — the flat mat color is already correct instantly, and the detailed
-  texture fills in moments later once the deferred script runs, which is
-  imperceptible in practice.
+  for the picked color — runs in the deferred `js/main.js` instead.
+  Duplicating that generator's loops and trigonometry inside 12 pre-paint
+  `<head>` scripts wasn't worth it for a background layer — the flat mat
+  color is already correct instantly, and the detailed grid fills in
+  moments later once the deferred script runs, which is imperceptible in
+  practice.
 
 The mat renders once per page, not tiled: `background-repeat: no-repeat`,
 `background-size: cover`, `background-position: left bottom` (see
@@ -164,23 +161,60 @@ ever references `--color-mat`. Any mat color is guaranteed not to touch text
 contrast — verified by setting an extreme saturated mat color and confirming
 `<body>`'s computed background and color are byte-identical before and after.
 
-Each group follows the APG radio-group pattern independently: roving
-`tabindex`, `aria-checked`, arrow keys move focus *and* select within that
-group (matching native `<input type="radio">`), `Escape` closes the popover
-and returns focus to the trigger. The two groups are separate radiogroups —
-each keeps its own roving-tabindex stop — but only one swatch total is ever
-`aria-checked`, since exactly one surface can be active across both.
+The swatch group follows the APG radio-group pattern: roving `tabindex`,
+`aria-checked`, arrow keys move focus *and* select (matching native
+`<input type="radio">`), `Escape` closes the popover and returns focus to
+the trigger.
 
-A relative-URL gotcha worth documenting: a photo surface's image URL cannot
-be stored in `--mat-image` as a bare relative path. A `url()` inside a CSS
-custom property resolves against the *stylesheet* that consumes it via
-`var()` — here, `css/styles.css`'s `html::before` rule — not the HTML page
-that set the property, so a relative path would resolve against `css/` and
-404 regardless of the page's own depth. `js/main.js` resolves each surface's
-path to an absolute URL (`new URL(path, document.baseURI)`) before writing
-it into `--mat-image`. The same reasoning is why the swatch thumbnails set
-their own `background-image` as a plain inline style rather than through a
-`--swatch-image` custom property read by styles.css.
+### Surface texture
+
+Both the mat and the paper carry a second, independent background layer: a
+tileable SVG noise panel (`feTurbulence` fractalNoise, 5–6 octaves,
+`stitchTiles: stitch` so the tile has no visible seam — `--mat-texture` and
+`--paper-texture` in `tokens.css`). Each pixel's alpha is coupled to its own
+lightness (both driven off the same `feComponentTransfer` gamma curve), so
+the grain has real peaks and valleys instead of a flat, uniform speckle —
+that coupling is what makes it read as "rough" rather than "hazy."
+`--paper-texture`'s `baseFrequency` is anisotropic (different on its two
+axes) for a directional, fibrous look; `--mat-texture` stays isotropic and
+runs at a coarser frequency — a self-healing cutting mat's rubber mottles
+at a glance rather than showing fibre.
+
+The blend mode is deliberately NOT `overlay` (an earlier version used it,
+uniformly, for both layers). Overlay is built to protect highlights/shadows
+and only perturb midtones — which makes it go nearly invisible right at the
+backdrop extremes our surfaces actually sit at (paper: near-white in light
+theme, near-black in dark; mat: every preset and default is dark-to-mid).
+Instead:
+
+- `--mat-texture` blends with `screen` in both themes — mat colors are
+  never near-white, so screen (which only adds visible *lighter* speckle)
+  reads correctly everywhere from the default black dark-theme mat to the
+  lightest preset.
+- `--paper-texture` uses a **themed** blend mode via `--paper-texture-blend`
+  — `multiply` in light theme (adds visible *darker* speckle to near-white
+  paper), `screen` under `[data-theme="dark"]` (adds visible *lighter*
+  speckle to near-black paper).
+
+Multiply is self-limiting by construction — because rising alpha and rising
+source value cancel each other at the extreme, the worst possible single
+pixel is bounded to roughly `alpha ÷ 4` darkening, which is why light
+theme's `--paper-texture` alpha can run as high as 0.32 and still keep
+`--color-text` at 13.3:1 in that worst case. Screen has no equivalent
+ceiling — an unchecked alpha can wash a peak pixel out toward full white —
+so dark theme's `--paper-texture` alpha is kept low (0.10). That value was
+picked by solving for the worst single-pixel case against every dark theme
+text token and keeping all of them ≥4.5:1 (`--color-accent` is the
+tightest, at 5.4:1; body text stays at 10.9:1). `--mat-texture` never sits
+under text, so it isn't bound by this and runs at a richer alpha (0.22) in
+both themes.
+
+(These alpha/gamma values are a second-pass tuning — an earlier, punchier
+version, 0.55/0.14/0.4 with steeper gamma curves, clearly read as texture
+but lost the material's subtlety and felt closer to sandpaper than paper.)
+
+Both textures are static (no animation), so there's nothing to gate behind
+`prefers-reduced-motion`.
 
 ## 4. Typography
 

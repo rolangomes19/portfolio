@@ -6,22 +6,30 @@
 /* ------ Fonts: self-hosted Inter ------
    Downloaded from rsms.me/inter/ rather than served via Google Fonts —
    one variable file covers the full weight range (100–900) instead of
-   separate static files per weight. Italic is included for the handful of
-   <em> uses in case-study copy; it's not preloaded (see the <link> in each
-   page's <head>) since it's rarely the first thing painted. */
+   separate static files per weight. No italic face: site-wide usage was
+   exactly one <em> (a case study) and one temporary .draft-note style,
+   neither worth a second ~380KB file — font-style: italic on this
+   family now resolves to the browser's synthetic/faux oblique, which is
+   indistinguishable at this usage's size and frequency. See
+   docs/FONT-LOADING-PERF-PLAN.md for the full before/after.
+
+   InterVariable.woff2, Commissioner-Variable.woff2, and
+   GeistMono-Variable.woff2 below are all Latin-subsetted (fontTools
+   pyftsubset — Basic Latin, Latin-1 Supplement, Latin Extended-A,
+   General Punctuation, Currency Symbols, Arrows, Geometric Shapes) —
+   a one-time, manual regeneration of the asset, not a build step. Full
+   Unicode originals covered dozens of scripts (Cyrillic, Greek,
+   Vietnamese...) this Latin-only site never renders through them —
+   Arabic is Estedad's job entirely, never these three. Re-run the
+   subset (command in the perf plan doc) if a future edit needs a
+   character outside that range; the font will otherwise silently fall
+   back to the browser's system sans/mono for just that character. */
 @font-face {
   font-family: "InterVariable";
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
   src: url("../assets/fonts/InterVariable.woff2") format("woff2");
-}
-@font-face {
-  font-family: "InterVariable";
-  font-style: italic;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url("../assets/fonts/InterVariable-Italic.woff2") format("woff2");
 }
 
 /* ------ Fonts: self-hosted Commissioner, Estedad, Geist Mono ------
@@ -70,16 +78,24 @@
    then stretches a `cover` image down the full document height. This is a
    static layer, not parallax — parallax is banned in DESIGN-GUIDELINES §8.
 
-   --mat-image is a single surface image — either the ruled-mat SVG (grid,
-   axis numbers, corner protractor — see tokens.css) or one of the
-   photographic surfaces from the picker (white texture, wood grain). It
-   renders once (`no-repeat`) and is scaled to fully cover the viewport
-   (`background-size: cover`), anchored `left bottom` so the mat's ruled
-   origin — or, for a photo surface, just the anchor corner — always sits
-   at the actual bottom-left of the screen instead of tiling in repeated
-   chunks. js/main.js overwrites this custom property with a freshly-built
-   version of the grid (recolored) or a photo surface's URL when a visitor
-   picks something in the surface picker. */
+   --mat-image is the ruled-mat SVG (grid, axis numbers, corner protractor —
+   see tokens.css). It renders once (`no-repeat`) and is scaled to fully
+   cover the viewport (`background-size: cover`), anchored `left bottom` so
+   the mat's ruled origin always sits at the actual bottom-left of the
+   screen instead of tiling in repeated chunks. js/main.js overwrites this
+   custom property with a freshly-built, recolored version when a visitor
+   picks a color in the surface picker.
+
+   --mat-texture is a second, independent layer: a tileable noise panel
+   (see tokens.css) giving the mat a mottled, rubberized surface instead
+   of a flat vector fill. It repeats at its own tile size while
+   --mat-image covers, and `background-blend-mode: screen` makes it read
+   correctly against the grid's fixed color AND any user-picked mat
+   color — every mat color is dark-to-mid, never near-white, and screen
+   is the blend mode that stays visible against a dark backdrop (see the
+   longer contrast writeup on --paper-texture in tokens.css, which uses
+   the same mat-vs-paper reasoning). Neither this rule nor js/main.js has
+   to know the mat's actual color for the texture to read correctly. */
 html {
   scroll-behavior: smooth;
   background-color: var(--color-mat);
@@ -95,10 +111,11 @@ html::before {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background-image: var(--mat-image);
-  background-repeat: no-repeat;
-  background-position: left bottom;
-  background-size: cover;
+  background-image: var(--mat-texture), var(--mat-image);
+  background-repeat: repeat, no-repeat;
+  background-position: left top, left bottom;
+  background-size: 300px 300px, cover;
+  background-blend-mode: screen, normal;
 }
 /* Below 48em the paper is full-bleed and the mat can never be seen — it's
    already inlined in this stylesheet either way (no separate request to
@@ -115,6 +132,14 @@ html::before {
    page margins be sized in cqi against the paper rather than the viewport.
    Note this makes <body> the containing block for positioned descendants —
    which is why the mat above hangs off <html> and not <body>. */
+/* The paper's own fibre grain (--paper-texture, see tokens.css) is a second
+   background layer over the flat --color-bg fill, tiled at its own size.
+   Unlike the mat, the paper flips from near-white (light theme) to
+   near-black (dark theme), and no single blend mode stays visible at both
+   extremes — so --paper-texture-blend is a token too, `multiply` in
+   :root and `screen` under [data-theme="dark"] (tokens.css has the full
+   contrast reasoning, including the worst-case-pixel math against every
+   text color). */
 body {
   inline-size: var(--paper-inline);
   margin-inline: auto;
@@ -122,7 +147,11 @@ body {
   margin-block-end: 0;
   min-block-size: 100vh;
   container-type: inline-size;
-  background: var(--color-bg);
+  background-color: var(--color-bg);
+  background-image: var(--paper-texture);
+  background-repeat: repeat;
+  background-size: 240px 240px;
+  background-blend-mode: var(--paper-texture-blend);
   box-shadow: var(--shadow-paper);
   color: var(--color-text);
   font-family: var(--font-sans);
@@ -130,7 +159,7 @@ body {
   font-weight: 400;
   letter-spacing: var(--tracking-body);
   line-height: var(--leading-body);
-  transition: background var(--duration-base) var(--ease),
+  transition: background-color var(--duration-base) var(--ease),
     color var(--duration-base) var(--ease);
 }
 
@@ -793,6 +822,124 @@ pre,
   color: var(--color-text-secondary);
 }
 
+/* ------ Case-study image lightbox ------
+   js/main.js wraps every `.prose figure img` in a `.figure-zoom` button at
+   runtime and builds one shared `.lightbox` <dialog>, appended once to
+   <body>, that any of those buttons can open. This is additive: with
+   JavaScript absent the images render exactly like any other figure
+   above, inline at full size — .figure-zoom never exists, so none of
+   this applies. */
+.figure-zoom {
+  appearance: none;
+  display: block;
+  inline-size: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+.figure-zoom img {
+  transition: opacity var(--duration-fast) var(--ease);
+}
+.figure-zoom:hover img,
+.figure-zoom:focus-visible img {
+  opacity: 0.88;
+}
+
+/* <dialog> ships its own UA styles (centered box, padding, border,
+   white background) — all overridden here so it becomes a full-viewport
+   scrim instead. The base rule applies regardless of the [open] state
+   (harmless while closed, since the UA's `dialog:not([open])` rule still
+   wins on `display`); centering only takes effect once [open] adds
+   `display: flex` — an unconditional `display` here would out-specificity
+   that UA rule and defeat `close()`. */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  max-inline-size: 100%;
+  max-block-size: 100%;
+  margin: 0;
+  padding: var(--space-07);
+  border: 0;
+  background: var(--color-scrim);
+  cursor: zoom-out;
+}
+.lightbox[open] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox::backdrop {
+  background: transparent;
+}
+
+.lightbox-figure {
+  position: relative;
+  margin: 0;
+  max-inline-size: 100%;
+  max-block-size: 100%;
+  cursor: default;
+}
+.lightbox-image {
+  display: block;
+  max-inline-size: min(92vw, 100%);
+  max-block-size: 80vh;
+  inline-size: auto;
+  block-size: auto;
+  border-radius: var(--radius-md);
+}
+.lightbox-caption {
+  margin-block-start: var(--space-04);
+  color: var(--color-on-scrim);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  text-align: center;
+}
+.lightbox-caption:empty {
+  display: none;
+}
+
+.lightbox-close {
+  appearance: none;
+  position: absolute;
+  inset-block-start: var(--space-05);
+  inset-inline-end: var(--space-05);
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--color-on-scrim-muted-hover);
+  background: var(--color-on-scrim-muted);
+  color: var(--color-on-scrim);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease);
+}
+.lightbox-close:hover {
+  background: var(--color-on-scrim-muted-hover);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lightbox[open] {
+    animation: lightbox-scrim-in var(--duration-base) var(--ease);
+  }
+  .lightbox-figure {
+    animation: lightbox-figure-in var(--duration-base) var(--ease-entrance);
+  }
+}
+@keyframes lightbox-scrim-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes lightbox-figure-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 .case-nav {
   display: flex;
   justify-content: space-between;
@@ -1169,12 +1316,11 @@ pre,
 }
 
 /* ------ Surface picker ------
-   A floating control, independent of the header toggle row, for changing
-   the background: recolor the cutting mat's grid, or swap it for a static
-   photo surface (white texture, wood grain). Lives outside <body> in
-   reading order conceptually (it's chrome, not content) but is placed just
-   before </body> in the DOM on every page so it never interrupts the
-   primary reading/tab order — visitors reach it only after the page's real
+   A floating control, independent of the header toggle row, for
+   recoloring the cutting mat's grid. Lives outside <body> in reading order
+   conceptually (it's chrome, not content) but is placed just before
+   </body> in the DOM on every page so it never interrupts the primary
+   reading/tab order — visitors reach it only after the page's real
    content. */
 .surface-picker {
   position: fixed;
@@ -1232,15 +1378,6 @@ pre,
   display: none;
 }
 
-/* Two groups share the panel: "Cutting mat" (recolorable grid swatches +
-   custom color) and "Surfaces" (static photo textures). Each is its own
-   labeled ARIA radiogroup — see js/main.js — with a rule between them. */
-.surface-picker-group + .surface-picker-group {
-  margin-block-start: var(--space-04);
-  padding-block-start: var(--space-04);
-  border-block-start: 1px solid var(--color-border);
-}
-
 .surface-picker-label {
   display: block;
   font-family: var(--font-mono);
@@ -1259,15 +1396,9 @@ pre,
   margin: 0;
 }
 
-/* Color swatches set --swatch (a plain hex) here, which url() resolution
-   never touches. Photo-surface swatches set their own background-image
-   directly via an inline style attribute instead of a --custom-property
-   url() — relative url()s inside a custom property resolve against the
-   stylesheet that *consumes* the var(), not the HTML page that authored
-   it, so routing a relative asset path through a var() here would resolve
-   it against this file's own folder (css/) and 404. An inline
-   background-image has no such indirection: it resolves against the page,
-   same as a plain <img src>. */
+/* Swatches set --swatch (a plain hex) as their fill; background-clip:
+   content-box insets it inside the padding so the focus/checked ring
+   (border-color, below) shows as a ring around the color dot. */
 .surface-picker-swatch {
   appearance: none;
   inline-size: 2rem;
@@ -1277,8 +1408,6 @@ pre,
   padding: 2px;
   cursor: pointer;
   background-color: var(--swatch, transparent);
-  background-size: cover;
-  background-position: center;
   background-clip: content-box;
   transition: border-color var(--duration-fast) var(--ease);
 }

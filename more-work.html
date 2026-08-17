@@ -16,14 +16,8 @@
         document.documentElement.lang = "ar";
         document.documentElement.dir = "rtl";
       }
-      var ms = localStorage.getItem("matSurface");
-      if (ms) {
-        var fallback = ms === "wood-grain" ? "#8a6a4a" : "#e9e7e2";
-        document.documentElement.style.setProperty("--color-mat", fallback);
-      } else {
-        var mc = localStorage.getItem("matColor");
-        if (mc) document.documentElement.style.setProperty("--color-mat", mc);
-      }
+      var mc = localStorage.getItem("matColor");
+      if (mc) document.documentElement.style.setProperty("--color-mat", mc);
     })();
   </script>
 
@@ -180,13 +174,6 @@
           <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>
           <input type="color" id="surface-picker-custom-input" value="#095848" />
           <button type="button" class="surface-picker-reset" data-surface-reset>Reset to default</button>
-        </div>
-      </div>
-      <div class="surface-picker-group">
-        <span class="surface-picker-label" id="surface-picker-surface-label">Surfaces</span>
-        <div class="surface-picker-swatches" role="radiogroup" aria-labelledby="surface-picker-surface-label">
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="0" data-surface="white-texture" data-fallback="#e9e7e2" data-surface-image="assets/images/white-texture.jpg" style="background-image:url('assets/images/white-texture.jpg')" aria-label="White texture"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-surface="wood-grain" data-fallback="#8a6a4a" data-surface-image="assets/images/wood-grain.jpg" style="background-image:url('assets/images/wood-grain.jpg')" aria-label="Wood grain"></button>
         </div>
       </div>
     </div>
