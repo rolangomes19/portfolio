@@ -275,6 +275,42 @@ the exact same generator (same grid pitch, same trig for the protractor) to
 build a live SVG for any color a visitor picks, not just the two shipped
 defaults.
 
+### Mobile/tablet nav (`.nav-toggle` / `.site-nav-panel`)
+Below `64em` the header's nav links and lang/theme toggles collapse behind
+a hamburger button; at `64em`+ they render exactly as before — a flat row
+in the header. Same open/close vocabulary as the surface picker (roving
+trigger/panel, outside-click and `Escape` both close it), and the same
+"purely additive" rule as the lightbox and drag engine everywhere else on
+this site.
+
+- **`display: contents` is the load-bearing default.** `.site-nav-panel`
+  wraps `.site-nav` and `.header-controls` and is `display: contents` at
+  *every* width until `js/main.js` §12 proves it can drive the toggle
+  (adds `.nav-js-ready` to `.site-header`) — `display: contents` makes the
+  wrapper invisible to layout, so its children render as direct flex
+  children of `.site-header .container` exactly as they did before this
+  wrapper existed. Absent JS, nothing about the header changes at any
+  width — no hamburger appears (nothing to click), nav links and toggles
+  sit in their normal flow position and wrap at narrow widths the same
+  way they always have. This is deliberate: a hamburger that's visible
+  but does nothing would be worse than no hamburger at all.
+- **`aria-expanded` is the single source of truth**, not a separate
+  JS-toggled class — the hamburger↔X icon animation reads the trigger's
+  own `[aria-expanded="true"]` in CSS, so the visual state and the
+  accessible state can never drift apart.
+- **`64em`+ has its own escape hatch**: `.site-nav-panel[hidden] { display: contents }`
+  under `min-width: 64em` guarantees the nav is never stuck hidden at
+  desktop width, regardless of whatever open/closed state a visitor's
+  last mobile-width interaction left behind — a CSS backstop underneath
+  the JS, which also actively closes the panel on that same `64em`
+  crossing via a `matchMedia` listener.
+- **Static markup, not injected.** Unlike the lightbox/tool-popover
+  (built by script, since they're wholly new UI), the toggle button and
+  panel wrapper are authored directly in each page's `<header>` — every
+  page shares the identical structure (`index.html`, `work/*.html`,
+  `writing/*.html`, `more-work.html`), only the nav links' `href` prefix
+  differs by folder depth.
+
 ### Surface picker
 
 A floating control (`.surface-picker`, bottom-inline-end, independent of the
@@ -346,14 +382,30 @@ nudge, gated `@media (hover: hover)`. The one-time "Play hint" banner (see
 below) mentions this control too, for visitors who never hover it.
 
 ### Play hint (`.play-hint`)
-A small dismissible tip, inserted once by `js/main.js` §10 right after the
-About heading — the first draggable surface a visitor reaches — introducing
-both the drag-anywhere feature (Draggable objects, above) and the surface
-picker. Dismissal is a single `localStorage.hintDismissed` flag; once set,
-the banner never appears again. Fades in via the site's existing
-`[data-reveal]`/`.reveal` machinery (§8) rather than a bespoke transition,
-so it's skipped entirely under reduced motion, exactly like every other
-below-the-fold reveal.
+A small dismissible toast, `position: fixed` top-center, built once by
+`js/main.js` §10 and revealed only once an `IntersectionObserver` reports
+the About section — the first draggable surface a visitor reaches — has
+actually scrolled into view. Introduces both the drag-anywhere feature
+(Draggable objects, above) and the surface picker. Dismissal is a single
+`localStorage.hintDismissed` flag; once set, the toast never appears again.
+
+- **Its own observer, not the shared reveal machinery.** Earlier this
+  lived inline right after the About heading and could reuse `[data-reveal]`/
+  `.reveal` (§8), since nothing needed watching until the element existed
+  at the trigger point in the flow. As a toast it exists from the moment
+  it's built, so it needs its own `IntersectionObserver` watching the
+  About *section*, not itself.
+- **Hidden unconditionally, not gated behind reduced motion.** Unlike a
+  decorative reveal, "hidden until the About section is reached" is this
+  component's actual function, not an animation nicety — so
+  `opacity`/`visibility` are hidden by default in plain CSS, and only the
+  fade/rise *transition* is wrapped in
+  `prefers-reduced-motion: no-preference`. A reduced-motion visitor still
+  only sees it appear at the right scroll position, just without the
+  animated entrance.
+- **`visibility`, not `opacity` alone**, keeps the close button out of the
+  tab order while hidden — otherwise a keyboard user tabbing through the
+  page could land on an invisible control before the toast ever appears.
 
 ### Surface texture
 

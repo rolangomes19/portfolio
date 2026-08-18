@@ -490,6 +490,116 @@ pre,
   }
 }
 
+/* ------ Mobile/tablet nav (hamburger) ------
+   Purely additive, same rule this codebase already applies to the
+   lightbox and the drag engine: `.site-nav-panel` defaults to
+   `display: contents` at EVERY width, so absent js/main.js §12 the
+   header renders exactly as it always has — nav links and the lang/theme
+   toggles in their normal flow position, wrapping at narrow widths same
+   as before, nothing collapsed, nothing to click. Only once that script
+   runs does `.site-header` gain `.nav-js-ready`, which is what actually
+   turns the hamburger button on and the panel into a real toggleable
+   dropdown below `64em` — both gated behind that one class, so there is
+   no state to reconcile if JS never runs. */
+.nav-toggle {
+  display: none;
+  min-inline-size: 2.75rem;
+  min-block-size: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface-interactive);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+.nav-toggle-icon,
+.nav-toggle-icon::before,
+.nav-toggle-icon::after {
+  display: block;
+  inline-size: 1.125rem;
+  block-size: 2px;
+  border-radius: 1px;
+  background: var(--color-text);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .nav-toggle-icon,
+  .nav-toggle-icon::before,
+  .nav-toggle-icon::after {
+    transition: transform var(--duration-fast) var(--ease), opacity var(--duration-fast) var(--ease);
+  }
+}
+.nav-toggle-icon {
+  position: relative;
+}
+.nav-toggle-icon::before,
+.nav-toggle-icon::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+}
+.nav-toggle-icon::before {
+  inset-block-start: -6px;
+}
+.nav-toggle-icon::after {
+  inset-block-start: 6px;
+}
+/* Hamburger → X, driven off the trigger's own aria-expanded rather than a
+   separate JS-toggled class — one state, already required for a11y,
+   instead of two that could drift out of sync. */
+.nav-toggle[aria-expanded="true"] .nav-toggle-icon {
+  background: transparent;
+}
+.nav-toggle[aria-expanded="true"] .nav-toggle-icon::before {
+  transform: translateY(6px) rotate(45deg);
+}
+.nav-toggle[aria-expanded="true"] .nav-toggle-icon::after {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+.site-nav-panel {
+  display: contents;
+}
+@media (max-width: 63.99em) {
+  .site-header.nav-js-ready .nav-toggle {
+    display: inline-flex;
+  }
+  .site-header.nav-js-ready .site-nav-panel {
+    display: block;
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 100%;
+    padding: var(--space-05) var(--paper-margin-inline) var(--space-07);
+    background: var(--color-bg);
+    border-block-end: 1px solid var(--color-border);
+    box-shadow: var(--shadow-float);
+  }
+  .site-header.nav-js-ready .site-nav-panel[hidden] {
+    display: none;
+  }
+  .site-header.nav-js-ready .site-nav ul {
+    flex-direction: column;
+    gap: var(--space-02);
+  }
+  .site-header.nav-js-ready .site-nav a {
+    font-size: var(--text-lead);
+  }
+  .site-header.nav-js-ready .header-controls {
+    margin-block-start: var(--space-06);
+    padding-block-start: var(--space-05);
+    border-block-start: 1px solid var(--color-border-soft);
+  }
+}
+@media (min-width: 64em) {
+  /* Desktop always shows the nav, regardless of whatever `hidden` state
+     a visitor's last mobile-width interaction left behind — resizing
+     from mobile to tablet-open to desktop must never strand the nav
+     hidden. js/main.js §12 also actively closes the panel on this same
+     64em crossing, so this is a CSS backstop, not the only guard. */
+  .site-nav-panel[hidden] {
+    display: contents;
+  }
+}
+
 /* ------ Sections ------ */
 .section {
   padding-block: var(--section-rhythm);
@@ -1174,22 +1284,55 @@ pre,
 
 /* ------ Play hint ------
    One-time dismissible tip introducing the drag-anywhere feature and the
-   mat color picker — js/main.js §10 inserts this only if the visitor
-   hasn't already dismissed it (a single localStorage flag), right after
-   the About heading, the first draggable surface on the page. Reuses the
-   site's existing [data-reveal]/.reveal machinery for its entrance (see
-   the Reveal animation block further down) rather than inventing a new
-   transition, so it fades in exactly like every other below-the-fold
-   element and is skipped entirely under reduced motion. */
+   mat color picker — js/main.js §10 builds this only if the visitor
+   hasn't already dismissed it (a single localStorage flag), and only
+   reveals it once an IntersectionObserver reports the About section
+   (the first draggable surface on the page) has actually been reached.
+   A floating top-center toast, not inline content — floating chrome gets
+   the same --color-bg/--shadow-float treatment as .surface-picker-panel,
+   not the flat --color-bg-subtle used for cards resting IN the page.
+
+   opacity/visibility are hidden unconditionally, NOT gated behind
+   prefers-reduced-motion — unlike a decorative reveal, "hidden until the
+   About section is reached" is this component's actual function. Only
+   the fade/rise TRANSITION itself is motion-gated below, so a
+   reduced-motion visitor still only sees the toast appear at the right
+   scroll position, just without the animated entrance. visibility (not
+   opacity alone) also keeps the close button out of the tab order while
+   hidden — a keyboard user tabbing through shouldn't be able to land on
+   an invisible control. */
 .play-hint {
+  position: fixed;
+  inset-block-start: var(--space-12);
+  inset-inline: var(--space-05);
+  margin-inline: auto;
+  max-inline-size: 26rem;
+  z-index: 10; /* above the header (8) and surface picker (9) — a toast should never hide behind either */
   display: flex;
   align-items: center;
   gap: var(--space-04);
-  margin-block-start: var(--space-06);
   padding: var(--space-04) var(--space-05);
   border-radius: var(--radius-md);
-  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  box-shadow: var(--shadow-float);
   color: var(--color-text);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(calc(-1 * var(--reveal-rise)));
+  pointer-events: none;
+}
+.play-hint.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  pointer-events: auto;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .play-hint {
+    transition: opacity var(--duration-reveal) var(--ease-entrance),
+      transform var(--duration-reveal) var(--ease-entrance);
+  }
 }
 .play-hint p {
   margin: 0;

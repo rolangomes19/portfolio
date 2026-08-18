@@ -62,19 +62,25 @@
     <div class="container">
       <a class="site-logo" href="index.html"><img src="assets/rolan-icon.png" alt="rolan face"> Rolan Gomes</a>
 
-      <nav class="site-nav" aria-label="Main">
-        <ul>
-          <li><a href="#work" data-i18n="nav.work">Works</a></li>
-          <li><a href="#about" data-i18n="nav.about">About</a></li>
-          <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
-        </ul>
-      </nav>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-panel" data-i18n-label="nav.toggle" aria-label="Menu">
+        <span class="nav-toggle-icon" aria-hidden="true"></span>
+      </button>
 
-      <div class="header-controls">
-        <button class="toggle-btn" type="button" data-lang-toggle aria-pressed="false" data-i18n="toggle.lang">العربية</button>
-        <button class="toggle-btn" type="button" data-theme-toggle aria-pressed="false" data-i18n-label="toggle.theme" aria-label="Toggle dark mode">
-          <span aria-hidden="true">◐</span>
-        </button>
+      <div class="site-nav-panel" id="site-nav-panel">
+        <nav class="site-nav" aria-label="Main">
+          <ul>
+            <li><a href="#work" data-i18n="nav.work">Works</a></li>
+            <li><a href="#about" data-i18n="nav.about">About</a></li>
+            <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
+          </ul>
+        </nav>
+
+        <div class="header-controls">
+          <button class="toggle-btn" type="button" data-lang-toggle aria-pressed="false" data-i18n="toggle.lang">العربية</button>
+          <button class="toggle-btn" type="button" data-theme-toggle aria-pressed="false" data-i18n-label="toggle.theme" aria-label="Toggle dark mode">
+            <span aria-hidden="true">◐</span>
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -274,64 +280,65 @@
              here is invented content; it's marked so it can't be mistaken
              for real copy. -->
         <div class="sticker-board" data-reveal>
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+          <button type="button" class="tool-sticker" data-description="I have used Figma to build pixel perfect designs for web and mobile applications. I build responsive layouts and create interactive prototypes and also a Design System, if you have somehow missed that information so far :p" data-proficiency="Expert">
             <img class="tool-sticker-img" src="assets/images/tools/Figma.svg" alt="Figma" width="169" height="209" loading="lazy" decoding="async" />
           </button>
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+          <button type="button" class="tool-sticker" data-description="I have used Adobe Illustrator to create vector graphics and illustrations for various projects. My tool of choice for creating scalable graphics and logos." data-proficiency="Expert">
             <img class="tool-sticker-img" src="assets/images/tools/Adobe_Illustrator.svg" alt="Adobe Illustrator" width="184" height="184" loading="lazy" decoding="async" />
           </button>
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+          <button type="button" class="tool-sticker" data-description="Photoshop is where all this magic happens — from retouching photos to creating stunning digital artwork." data-proficiency="Expert">
             <img class="tool-sticker-img" src="assets/images/tools/Adobe_Photoshop.svg" alt="Adobe Photoshop" width="184" height="182" loading="lazy" decoding="async" />
           </button>
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+          <button type="button" class="tool-sticker" data-description="I have used Paper to sketch out ideas and create rough drafts for various projects. I like Paper for it's HTML based design, which makes it easy to build with AI tools like Claude Code, and it's OKLCH native color support." data-proficiency="Intermediate">
             <img class="tool-sticker-img" src="assets/images/tools/Paper.svg" alt="Paper" width="189" height="189" loading="lazy" decoding="async" />
           </button>
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+          <button type="button" class="tool-sticker" data-description="I have used Tailwind CSS to build responsive and maintainable user interfaces. I leverage its utility-first approach to create consistent designs quickly." data-proficiency="Intermediate">
             <img class="tool-sticker-img" src="assets/images/tools/Tailwind%20CSS.svg" alt="Tailwind CSS" width="198" height="158" loading="lazy" decoding="async" />
           </button>
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+          <button type="button" class="tool-sticker" data-description="I have used HTML to structure web pages and create the foundation for web applications." data-proficiency="Expert">
             <img class="tool-sticker-img" src="assets/images/tools/HTML.svg" alt="HTML" width="186" height="199" loading="lazy" decoding="async" />
           </button>
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+          <button type="button" class="tool-sticker" data-description="I have used CSS to style web pages and create visually appealing user interfaces." data-proficiency="Expert">
             <img class="tool-sticker-img" src="assets/images/tools/CSS.svg" alt="CSS" width="184" height="196" loading="lazy" decoding="async" />
           </button>
 
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+          <button type="button" class="tool-sticker" data-description="Accessibility has been a concept close to me from the time I started learning web development. I strive to create inclusive experiences for all users. But I really internalized the importance of accessible design when I had to use devices and get my work done with a broken right hand for the entirety of two months, so you know that this is not just a checkbox for me." data-proficiency="Intermediate">
             <img class="tool-sticker-img" src="assets/images/tools/a11y.svg" alt="Accessibility (a11y)" width="198" height="198" loading="lazy" decoding="async" />
           </button>
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+
+          <button type="button" class="tool-sticker" data-description="Accessibility has been a concept close to me from the time I started learning web development. I strive to create inclusive experiences for all users. But I really internalized the importance of accessible design when I had to use devices and get my work done with a broken right hand for the entirety of two months, so you know that this is not just a checkbox for me." data-proficiency="Intermediate">
             <img class="tool-sticker-img" src="assets/images/tools/a11y-text.svg" alt="Accessibility (a11y) logotype" width="205" height="132" loading="lazy" decoding="async" />
           </button>
 
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+          <button type="button" class="tool-sticker" data-description="I have used Claude to assist with writing and editing code, as well as brainstorming ideas and solving complex problems. This whole website was created with Claude's help. If Claude was a human, he'd be the best man at my wedding." data-proficiency="Intermediate">
             <img class="tool-sticker-img" src="assets/images/tools/Claude.svg" alt="Claude" width="185" height="186" loading="lazy" decoding="async" />
           </button>
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+          <button type="button" class="tool-sticker" data-description="I have used GitHub Copilot to assist with writing code and generating ideas. It's like having a helpful assistant by your side. The Design System was built with Copilot's assistance, helped me to undertsand React JS much better and to create a more accessible user interface." data-proficiency="Intermediate">
             <img class="tool-sticker-img" src="assets/images/tools/Github%20Copilot.svg" alt="GitHub Copilot" width="206" height="185" loading="lazy" decoding="async" />
           </button>
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+          <button type="button" class="tool-sticker" data-description="I have used Midjourney to generate visual content for my projects, including illustrations and concept art. It has been a valuable tool for bringing creative ideas to life. It's an engineer-turned designer's dream come to life to create images with specifications and parameters and not just words. But what I love (and hate) about it is the ambiguity and unpredictability of the results. Makes you to think and explore instead of being focused on your first idea." data-proficiency="Intermediate">
             <img class="tool-sticker-img" src="assets/images/tools/Midjourney.svg" alt="Midjourney" width="184" height="168" loading="lazy" decoding="async" />
           </button>
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+          <button type="button" class="tool-sticker" data-description="VS Code is the playground for my coding adventures. Combined with Github Copilot, it's my go-to environment for development. I'm also guilty of spending too much time in it chasing the right theme, instead of focusing on the code." data-proficiency="Intermediate">
             <img class="tool-sticker-img" src="assets/images/tools/VSCode.svg" alt="Visual Studio Code" width="196" height="196" loading="lazy" decoding="async" />
           </button>
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+          <button type="button" class="tool-sticker" data-description="Relatively new to Github as a tool, but finding it useful for version control and collaboration. I'm hosting this portfolio on Github and using it for code management." data-proficiency="Beginner">
             <img class="tool-sticker-img" src="assets/images/tools/github.svg" alt="GitHub" width="184" height="184" loading="lazy" decoding="async" />
           </button>
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+          <button type="button" class="tool-sticker" data-description="Tool of choice for managing development workflows, enterprise projects, and team collaboration." data-proficiency="Intermediate">
             <img class="tool-sticker-img" src="assets/images/tools/DevOps.svg" alt="DevOps" width="184" height="188" loading="lazy" decoding="async" />
           </button>
 
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+          <button type="button" class="tool-sticker" data-description="Relatively new to Adobe Premiere Pro, but finding it useful for video editing and post-production tasks." data-proficiency="Beginner">
             <img class="tool-sticker-img" src="assets/images/tools/Adobe_Premiere_Pro.svg" alt="Adobe Premiere Pro" width="184" height="182" loading="lazy" decoding="async" />
           </button>
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+          <button type="button" class="tool-sticker" data-description="Well, MS Office is a staple in my productivity toolkit, used for document creation, data analysis, and communication. What else can you even say about it? It's indispensable." data-proficiency="Intermediate">
             <img class="tool-sticker-img" src="assets/images/tools/Microsoft%20Office.svg" alt="Microsoft Office" width="182" height="207" loading="lazy" decoding="async" />
           </button>
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+          <button type="button" class="tool-sticker" data-description="I use Notion to organize my thoughts, manage tasks, and collaborate with others. I love the clean and intuitive interface, and it's accessibility with multiple devices. Not to miss, the good integration with other tools and availability of templates to use." data-proficiency="Intermediate">
             <img class="tool-sticker-img" src="assets/images/tools/Notion.svg" alt="Notion" width="180" height="184" loading="lazy" decoding="async" />
           </button>
-          <button type="button" class="tool-sticker" data-description="Placeholder — replace with a real description of how you use this tool." data-proficiency="Placeholder — replace with your real proficiency">
+          <button type="button" class="tool-sticker" data-description="I have experience using Power Pages to create custom web applications and forms for various projects while working on the Wipfli Hub project. We pushed Power Pages to its limits with custom integrations, and it has been a valuable tool for creating dynamic web experiences." data-proficiency="Intermediate  ">
             <img class="tool-sticker-img" src="assets/images/tools/Power%20Pages.svg" alt="Power Pages" width="184" height="184" loading="lazy" decoding="async" />
           </button>
         </div>
