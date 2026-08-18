@@ -64,6 +64,7 @@
       "nav.writing": "Writing",
       "nav.morework": "More work",
       "nav.contact": "Contact",
+      "nav.toggle": "Menu",
       "toggle.theme": "Toggle dark mode",
       "toggle.lang": "العربية", // button shows the OTHER language
       "actions.work": "View my work",
@@ -81,6 +82,7 @@
       "nav.writing": "الكتابة",
       "nav.morework": "أعمال أخرى",
       "nav.contact": "تواصل",
+      "nav.toggle": "القائمة",
       "toggle.theme": "تبديل الوضع الداكن",
       "toggle.lang": "English",
       "actions.work": "عرض أعمالي",
@@ -1261,19 +1263,34 @@
   /* ------------------------------------------------------------------
      10. Play hint
      One-time dismissible tip introducing §9's drag-anywhere feature and
-     the surface picker (section 4). Purely additive chrome, same pattern
-     as the lightbox above: with this script absent, or once already
-     dismissed, there's simply no tip — nothing else depends on it.
+     the surface picker (section 4) — a floating toast (top-center,
+     position: fixed in styles.css), not inline content, so it needs its
+     OWN IntersectionObserver watching the About SECTION rather than the
+     hint element itself (which is how the earlier inline version got
+     away with reusing §3's reveal machinery — nothing to watch until the
+     element existed at the trigger point in the flow; a toast exists
+     from the moment it's built, so watching itself would just fire
+     immediately at the top of the page).
+
+     Unlike a decorative reveal, "hidden until the About section is
+     reached" is this component's actual function, not an animation
+     nicety — so styles.css hides it (opacity/visibility) unconditionally,
+     not gated behind reduced-motion, and only the FADE transition itself
+     is motion-gated. A reduced-motion visitor still only sees it appear
+     at the right scroll position, just without the fade.
+
+     Purely additive chrome either way: with this script absent, or once
+     already dismissed, there's simply no tip — nothing else depends on it.
   ------------------------------------------------------------------ */
-  if (!localStorage.getItem("hintDismissed")) {
-    const aboutTitle = document.getElementById("about-title");
-    if (aboutTitle) {
+  if (!localStorage.getItem("hintDismissed") && "IntersectionObserver" in window) {
+    const aboutSection = document.getElementById("about");
+    if (aboutSection) {
       const hint = document.createElement("div");
       hint.className = "play-hint";
 
       const text = document.createElement("p");
       text.textContent =
-        "Photos and tool stickers can be dragged anywhere on the page — even past the paper, onto the mat. The mat's own color is yours to change too, from the swatch in the corner.";
+        "Photos and tool stickers can be dragged anywhere on the page — even past the paper, onto the mat. The mat's own color is yours to change too, from the swatch in the bottom corner.";
 
       const closeBtn = document.createElement("button");
       closeBtn.type = "button";
@@ -1287,27 +1304,20 @@
       });
 
       hint.append(text, closeBtn);
-      aboutTitle.insertAdjacentElement("afterend", hint);
+      document.body.appendChild(hint);
 
-      // Reuses §3's `.reveal`/`.is-visible` classes and `show()` (its own
-      // IntersectionObserver is block-scoped to §3, so this gets a small
-      // dedicated one rather than reaching into that scope) — same fade,
-      // same stagger token, skipped entirely under reduced motion.
-      if (motionQuery.matches && "IntersectionObserver" in window) {
-        hint.classList.add("reveal");
-        const hintIo = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                show(entry.target);
-                hintIo.unobserve(entry.target);
-              }
-            });
-          },
-          { threshold: 0.1, rootMargin: "0px 0px -12% 0px" }
-        );
-        hintIo.observe(hint);
-      }
+      const hintIo = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              hint.classList.add("is-visible");
+              hintIo.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+      hintIo.observe(aboutSection);
     }
   }
 
@@ -1416,5 +1426,73 @@
     );
     toolPopoverEl.showModal();
     toolPopoverParts.closeBtn.focus();
+  }
+
+  /* ------------------------------------------------------------------
+     12. Mobile/tablet nav toggle
+     Purely additive — see the long comment on .nav-toggle/.site-nav-panel
+     in styles.css for the full "why": without this, .site-nav-panel's
+     `display: contents` default means the header behaves exactly as it
+     always has at every width. Only once this runs does .site-header
+     gain .nav-js-ready, which is what actually turns the hamburger
+     button on and the panel into a toggleable dropdown below 64em (both
+     gated behind that class in CSS). Open/close mechanics mirror the
+     surface picker (§4) — roving trigger/panel, outside-click and
+     Escape both close it, aria-expanded is the single source of truth
+     the icon's hamburger→X animation reads too, so there's nothing to
+     keep in sync separately.
+  ------------------------------------------------------------------ */
+  const navToggle = document.querySelector(".nav-toggle");
+  const navPanel = document.getElementById("site-nav-panel");
+  const siteHeaderEl = document.querySelector(".site-header");
+  if (navToggle && navPanel && siteHeaderEl) {
+    navPanel.hidden = true;
+    siteHeaderEl.classList.add("nav-js-ready");
+
+    function openNav() {
+      navPanel.hidden = false;
+      navToggle.setAttribute("aria-expanded", "true");
+    }
+    function closeNav({ returnFocus = false } = {}) {
+      navPanel.hidden = true;
+      navToggle.setAttribute("aria-expanded", "false");
+      if (returnFocus) navToggle.focus();
+    }
+
+    navToggle.addEventListener("click", () => {
+      if (navPanel.hidden) openNav();
+      else closeNav();
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!navPanel.hidden && !siteHeaderEl.contains(e.target)) closeNav();
+    });
+
+    navPanel.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        closeNav({ returnFocus: true });
+      }
+    });
+
+    // Anchor links inside the panel scroll the page to a section — leaving
+    // the panel open over the destination would just be in the way.
+    navPanel.querySelectorAll("a").forEach((a) => {
+      a.addEventListener("click", () => closeNav());
+    });
+
+    // A resize that crosses into desktop width must never strand the
+    // panel open (or aria-expanded stuck true) — CSS already forces the
+    // nav visible there regardless (see the min-width: 64em rule in
+    // styles.css), but the trigger's own state should still reflect
+    // reality if the visitor resizes back down again later.
+    const desktopQuery = window.matchMedia("(min-width: 64em)");
+    // Reads the live desktopQuery.matches rather than the change event's
+    // own .matches — real browsers populate that on a MediaQueryListEvent,
+    // but reading the list itself is correct regardless of how the event
+    // was constructed, and doesn't depend on that detail holding.
+    desktopQuery.addEventListener("change", () => {
+      if (desktopQuery.matches) closeNav();
+    });
   }
 })();
