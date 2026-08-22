@@ -924,11 +924,14 @@ pre,
     transition: opacity var(--duration-base) var(--ease);
   }
 }
-.work-card.is-liftable:focus-within .work-card-media {
+/* Media reveal is independent of is-liftable: a gated card (no link, no
+   lift/shadow) still shows its thumbnail on hover, since the image itself
+   implies nothing about clickability. */
+.work-card:focus-within .work-card-media {
   opacity: 1;
 }
 @media (hover: hover) {
-  .work-card.is-liftable:hover .work-card-media {
+  .work-card:hover .work-card-media {
     opacity: 1;
   }
 }
