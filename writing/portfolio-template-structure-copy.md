@@ -213,7 +213,7 @@ Before anything else, internalize this: **Dubai hiring managers in enterprise/fi
 /contact
 ```
 
-**Order rationale:** Blueprint first because it's your flagship systems piece. AI second because it's the most timely differentiator. Accessibility third because UAE finance/government cares deeply about compliance. Migration fourth for engineering depth. Framework fifth as thought leadership. Do not list Incridea or Offsite as primary case studies — move them to a "More Work" section or the About page as range signals.
+**Order rationale:** Blueprint first because it's your flagship systems piece. AI second because it's the most timely differentiator. Accessibility third because UAE finance/government cares deeply about compliance. Migration fourth for engineering depth. Framework fifth as thought leadership. **Deliberate strategy change, confirmed:** Incridea 2022 stays as a featured case study on the homepage because of its scale — it's not a discrepancy with the rest of this guidance, just a later call that overrides this specific line. Offsite still moves to a "More Work" section or the About page as a range signal.
 
 ### Hero Section (Home)
 
