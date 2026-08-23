@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Blueprint Design System — Rolan Gomes</title>
-  <meta name="description" content="Case study: building the Blueprint Design System from the ground up for Wipfli Hub — a three-tier OKLCH token model, a brand color corrected for AA contrast, an elevation model built on shadow rather than tint, and the Code Connect links that made an 80% LLM design-to-code conversion rate possible." />
+  <meta name="description" content="Case study: building the Blueprint Design System from the ground up for the Hub platform — a three-tier OKLCH token model, a brand color corrected for AA contrast, an elevation model built on shadow rather than tint, and the Code Connect links that made an 80% LLM design-to-code conversion rate possible." />
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
 
   <script>
@@ -82,7 +82,7 @@
       <div class="container" data-reveal-intro>
         <span class="eyebrow">May 2025 – present · Design systems · Figma · Code Connect</span>
         <h1 id="case-title">Blueprint Design System</h1>
-        <p class="case-summary">Wipfli Hub had five squads shipping the same button five different ways, and no bridge between Figma and code besides screenshots and goodwill. I led design on the system that fixed both, working alongside a UX Lead Architect and a frontend engineer — a three-tier OKLCH token architecture, a documented component kit, and the Code Connect links that turned out to be exactly what an LLM needed too.</p>
+        <p class="case-summary">The Hub platform had five squads shipping the same button five different ways, and no bridge between Figma and code besides screenshots and goodwill. I led design on the system that fixed both, working alongside a UX Lead Architect and a frontend engineer — a three-tier OKLCH token architecture, a documented component kit, and the Code Connect links that turned out to be exactly what an LLM needed too.</p>
 
         <dl class="facts-bar">
           <div class="fact"><dt>Role</dt><dd>Design, definitions, documentation, foundational architecture</dd></div>
@@ -91,7 +91,7 @@
               <ul class="team-list">
                 <li>Nabarun Chakravarty — UX Lead Architect</li>
                 <li>Rolan Gomes — UX Designer</li>
-                <li>Satvik Nayak — UX Engineer (joined for Phase&nbsp;2)</li>
+                <li>Satvik Nayak — UX Engineer (joined partway through Phase&nbsp;1)</li>
               </ul>
             </dd>
           </div>
@@ -117,11 +117,11 @@
         <p class="nda-note">Detailed UI masked per NDA. Process artifacts and metrics shared with permission. <!-- PLACEHOLDER: confirm written sign-off covering the published (not just interview-walkthrough) version before this goes live — see Master Profile §11.15.1 --></p>
 
         <h2>Context</h2>
-        <p>Wipfli's brand system was built for print and editorial. Nobody had thought much about product. Into that gap, engineering teams filled in their own interpretations, on whatever stack they were already on, with nothing to check their work against.</p>
+        <p>The brand system at a top-20 US accounting and consulting firm was built for print and editorial. Nobody had thought much about product. Into that gap, engineering teams filled in their own interpretations, on whatever stack they were already on, with nothing to check their work against.</p>
 
         <p>I saw the trigger up close. Inside a single project, the same button showed up four different ways, built by four different developers who'd each made their own reasonable call. No shared framework, no single source of truth. Teams that should have been building the same thing were quietly building four different things instead.</p>
 
-        <p>That's when it stopped being a nice-to-have and turned into a real problem worth fixing. I took it to Wipfli's internal IT Director and pitched building a design system. The pitch got approved — not as a funded line item with set hours, but as permission to work on it whenever sprint commitments left room. Meeting the deadlines the team set for itself meant putting in time outside working hours; that's what actually got Phase 1 built.</p>
+        <p>That's when it stopped being a nice-to-have and turned into a real problem worth fixing. I took it to the firm's internal IT Director and pitched building a design system. The pitch got approved — not as a funded line item with set hours, but as permission to work on it whenever sprint commitments left room. Meeting the deadlines the team set for itself meant putting in time outside working hours; that's what actually got Phase 1 built.</p>
 
         <h2>Why a style guide wouldn't have fixed this</h2>
         <p>Multiple versions of the same component meant nobody had unified control over how it looked or worked. A single bug fix meant hunting down every page it touched and fixing it there too, one at a time. Simple problems turned tedious fast.</p>
@@ -130,7 +130,7 @@
 
         <figure>
           <img src="../assets/images/brand-wipfli.svg" width="1200" height="720" alt="Existing Brand Guidelines - print and marketing focused." loading="lazy" decoding="async" />
-          <figcaption>Brand Guidelines for Wipfli - Typography and Colors</figcaption>
+          <figcaption>Brand Guidelines for the firm - Typography and Colors</figcaption>
         </figure>
 
         <h2>Two phases, and the pivot between them</h2>
@@ -139,7 +139,7 @@
         <p>The pivot to Phase 2 happened partway through, almost by accident. It became clear that a well-documented design system doesn't just keep Figma tidy — it makes a design-to-code workflow possible. Once I saw that, Phase 2 more or less defined itself. Satvik Nayak, a frontend engineer with real depth in React, Base UI, Radix UI, and Tailwind CSS, joined the team partway through Phase 1 — and his technical depth is what made Phase 2 possible in the first place; we planned it together once he was on board. It wasn't a random hire either: upcoming projects, and pieces of the ones already running, were headed toward React anyway. So the plan became simple — move fast, get components into real code, and prove it out on the task management work inside the Hub platform first.</p>
 
         <div class="case-quote">
-          <p>This was never a one-person job. I reported to Nabarun, our UX Lead Architect, but the design decisions were mine to make — backed by data and research, then brought to him in review for feedback and sign-off. That's not the same as being directed; it's how a team keeps one person's judgment accountable to the rest of the group. With Satvik on Phase 2, it worked differently again: he owned how everything came together in code, Code Connect included, with just as much say in his half as I had in mine.</p>
+          <p>This was never a one-person job. I reported to Nabarun, our UX Lead Architect, who had final say. Within that, I had the liberty to decide color, typography, elevation, and iconography based on research and judgment, brought to him for review and sign-off. With Satvik on Phase 2, it worked differently again: he owned how everything came together in code, Code Connect included, with just as much say in his half as I had in mine.</p>
         </div>
 
         <h2>Foundations</h2>
@@ -177,7 +177,7 @@
         <h3>Token architecture: three tiers, one direction of flow</h3>
         <p>Blueprint runs on a three-tier token model. Primitive values sit at the bottom. Semantic tokens, named for what they mean rather than what they look like, sit in the middle. Component tokens sit on top, and those are what a React component actually reads. Everything flows one direction, primitive to semantic to component. A component never reaches down and grabs a primitive directly.</p>
 
-        <p>The worked example is worth walking through as an actual decision, not just a chain of values. The brand guidelines list the primary blue as <code>#0050FF</code>. Blueprint doesn't use that value — it uses <code>#004DFF</code> instead, substituted right at the primitive layer, because <code>#0050FF</code> doesn't clear WCAG&nbsp;2.2&nbsp;AA sitting behind white body text. That's not a rounding error, and it isn't a quiet workaround either — it's a stated correction: the brand's own primary color, adjusted on purpose, with the reasoning written down. Marketing keeps the guideline value; the product ships the accessible one.</p>
+        <p>Blue was the first color decision in the design system, and every other hue was built downstream of it. The anchor blue, <code>#004DFF</code>, was chosen to hold up against black as much as against white, since blue elements are frequently paired with black text and used directly on black backgrounds in banners, buttons, and marketing graphics. That decision anchored blue-500 in OKLCH, and every other hue in the system — red, green, yellow, the tinted greys — was then built by holding lightness constant against that same blue-500 anchor and adjusting hue and chroma. That's also why the one deliberate break from the pattern (yellow's anchor moving to 600 instead of 500) reads as a considered exception rather than an inconsistency.</p>
 
         <figure>
           <!-- PLACEHOLDER image -->
