@@ -82,7 +82,7 @@
       <div class="container" data-reveal-intro>
         <span class="eyebrow">May 2025 – present · Design systems · Figma · Code Connect</span>
         <h1 id="case-title">Blueprint Design System</h1>
-        <p class="case-summary">The Hub platform had five squads shipping the same button five different ways, and no bridge between Figma and code besides screenshots and goodwill. I led design on the system that fixed both, working alongside a UX Lead Architect and a frontend engineer — a three-tier OKLCH token architecture, a documented component kit, and the Code Connect links that turned out to be exactly what an LLM needed too.</p>
+        <p class="case-summary">The Hub platform had five squads shipping the same button five different ways, and no bridge between Figma and code besides screenshots and goodwill. I led design on the system that fixed both, working alongside a UX Lead Architect and a frontend engineer — an Atomic Design component hierarchy sitting on top of a three-tier OKLCH token architecture, and the Code Connect links that turned out to be exactly what an LLM needed too.</p>
 
         <dl class="facts-bar">
           <div class="fact"><dt>Role</dt><dd>Design, definitions, documentation, foundational architecture</dd></div>
@@ -142,7 +142,25 @@
           <p>This was never a one-person job. I reported to Nabarun, our UX Lead Architect, who had final say. Within that, I had the liberty to decide color, typography, elevation, and iconography based on research and judgment, brought to him for review and sign-off. With Satvik on Phase 2, it worked differently again: he owned how everything came together in code, Code Connect included, with just as much say in his half as I had in mine.</p>
         </div>
 
+        <h2>Composition model: Atomic Design</h2>
+        <p>Everything under Foundations and everything in the component kit follows Brad Frost's Atomic Design methodology — atoms, molecules, organisms, templates, and pages, each level built from the one below it. I didn't bolt this on after the fact; it's the reason Phase 1 was sequenced the way it was. Foundations got built first, and a single component wasn't touched until color, typography, spacing, elevation, and iconography were locked. That's Atomic Design's own build order, applied without ever naming it in the earlier drafts of this case study — an omission worth correcting, since it's the methodology the whole system runs on.</p>
+
+        <p>One distinction matters here, because it's easy to get wrong: the token tiers (Primitive → Semantic → Component, covered in the next section) and the Atomic Design tiers (atoms → molecules → organisms) are two different hierarchies, not the same one under two names. Token tiers describe how a <em>value</em> resolves — how <code>#004DFF</code> becomes <code>Brand/Primary</code> becomes the background of a solid button. Atomic Design describes how a <em>component</em> gets composed — how a Button and a Tooltip combine into an icon-only button, and how that combines with others into a toolbar. Foundations sit <em>underneath</em> atoms, supplying the values every atom is built from, the same way protons and electrons sit underneath a chemical atom without being atoms themselves.</p>
+
+        <dl class="prop-list">
+          <dt>Subatomic (Foundations)</dt><dd>Color primitives, type scale, spacing scale, elevation shadows, icon spec. Raw values, not independently functional in a UI — a <code>Space/4</code> token or an OKLCH value doesn't do anything on its own.</dd>
+          <dt>Atoms</dt><dd>Button, Input, Label, Icon, Avatar, Badge, Checkbox, Radio. The smallest components that are still functional on their own. Can't be broken down further without losing what makes them useful.</dd>
+          <dt>Molecules</dt><dd>Icon-only button + Tooltip, Split Button, Connected Button Group, Form Field (Label + Input + helper/error text). Small, purpose-built groups of atoms. Each one does exactly one job.</dd>
+          <dt>Organisms</dt><dd>Data Table (rows/columns of text, numbers, indicator icons, icon-button actions, dropdowns, status pills, checkboxes, redirecting actions). Distinct, complex sections of an interface, composed of molecules, atoms, or other organisms.</dd>
+          <dt>Templates</dt><dd>Page Frame (Header + Footer, D365 Power Pages–style), Modal/Drawer Frame (scrim + container). Page-level layout with components placed, content structure defined, no final content yet.</dd>
+          <dt>Pages</dt><dd>Task management proof of concept (Hub platform, Phase 2). Templates with real content in place — the point where the system gets tested against actual use.</dd>
+        </dl>
+
+        <p>Foundations, covered next, is the subatomic layer: the raw material every atom in the system is built from.</p>
+
         <h2>Foundations</h2>
+
+        <p>This is the subatomic layer — the raw material every atom in the component kit is built from. None of it is directly usable in a UI on its own; a font-weight primitive or a shadow value only becomes something a user interacts with once it's assembled into an atom like Button or Input.</p>
 
         <h3>Typography: brand identity meets product legibility</h3>
         <p>Phase 1 launched with the brand's own editorial fonts: Anton, Montserrat, Lora. On a product screen, none of them held up. Anton is all caps with thick strokes, built for huge display sizes, and it turns into a mess at title scale in a real interface. Montserrat's characters run wide, so anything data-dense started to feel cramped.</p>
@@ -230,7 +248,7 @@
           <figcaption>Elevation model by shadow depth</figcaption>
         </figure>
 
-        <h2>Component: Button</h2>
+        <h2>Atom: Button</h2>
         <p>The Button is the component that started all of this. Four different implementations in one project were what got the whole pitch approved in the first place. It's also the clearest place to see the token layers actually working together, since every variant is just a combination of choices across a few independent dimensions.</p>
 
         <dl class="prop-list">
@@ -276,16 +294,52 @@ export type ButtonProps =
   (LabelledButtonProps | IconOnlyButtonProps) &amp;
   React.ButtonHTMLAttributes&lt;HTMLButtonElement&gt;</code></pre>
 
-  <figure>
+        <p>Button is the atom everything else in the component kit builds on. It doesn't combine with anything else to become useful — it already is. But it's also the piece that molecules like the icon-only button's Tooltip wrapper, the Split Button, and the Connected Button Group all start from, which is why getting its states, sizing, and accessibility contract right mattered more than any other single component in the system.</p>
+
+        <figure>
           <!-- PLACEHOLDER image -->
           <img src="../assets/images/components-bds.svg" width="1200" height="694" alt="Some components of the design system" loading="lazy" decoding="async" />
-          <figcaption>Some components of the design system</figcaption>
+          <figcaption>Some atoms and molecules in the component kit</figcaption>
         </figure>
+
+        <h2>Molecule: Icon-only Button + Tooltip</h2>
+        <p>The clearest molecule in the system is small on purpose. An icon-only button is an Atom (Button) that, alone, fails a basic usability requirement — it has no visible text, so a screen reader user and a keyboard user who can see the screen but has no label to read both lose information a labelled button gives away for free. Pairing it with a Tooltip atom fixes that. Together, the two atoms take on a property neither one has by itself: an icon-only control that's fully identifiable no matter how someone is navigating the interface. That's the molecule test from Atomic Design — a group of atoms that, combined, does something none of them does alone.</p>
+
+        <p>The pairing isn't optional or left to whoever's building the screen to remember. The component's TypeScript types won't compile for an icon-only button unless both <code>aria-label</code> and <code>tooltip</code> are supplied, and the component wraps itself in the Tooltip atom automatically whenever <code>iconOnly</code> is <code>true</code>. The molecule is enforced at the type level, not just documented in prose.</p>
+
+        <p>Split Button and Connected Button Group are the same molecule pattern applied one level up — both compositions of the Button atom, both fully designed and documented in the Docsite as designed-but-not-built, the same status the "Documentation as a first-class artifact" section describes for the system generally. A Split Button pairs a primary action with a secondary dropdown trigger, sharing a single visual container; a Connected Button Group takes a row of Button atoms and removes the spacing and corner radius between them so the row reads as one control instead of several. Neither needed a new foundational decision — like the icon-only button, both are Button, recombined.</p>
+
+        <h2>Organism: Data Table</h2>
+        <p>The data table is the clearest proof that the hierarchy compounds. Every piece of it already exists somewhere earlier in this case study — the table itself introduces almost nothing new. What it does introduce is composition at scale: the same small set of atoms and molecules, repeated and combined differently across dozens of rows, each row still behaving predictably because every cell type resolves back to a component that was already defined once.</p>
+
+        <p><strong>Composition, by cell type:</strong></p>
+        <ul class="detail-list">
+          <li><strong>Text and numeric cells</strong> — the Label atom, styled off the same type scale as everywhere else in the system. Numeric columns right-align by convention; text columns left-align.</li>
+          <li><strong>Indicator icons</strong> — the Icon atom, used to flag a row-level condition (a warning, a flag, an attachment) without consuming a full column of text.</li>
+          <li><strong>Icon-button actions</strong> — the Icon Button molecule (Button atom + Tooltip atom, covered above) reused directly, unmodified, inside a table cell. This is the compounding in action: a molecule built for one context works in a completely different one without a single change.</li>
+          <li><strong>Dropdowns</strong> — a menu trigger molecule (Button atom or Icon Button molecule, paired with a menu/listbox), used for inline row actions or filtering without leaving the table.</li>
+          <li><strong>Status pills</strong> — a Badge atom carrying semantic color intent (the same six intents from the Color System section — action, critical, success, warning, and so on), so a status pill's color always means the same thing here as it does anywhere else in the product.</li>
+          <li><strong>Checkboxes</strong> — the Checkbox atom, used for row selection and bulk actions.</li>
+          <li><strong>Redirecting actions</strong> — a row-level action (an icon button or a whole-row click target) that routes to one of two destinations: a full page navigation for a deep, standalone view, or a right-side drawer for a lighter, in-context look without losing the table underneath it. Which destination a given table uses is a product decision made per use case, not something the table component enforces on its own.</li>
+        </ul>
+
+        <p>A table row is a Molecule — a fixed set of cell-level atoms and molecules arranged in a line, functioning as a unit. The table itself, with its header row, its body of repeated row molecules, and (where present) pagination or bulk-action controls, is the Organism — a distinct, complex section of the interface built entirely from pieces defined once, upstream, and never redefined here. Nothing in the table needed a new color, a new spacing value, or a new interaction pattern. That's the payoff of building foundations before atoms and atoms before molecules: by the time you need something as complex as a data table, you're assembling, not designing from scratch.</p>
+
+        <h2>Templates: Page Frame + Modal/Drawer Frame</h2>
+        <p>Two templates carry the system from components into layout.</p>
+
+        <p><strong>Page Frame</strong> attaches a Header and a Footer to a blank canvas, and every new page created in the Hub platform starts from it. Neither the header nor the footer gets rebuilt or re-attached per page — the template handles that once, the same way Microsoft's Power Pages configures page layout in Dynamics 365: a base template every new page inherits from, not a convention every page author has to remember to follow. That's the actual value of a template in Atomic Design terms — it's not a design decision, it's the removal of a decision a page author would otherwise have to make (and could get wrong) every single time.</p>
+
+        <p><strong>Modal/Drawer Frame</strong> pairs a background scrim with a container, and the same template serves two different placements: a centered modal and a right-side drawer. The scrim and the container are the constant. Position, entry animation, and width are what change between the two. Building this as one template instead of two means a scrim-behavior fix — dismiss-on-click-outside, focus trapping, whatever it is — only has to happen once and both placements inherit it.</p>
+
+        <p>Both templates sit exactly where Atomic Design says they should: below Pages, above Organisms. Neither one is a component, and neither one has final content in it — they're the layout skeleton a Page (like the task management proof of concept) gets poured into.</p>
 
         <h2>Process &amp; governance</h2>
 
         <h3>Governance: a real intake process, not a placeholder</h3>
         <p>When a team wants a new component added, it doesn't just get built. Design sits down with dev and whoever's asking for it — could be a BA, a QA, a PO, anyone actually using the system day to day — and we work through three questions together: does something like this already exist? How often would it really get used? Is this a one-project need, or something other teams will want too? That conversation is what decides whether it gets built at all.</p>
+
+        <p>Part of "does something like this already exist" is a tier question, not just a naming one: is what's being requested actually a new atom, or is it a molecule that can be assembled from atoms already in the kit? A lot of requests that sound like new components turn out to be a new combination of existing ones — which changes the scope of the work from "design and build something new" to "document a new composition," a much smaller lift.</p>
 
         <p>If the answer's yes, it gets designed against the foundational layer already in place, broken down into its smallest parts, and scoped properly before anyone opens a design file. Then it gets built in code and documented the same way everything else is: anatomy, usage, behavior, accessibility. Only after all of that does it become an official part of the system.</p>
 
@@ -306,7 +360,7 @@ export type ButtonProps =
         </div>
 
         <h3>Documentation as a first-class artifact</h3>
-        <p>Documentation lives in a custom Docsite, built on the firm's internal DevOps wiki. Every component page follows the exact same structure: definitions, anatomy, properties, a code snippet in both React and plain HTML and CSS, accessibility notes. Read one page, and you already know where to find anything on any other page.</p>
+        <p>Documentation lives in a custom Docsite, built on the firm's internal DevOps wiki. Every component page follows the exact same structure: definitions, anatomy, properties, a code snippet in both React and plain HTML and CSS, accessibility notes. Read one page, and you already know where to find anything on any other page. The Docsite's navigation follows the same hierarchy: Foundations first, then Atoms, then Molecules, then Organisms — so browsing the sidebar top to bottom is, itself, a walkthrough of how the system composes, without anyone having to read an explanation of the methodology first.</p>
 
         <p>There's a small discipline in there worth pointing out. The docs separate what's actually built from what's only planned: a split button and a connected button group are both fully designed and written up in the docsite right now, and both are labeled plainly as not yet built. It's the same honesty I used for the Phase 1 and Phase 2 status up top, just applied one level deeper.</p>
 
@@ -337,6 +391,9 @@ export type ButtonProps =
           <li><strong>Faster onboarding.</strong> New developers ship real work sooner, working against predictable props and documentation that's actually complete.</li>
           <li><strong>Global refreshes are token-only now.</strong> A product-wide visual update happens at the semantic layer, not as a JSX refactor. That's the system delivering on the exact promise its architecture made.</li>
         </ul>
+
+        <h2>Reflection</h2>
+        <p>The lesson that cost me the most wasn't technical. I built Phase 1 mostly outside my sprint commitments — real hours, real learning — but I sat on submitting it for review far longer than I should have, convinced it wasn't ready yet. I was young in my career and wanted to prove myself, and that zeal for perfection didn't make the work better. It just delayed a genuinely solid system from getting the scrutiny and momentum it needed. Perfection is the enemy of done, and I learned that the hard way instead of early. Understanding it sooner wouldn't have meant cutting corners — it would have meant moving the same good work forward faster.</p>
 
       </div>
     </article>
