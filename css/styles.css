@@ -1506,6 +1506,17 @@ pre,
   color: var(--color-text-secondary);
 }
 
+/* ------ Embedded Figma prototype ------
+   Same border/radius treatment as a .prose figure img, since a live embed
+   sits in the same role a screenshot figure would. */
+.figma-embed {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-block: var(--space-05);
+}
+
 /* ------ Case-study image lightbox ------
    js/main.js wraps every `.prose figure img` in a `.figure-zoom` button at
    runtime and builds one shared `.lightbox` <dialog>, appended once to

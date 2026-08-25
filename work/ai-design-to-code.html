@@ -111,12 +111,6 @@
         <h2>Prerequisites</h2>
         <p>This only works because Blueprint already existed: three-tier tokens, a documented component library, and Code Connect links tying every Figma component to its real code counterpart. Without that structure, an LLM has nothing precise to point at — it's guessing from screenshots, the exact failure mode Blueprint was built to remove in the first place.</p>
 
-        <figure>
-          <!-- PLACEHOLDER image -->
-          <img src="../assets/images/placeholder-ai-poc.svg" width="1200" height="900" alt="Workflow diagram: Figma design system through Code Connect to LLM prompt, output, and review loop" loading="lazy" decoding="async" />
-          <figcaption>Fig 1 — Workflow: Figma DS → Code Connect → LLM direction → output → review loop.</figcaption>
-        </figure>
-
         <h2>Direction method</h2>
         <p>I designed the WorkFeed v2 concept in Figma using Blueprint components exclusively, then directed an LLM to generate the frontend from those linked components rather than from a visual description — treating the design system as the instruction manual, and my own prompts as the spec, not a suggestion.</p>
 
@@ -124,7 +118,7 @@
         <p>The result was an 80% component match rate against the Figma spec, delivered in a 7-day turnaround. The POC is currently under evaluation for production use at the platform.</p>
 
         <h2>What broke</h2>
-        <div class="draft-note">Placeholder — this section is the credibility test of the whole case study and needs your specifics, not a vague gesture at "edge cases." Name: which components fell inside the 20% gap, and why — layout ambiguity, a token that didn't exist yet, a state Blueprint hadn't documented? The honest accounting here is more convincing than the headline number.</div>
+        <div class="draft-note">Detailed documentation for this section is in progress.</div>
 
         <h2>What it proves</h2>
         <p>The output quality of AI-directed frontend work tracks the quality of the system underneath it, not the cleverness of the prompt. Blueprint's token coverage and Code Connect mapping — built for human designer-developer handoff — turned out to be exactly the structure an LLM needed too.</p>

@@ -96,14 +96,24 @@
         <h2>Explore the prototype</h2>
         <p>This is the actual file, not a recording of it. Click through it the way a stakeholder review would, every transition is real Smart Animate, including the hover states on cards and the filter toolbar, not static frames stitched together.</p>
 
-        <div class="draft-note">Placeholder — Figma prototype embed. The reference file is <code>https://www.figma.com/proto/OPbEctl0aS6t7FJBb4pNHf/Personal-Work</code>, but the "Vibe-coded UI" reference frame inside it (node 4:4054) still shows the real client wordmark, so it can't go live as an iframe until that's fixed in Figma. Swap this note for the embed once the NDA fix lands — consider pointing <code>starting-point-node-id</code> at that same frame so a visitor lands on the before/after contrast instead of the file's own intro slide.</div>
+        <iframe
+          class="figma-embed"
+          width="100%"
+          height="640"
+          src="https://www.figma.com/embed?embed_host=share&amp;url=https%3A%2F%2Fwww.figma.com%2Fproto%2FOPbEctl0aS6t7FJBb4pNHf%2FPersonal-Work%3Fnode-id%3D0-1%26p%3Df%26viewport%3D411%252C558%252C0.13%26t%3DJJkaSYDAi6hSJm8M-0%26scaling%3Dscale-down%26content-scaling%3Dfixed%26starting-point-node-id%3D1%253A5602"
+          allowfullscreen
+          title="Speery Health interactive Figma prototype"
+          loading="lazy"></iframe>
 
         <h2>Context</h2>
         <p>The client had a working, AI-generated prototype and wanted to bring it to healthcare enterprise buyers as professional software, not as an AI demo. It worked. It just didn't hold together. The same red or blue showed up on a metric, a chart, and a status tag with no shared logic tying any of it together, and nothing about the interface signaled that this system could be trusted with a hospital's or a pharma company's data.</p>
 
         <p>An AI agent can generate a functionally complete interface fast. It can't originate a system, a color that always means the same thing, a tag hierarchy that still works past the tenth card, an accessibility decision made on purpose. That gap, between functionally complete and actually systematic, is what two weeks went toward closing.</p>
 
-        <div class="draft-note">Placeholder — export of the "Vibe-coded UI" reference frame (node 4:4054), the direct before. Blocked on the same NDA fix as the prototype embed above; the frame currently still shows the real client wordmark.</div>
+        <figure>
+          <img src="../assets/images/speery/old-vibe-coded-ui.webp" width="3146" height="1932" alt="The original vibe-coded interface: dashboard metrics, charts, and status tags each using color inconsistently, with no shared logic tying them together" loading="lazy" decoding="async" />
+          <figcaption>Fig 0 — The direct before: the vibe-coded UI this rebuild replaced.</figcaption>
+        </figure>
 
         <h2>Why the colors needed logic, not just consistency</h2>
         <p>The vibe-coded UI used a lot of color, applied inconsistently, meaning nothing from one screen to the next. The fix started with a rule, not a palette: every status a user needs to read at a glance gets a color <strong>and</strong> an icon <strong>and</strong> a label, always in that same combination, everywhere in the product. Every insight card carries three of these independently, type (Observation, Insight, Actionable, Impact), priority (High, Medium, Low), and sentiment (Positive, Neutral, Negative), so a card can be high-priority and negative at once and still read clearly, something a single flat color code can't do.</p>
