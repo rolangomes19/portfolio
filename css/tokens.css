@@ -449,6 +449,7 @@
 [dir="rtl"] h6,
 [dir="rtl"] .btn {
   font-family: var(--font-sans-arabic);
+  letter-spacing: 0;
 }
 [dir="rtl"] .eyebrow,
 [dir="rtl"] .mono {
