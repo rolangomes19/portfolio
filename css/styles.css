@@ -635,6 +635,19 @@ pre,
 [data-theme="dark"] .hero-avatar img {
   filter: none;
 }
+/* GIF playback can't be paused by CSS, so prefers-reduced-motion swaps to a
+   static first frame instead of trying to gate the animation itself. */
+.hero-avatar-static {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-avatar-motion {
+    display: none;
+  }
+  .hero-avatar-static {
+    display: block;
+  }
+}
 .hero-name {
   font-family: var(--font-heading);
   font-weight: 600;
