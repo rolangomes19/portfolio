@@ -1233,7 +1233,16 @@
 
     const stickerBoard = document.querySelector(".sticker-board");
     if (stickerBoard) {
-      scatterStickers(stickerBoard);
+      // Below 48em (matching styles.css's own breakpoint for this
+      // component), the scatter grid's own math no longer guarantees
+      // non-overlapping cells, so the CSS falls back to a plain grid
+      // instead and scattering is skipped entirely rather than fighting
+      // that layout with inline left/top percentages. Click-to-open-popover
+      // still gets wired up either way — only the scatter/rotation is
+      // viewport-gated, not the sticker's actual functionality.
+      if (window.matchMedia("(min-width: 48em)").matches) {
+        scatterStickers(stickerBoard);
+      }
       // openToolPopover is declared later, in §11 — safe to reference here
       // because `function` declarations hoist, and this callback only
       // ever actually RUNS later, from a click, by which point §11's

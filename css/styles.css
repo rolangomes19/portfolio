@@ -1123,6 +1123,28 @@ pre,
   block-size: auto;
   pointer-events: none; /* clicks/taps always resolve to the button, never the image */
 }
+/* Below 48em, the grid-cell math scatterStickers() (js/main.js) relies on
+   breaks down: a sticker's own minimum width (7rem) is often wider than
+   the board's own scatter cell at this width, so "each sticker gets its
+   own cell" no longer holds and stickers overlap (measured: dozens of
+   overlapping pairs at 375px). js/main.js skips scatterStickers() below
+   this same breakpoint, leaving every custom property at its zero
+   default, so this rule only has to replace the absolute scatter with a
+   plain, non-overlapping grid. Dragging still works exactly as before —
+   picking up a sticker reparents it to <body> with an inline
+   position: absolute that overrides this rule regardless of viewport. */
+@media (max-width: 47.99em) {
+  .sticker-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-04);
+    min-block-size: auto;
+  }
+  .tool-sticker {
+    position: static;
+    inline-size: 100%;
+  }
+}
 
 /* ------ Draggable objects ------
    Shared pointer-drag affordance for the About photos below and the Tools
