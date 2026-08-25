@@ -409,58 +409,52 @@ actually scrolled into view. Introduces both the drag-anywhere feature
 
 ### Surface texture
 
-Both the mat and the paper carry a second, independent background layer: a
-tileable SVG noise panel (`feTurbulence` fractalNoise, 5–6 octaves,
-`stitchTiles: stitch` so the tile has no visible seam — `--mat-texture` and
-`--paper-texture` in `tokens.css`). Each pixel's alpha is coupled to its own
-lightness (both driven off the same `feComponentTransfer` gamma curve), so
-the grain has real peaks and valleys instead of a flat, uniform speckle —
-that coupling is what makes it read as "rough" rather than "hazy."
-`--paper-texture`'s `baseFrequency` is anisotropic (different on its two
-axes) for a directional, fibrous look; `--mat-texture` stays isotropic and
-runs at a coarser frequency — a self-healing cutting mat's rubber mottles
-at a glance rather than showing fibre.
+The mat and the paper carry a second, independent background layer each, but
+they're no longer the same *kind* of texture. `--mat-texture` is unchanged:
+flat `feTurbulence` fractalNoise, alpha shaped by a `feComponentTransfer`
+gamma curve, blended with `screen` in both themes (mat colors are never
+near-white, so screen — which only adds visible *lighter* speckle — reads
+correctly everywhere from the default black dark-theme mat to the lightest
+preset). `--mat-texture` stays isotropic and coarse — a self-healing cutting
+mat's rubber mottles at a glance rather than showing fibre — and it never sits
+under text, so it carries no contrast obligation.
 
-The blend mode is deliberately NOT `overlay` (an earlier version used it,
-uniformly, for both layers). Overlay is built to protect highlights/shadows
-and only perturb midtones — which makes it go nearly invisible right at the
-backdrop extremes our surfaces actually sit at (paper: near-white in light
-theme, near-black in dark; mat: every preset and default is dark-to-mid).
-Instead:
+`--paper-texture` is a different pipeline, matched to marijanapav.com/stamps's
+actual paper effect: `feTurbulence` feeds `feDiffuseLighting` (a distant light
+at 45°/60° azimuth/elevation lighting the noise as a bump map), producing real
+raised-fibre relief rather than flat grain — the same underlying primitive a
+real paper photograph's highlight/shadow relief comes from. That output (RGB
+155–255 measured, at these settings) gets a closing `feColorMatrix` that pins
+it to a constant alpha, then composites with `background-blend-mode: normal`
+— **not themed anymore**; normal is what this technique needs in both themes,
+matching how the reference site's own `opacity 0.2; mix-blend-mode: normal`
+overlay composites. What still differs per theme is baked into the token
+itself: a different constant alpha (0.20 light, 0.04 dark).
 
-- `--mat-texture` blends with `screen` in both themes — mat colors are
-  never near-white, so screen (which only adds visible *lighter* speckle)
-  reads correctly everywhere from the default black dark-theme mat to the
-  lightest preset.
-- `--paper-texture` uses a **themed** blend mode via `--paper-texture-blend`
-  — `multiply` in light theme (adds visible *darker* speckle to near-white
-  paper), `screen` under `[data-theme="dark"]` (adds visible *lighter*
-  speckle to near-black paper).
+`multiply`/`screen` were self-limiting in one direction each — multiply's
+worst pixel bounded to roughly `alpha ÷ 4` darkening, screen's to lightening
+with no ceiling. `normal` has no self-limit in *either* direction: the same
+image has a bright peak and a dark valley, so it can push contrast down by
+lightening a dark-text background OR by darkening a light-text background,
+depending which foreground token is looking at it. Any change to
+`--paper-texture` must be re-verified the same way this pass was: render the
+actual filter to a canvas, sample its real min/max (don't estimate it), then
+composite both extremes — `bg × (1 − alpha) + litMin × alpha` and
+`bg × (1 − alpha) + litMax × alpha` — and check every foreground token
+(body text, secondary text, **and the accent** — an inline link is real paper
+content) against both.
 
-Multiply is self-limiting by construction — because rising alpha and rising
-source value cancel each other at the extreme, the worst possible single
-pixel is bounded to roughly `alpha ÷ 4` darkening. Screen has no equivalent
-ceiling: an unchecked alpha can wash a peak pixel out toward full white, which
-is why the dark-theme alpha is always the smaller of the two.
-
-**Current alphas: `--paper-texture` 0.16 light / 0.05 dark; `--mat-texture`
-0.22 in both themes.** The paper values are half what they were — the grain was
-reading as a surface effect rather than as stock. The mat was deliberately left
-alone: it is a rubber cutting mat, it should stay visibly mottled, and it never
-sits under text.
-
-Halving the paper alpha also bought real accessibility headroom, since the
-worst-case pixel is what bounds every foreground token. On light paper the
-worst-case background moved from `#a7a6a1` to `#cecdc7`, taking
-`--color-text-secondary` from 3.41:1 to 5.22:1 in that pathological case — from
-below AA to comfortably above it. Dark theme gained the same way.
-
-Any change to these alphas must be re-checked the same way: composite the
-extreme pixel (multiply → `bg × (1 − alpha)`, screen → `bg + (255 − bg) ×
-alpha`) and measure every text token against the result.
-
-(These are a third-pass tuning. The first version, 0.55/0.14/0.4 with steeper
-gamma, read as sandpaper; the second, 0.32/0.10, still read as effect.)
+**Current alpha: `--paper-texture` 0.20 light / 0.04 dark; `--mat-texture`
+0.22 in both themes, unchanged.** The asymmetry between light and dark isn't
+cosmetic — it's the accent. Light theme's accent has real headroom (worst
+case 5.68:1 even at the reference's own unmodified 0.20). Dark theme's
+amber/bronze accent only has 5.34:1 to begin with, and a *white*-lit texture
+erodes exactly that token fastest, since both trend toward white together —
+0.20 there put it as low as 3.19:1, and 0.04 is the highest alpha that holds
+every token ≥4.5:1 (accent worst-case 4.75:1; body/secondary text stay
+≥12:1). This is the same shape of asymmetry the old multiply/screen version
+already had (0.16 light / 0.05 dark) — dark theme simply has less contrast
+budget to spend on texture, whichever blend mode is doing the compositing.
 
 Both textures are static (no animation), so there's nothing to gate behind
 `prefers-reduced-motion`.

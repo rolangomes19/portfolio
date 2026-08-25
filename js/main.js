@@ -361,8 +361,8 @@
   const WARM_SAND = "#e8e6dc";
   const DARK_PAPER = "#26231e";
   const DARK_SUBTLE = "#302c26";
-  const LIGHT_TEX_ALPHA = 0.16; // must track --paper-texture's light alpha
-  const DARK_TEX_ALPHA = 0.05; //  "        "        "      dark alpha
+  const LIGHT_TEX_ALPHA = 0.20; // must track --paper-texture's light alpha
+  const DARK_TEX_ALPHA = 0.04; //  "        "        "      dark alpha
   const DEFAULT_LIGHT = { accent: "#1B365D", hover: "#12253F", on: "#faf9f5", tint: "#EEF2F7" };
   // Amber/bronze, not ink-blue — see the matching comment in tokens.css for
   // why: a cool blue was the one thing breaking this palette's warm
@@ -496,15 +496,23 @@
     return rgbToHex(ca.map((c, i) => c + (cb[i] - c) * t));
   }
 
-  // CSS `background-blend-mode: multiply` composited at alpha over bg —
-  // mirrors the light-theme --paper-texture-blend exactly.
-  function multiplyWorst(bgHex, alpha) {
-    return rgbToHex(hexToRgb(bgHex).map((c) => c * (1 - alpha)));
-  }
-
-  // Mirrors the dark-theme `screen` blend.
-  function screenWorst(bgHex, alpha) {
-    return rgbToHex(hexToRgb(bgHex).map((c) => c + (255 - c) * alpha));
+  // CSS `background-blend-mode: normal` compositing --paper-texture's own
+  // per-pixel alpha over bg — same mechanism in both themes now (see the
+  // tokens.css comment on --paper-texture for why normal replaced the old
+  // multiply/screen split). A lit-relief texture has a bright peak AND a
+  // dark valley in the same image, unlike the old flat grain, so there are
+  // two worst cases instead of one — this returns both, and callers add
+  // both to the background set findLDown/findLUp must clear. LIT_MIN/MAX
+  // are --paper-texture's actual measured output range (sampled from a
+  // live canvas render of the real filter at these settings, not
+  // estimated) and are shared by both themes since it's the identical
+  // feTurbulence/feDiffuseLighting recipe in each — only the alpha differs.
+  const LIT_MIN = 155;
+  const LIT_MAX = 255;
+  function litWorstPair(bgHex, alpha) {
+    const bg = hexToRgb(bgHex);
+    const mix = (v) => rgbToHex(bg.map((c) => c * (1 - alpha) + v * alpha));
+    return [mix(LIT_MAX), mix(LIT_MIN)];
   }
 
   // Largest L (walking up from 0) at which hsl(h,s,L) still clears `target`
@@ -561,7 +569,7 @@
     const sWork = clamp(s, 0.4, 0.7);
 
     if (theme === "dark") {
-      const bgs = [DARK_PAPER, DARK_SUBTLE, screenWorst(DARK_PAPER, DARK_TEX_ALPHA)];
+      const bgs = [DARK_PAPER, DARK_SUBTLE, ...litWorstPair(DARK_PAPER, DARK_TEX_ALPHA)];
       const lAccent = findLUp(h, sWork, bgs, 4.6);
       if (lAccent === null) return DEFAULT_DARK;
       const accent = hslToHex(h, sWork, lAccent);
@@ -571,7 +579,7 @@
       return { accent, hover, on: chooseOn(accent), tint: deriveTint(accent, DARK_PAPER, 0.16) };
     }
 
-    const bgs = [PARCHMENT, WARM_SAND, multiplyWorst(PARCHMENT, LIGHT_TEX_ALPHA)];
+    const bgs = [PARCHMENT, WARM_SAND, ...litWorstPair(PARCHMENT, LIGHT_TEX_ALPHA)];
     const lAccent = findLDown(h, sWork, bgs, 4.6);
     if (lAccent === null) return DEFAULT_LIGHT;
     const accent = hslToHex(h, sWork, lAccent);

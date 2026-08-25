@@ -164,14 +164,17 @@ html::before {
    assume <body> will catch it. The mat hangs off <html> rather than <body>
    for an unrelated reason: it's a fixed backdrop meant to fill the viewport
    regardless of where the paper itself scrolls to. */
-/* The paper's own fibre grain (--paper-texture, see tokens.css) is a second
-   background layer over the flat --color-bg fill, tiled at its own size.
-   Unlike the mat, the paper flips from near-white (light theme) to
-   near-black (dark theme), and no single blend mode stays visible at both
-   extremes — so --paper-texture-blend is a token too, `multiply` in
-   :root and `screen` under [data-theme="dark"] (tokens.css has the full
-   contrast reasoning, including the worst-case-pixel math against every
-   text color). */
+/* The paper's own lit-fibre relief (--paper-texture, see tokens.css) is a
+   second background layer over the flat --color-bg fill, tiled at its own
+   size. Unlike the old flat-grain version, `background-blend-mode: normal`
+   is NOT themed — this is the blend mode the feDiffuseLighting technique
+   actually needs (it alpha-composites the lit pixel straight over
+   --color-bg, matching how marijanapav.com/stamps's own reference effect
+   composites), so it stays constant across themes. What changes per theme
+   is baked into the token itself: --paper-texture's own feColorMatrix
+   carries a different constant alpha per theme (0.20 light / 0.04 dark —
+   tokens.css has the full worst-single-pixel contrast derivation, checked
+   against body text, secondary text, AND the accent). */
 body {
   inline-size: var(--paper-inline);
   margin-inline: auto;
@@ -183,7 +186,7 @@ body {
   background-image: var(--paper-texture);
   background-repeat: repeat;
   background-size: 240px 240px;
-  background-blend-mode: var(--paper-texture-blend);
+  background-blend-mode: normal;
   box-shadow: var(--shadow-paper);
   color: var(--color-text);
   font-family: var(--font-sans);
