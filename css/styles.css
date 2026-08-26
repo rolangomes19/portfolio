@@ -1085,7 +1085,7 @@ pre,
   position: relative;
   background: var(--color-note-bg);
   color: var(--color-note-text);
-  border: 1px solid var(--color-border-strong);
+  border: 1px solid var(--color-note-edge);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-note);
   font-family: var(--font-hand);
@@ -1117,6 +1117,19 @@ pre,
 @container (min-width: 48em) {
   .highlight-list {
     grid-template-columns: repeat(5, 1fr);
+  }
+  /* A small bleed past the paper's own edge onto the mat, the same
+     cancel-the-container-padding-then-go-further technique #about's
+     scrapbook photos use above — just a smaller push (--space-04, not
+     --space-09), since these five cards read as one continuous row, not
+     a single object meant to dominate the mat. Only above this
+     breakpoint: below it the paper runs edge-to-edge and there is no mat
+     for the end cards to bleed onto. */
+  .highlight-list > :first-child {
+    margin-inline-start: calc(-1 * var(--paper-margin-inline) - var(--space-04));
+  }
+  .highlight-list > :last-child {
+    margin-inline-end: calc(-1 * var(--paper-margin-inline) - var(--space-04));
   }
 }
 .sticky-note--stat {

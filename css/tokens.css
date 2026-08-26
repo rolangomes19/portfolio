@@ -325,7 +325,7 @@
      Both pairs verified >=4.5:1 (11.08:1 light, 8.76:1 dark). */
   --color-note-bg: #fbf3d4;
   --color-note-text: #3d3418;
-  --color-note-edge: rgb(0 0 0 / 0.06);
+  --color-note-edge: #e5dcb6;
 
   /* ------ Hero highlight mark ------
      A highlighter's color doesn't change when you change desks: unlike
@@ -474,7 +474,7 @@
      8.76:1 against --color-note-text. */
   --color-note-bg: #4a3f22;
   --color-note-text: #f6ecc8;
-  --color-note-edge: rgb(255 255 255 / 0.08);
+  --color-note-edge: #e5dcb6;
 
   /* Darker marker ink so the inherited near-white --color-text stays
      readable on top — a highlighter held up to a dark screen, not the same
