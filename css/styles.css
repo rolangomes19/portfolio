@@ -1057,9 +1057,8 @@ pre,
   border-radius: var(--radius-pill);
   padding: var(--space-02) var(--space-03);
   font-size: var(--text-mono);
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.04em;
-  text-transform: uppercase;
   white-space: nowrap;
   color: var(--color-concept);
   background: var(--color-tag-bg);
