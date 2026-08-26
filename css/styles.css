@@ -1085,9 +1085,11 @@ pre,
   position: relative;
   background: var(--color-note-bg);
   color: var(--color-note-text);
+  border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-note);
   font-family: var(--font-hand);
+  font-size: var(--text-hand);
   transform: translate3d(var(--dx), var(--dy), 0)
     rotate(calc(var(--base-rot) + var(--hover-rot))) scale(var(--hover-scale));
 }
@@ -1119,17 +1121,17 @@ pre,
 }
 .sticky-note--stat {
   display: grid;
-  gap: var(--space-02);
-  padding: var(--space-05);
+  gap: var(--space-03);
+  padding: var(--space-06);
 }
 /* A small, alternating tilt per card — much smaller than the sticker
    board's decorative +-12 deg swing below, since these hold real numbers
    that must stay easy to scan, not a pile of loose stickers. */
-.highlight-list .sticky-note--stat:nth-child(5n+1) { --base-rot: -2deg; }
-.highlight-list .sticky-note--stat:nth-child(5n+2) { --base-rot: 1.5deg; }
-.highlight-list .sticky-note--stat:nth-child(5n+3) { --base-rot: -1deg; }
-.highlight-list .sticky-note--stat:nth-child(5n+4) { --base-rot: 2deg; }
-.highlight-list .sticky-note--stat:nth-child(5n+5) { --base-rot: -1.5deg; }
+.highlight-list .sticky-note--stat:nth-child(5n+1) { --base-rot: -3deg; }
+.highlight-list .sticky-note--stat:nth-child(5n+2) { --base-rot: 2deg; }
+.highlight-list .sticky-note--stat:nth-child(5n+3) { --base-rot: -1.5deg; }
+.highlight-list .sticky-note--stat:nth-child(5n+4) { --base-rot: 3deg; }
+.highlight-list .sticky-note--stat:nth-child(5n+5) { --base-rot: -2.5deg; }
 /* tabular-nums so the five stat values line up as a row of figures rather
    than as five independently-spaced strings. Stays on --font-heading (not
    --font-hand) — a handwritten face on the large scannable number would
@@ -1144,7 +1146,7 @@ pre,
 }
 .highlight-label {
   position: static;
-  font-size: var(--text-body);
+  font-size: var(--text-hand);
   line-height: var(--leading-dense);
   color: var(--color-note-text);
   text-decoration: none;
@@ -1435,11 +1437,11 @@ pre,
    hidden — a keyboard user tabbing through shouldn't be able to land on
    an invisible control. */
 .sticky-note--tip {
-  --base-rot: -1deg;
+  --base-rot: -1.5deg;
   display: flex;
   align-items: center;
   gap: var(--space-04);
-  padding: var(--space-04) var(--space-05);
+  padding: var(--space-05) var(--space-06);
   margin-block-end: var(--space-06);
   max-inline-size: 32rem;
   opacity: 0;
@@ -1462,7 +1464,7 @@ pre,
 .sticky-note--tip p {
   margin: 0;
   max-inline-size: none;
-  font-size: var(--text-body);
+  font-size: var(--text-hand);
   line-height: var(--leading-dense);
 }
 .sticky-note--tip-close {
@@ -1622,7 +1624,8 @@ pre,
   }
 }
 .sticky-note--margin {
-  padding: var(--space-05);
+  --base-rot: -1.5deg;
+  padding: var(--space-06);
 }
 .prose h2 {
   font-size: var(--text-h2);
@@ -1921,7 +1924,7 @@ pre,
    heading — following an NDA is a professionalism signal, and it should
    look like one. */
 .nda-note {
-  font-size: var(--text-body);
+  font-size: var(--text-hand);
   line-height: var(--leading-dense);
 }
 

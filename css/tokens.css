@@ -238,6 +238,10 @@
   --text-h3: 1.1875rem;                             /* 19px */
   --text-lead: 1.0625rem;                           /* 17px — intro paragraphs */
   --text-body: 1rem;                                /* 16px */
+  /* Caveat's x-height reads smaller than a sans face at the same size —
+     sized up from --text-body so handwritten note copy (.sticky-note)
+     stays as legible as the body text around it, not smaller-looking. */
+  --text-hand: 1.3125rem;                           /* 21px */
   /* 14px, raised from 13px. kami's ladder discipline puts the 12px floor on
      uppercase micro-labels and badges only — prose stops at 14 — and this
      token carries prose (card descriptions, theses, contact meta). */
