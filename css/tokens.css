@@ -198,6 +198,12 @@
   /* Estedad covers ALL Arabic text — headings, buttons, and body — not just
      body copy, per the brief. It replaces IBM Plex Sans Arabic entirely. */
   --font-sans-arabic: "Estedad", "InterVariable", system-ui, sans-serif;
+  /* Handwriting face for the sticky-note component's label/annotation text
+     only (never headings, body copy, or RTL — Caveat has no Arabic coverage,
+     see the RTL override below). Falls back to the heading font rather than
+     the body font if it fails to load, since a note's label sits closer to a
+     heading's job (a short, scannable phrase) than to running body copy. */
+  --font-hand: "Caveat", var(--font-heading);
   --tracking-body: -0.02em;
   --tracking-heading: -0.025em;
   --font-feature-alt:
@@ -299,6 +305,31 @@
      already has an edge stacks three outlines and reads digital rather than
      papery. Rings are for buttons, whispers are for cards. */
   --shadow-whisper: 0 4px 24px rgb(0 0 0 / 0.05);
+
+  /* A note sitting slightly proud of the page at rest, not just on hover —
+     unlike --shadow-whisper (a hover-only cue), this is always-on, so it
+     needs a touch more contact definition than a bare diffuse blur gives. */
+  --shadow-note:
+    0 1px 1px rgb(0 0 0 / 0.06),
+    0 4px 10px rgb(0 0 0 / 0.1);
+
+  /* ------ Sticky note: paper-on-paper material ------
+     A visibly different stock from --color-bg-subtle (the flat card fill) —
+     warm, sun-yellowed paper, the way a Post-it reads next to plain paper.
+     Not an accent-tinted surface: --color-accent already means
+     "interactive/brand" everywhere else on the site, and a note is neither.
+     Both pairs verified >=4.5:1 (11.08:1 light, 8.76:1 dark). */
+  --color-note-bg: #fbf3d4;
+  --color-note-text: #3d3418;
+  --color-note-edge: rgb(0 0 0 / 0.06);
+
+  /* ------ Hero highlight mark ------
+     A highlighter's color doesn't change when you change desks: unlike
+     --color-tint-brand (which the mat-recolor picker drives), this is fixed
+     regardless of theme or mat color, so it reads as ink laid over the page
+     rather than another piece of interactive brand chrome. Verified against
+     --color-text at 13.08:1 (the span's own text is color: inherit). */
+  --color-highlight-mark: #f5d949;
 
   /* ------ Motion (Carbon productive easing) ------ */
   --duration-fast: 150ms;
@@ -430,6 +461,21 @@
     inset 0 0 0 1px var(--color-paper-edge),
     0 2px 6px rgb(0 0 0 / 0.4),
     0 8px 20px rgb(0 0 0 / 0.45);
+
+  --shadow-note:
+    0 1px 1px rgb(0 0 0 / 0.35),
+    0 6px 16px rgb(0 0 0 / 0.4);
+
+  /* Dark, warm-yellow paper — not the same as --color-bg-subtle. Verified
+     8.76:1 against --color-note-text. */
+  --color-note-bg: #4a3f22;
+  --color-note-text: #f6ecc8;
+  --color-note-edge: rgb(255 255 255 / 0.08);
+
+  /* Darker marker ink so the inherited near-white --color-text stays
+     readable on top — a highlighter held up to a dark screen, not the same
+     bright yellow as daylight paper. Verified 6.46:1 against --color-text. */
+  --color-highlight-mark: #6b5a12;
 }
 
 /* ------ RTL: Arabic type ------
@@ -453,5 +499,13 @@
 }
 [dir="rtl"] .eyebrow,
 [dir="rtl"] .mono {
+  letter-spacing: 0;
+}
+/* Caveat has no Arabic coverage — without this, RTL content inside a
+   sticky note would silently fall through to --font-heading (Commissioner)
+   via --font-hand's own fallback chain, inconsistent with every other
+   Arabic string on the site. */
+[dir="rtl"] .sticky-note {
+  font-family: var(--font-sans-arabic);
   letter-spacing: 0;
 }
