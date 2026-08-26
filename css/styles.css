@@ -63,6 +63,22 @@
   src: url("../assets/fonts/GeistMono-Variable.woff2") format("woff2");
 }
 
+/* ------ Fonts: self-hosted Caveat (handwriting) ------
+   Downloaded from Google Fonts' own CDN (the "latin" subset — Basic Latin,
+   Latin-1 Supplement, and matching punctuation, the same scope the other
+   Latin-subsetted fonts above cover), not linked live, so it follows the
+   same self-hosting rule as every other typeface here. Used only for the
+   sticky-note component's handwritten label text (.sticky-note), never for
+   headings or body copy, and never under [dir="rtl"] — see the RTL
+   override further down. */
+@font-face {
+  font-family: "Caveat";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../assets/fonts/Caveat-Variable.woff2") format("woff2");
+}
+
 /* ------ Reset & base ------ */
 *,
 *::before,
@@ -635,6 +651,19 @@ pre,
 [data-theme="dark"] .hero-avatar img {
   filter: none;
 }
+/* GIF playback can't be paused by CSS, so prefers-reduced-motion swaps to a
+   static first frame instead of trying to gate the animation itself. */
+.hero-avatar-static {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-avatar-motion {
+    display: none;
+  }
+  .hero-avatar-static {
+    display: block;
+  }
+}
 .hero-name {
   font-family: var(--font-heading);
   font-weight: 600;
@@ -658,36 +687,51 @@ pre,
   font-weight: 400;
 }
 
-/* Concept highlight: a light wash of the mat-driven tint behind the word,
-   like a highlighter bleeding into the paper — not underlined, not
-   recoloured text. This replaced an underline+colour treatment (wavy vs
-   dashed, ink-coloured text) once "design" and "engineering" were unified to
-   a single shared accent (see --color-concept in tokens.css): with both
-   spans reading the identical colour, an underline pattern was the only
-   thing left telling them apart, which was more machinery than the current
-   design calls for. Colour reverts to `inherit` — the surrounding heading or
-   paragraph's own ink — so the highlight is the entire signal, the same way
-   a real highlighter never changes the colour of the ink beneath it.
-
-   var(--color-tint-brand) already IS "the accent mixed lightly into the
-   current paper" (kami's own quietest-fill pattern, re-derived by
-   js/main.js every time the mat changes) — exactly the "bleeding into the
-   paper" look asked for, with zero new tokens.
+/* Concept highlight: an actual highlighter stroke, not a UI tag. The
+   previous version filled the words with var(--color-tint-brand) — the
+   exact token .tag-pill's background also uses, so the mark read as
+   another piece of interactive chrome rather than ink on paper. Fixed
+   here to a dedicated --color-highlight-mark that does NOT change with
+   the mat-recolor picker: a highlighter's color doesn't change when you
+   change desks. mix-blend-mode makes it read as translucent ink laid over
+   the paper (multiply in light theme; screen in dark theme, since multiply
+   would just darken toward black on a dark paper) and clip-path swaps the
+   perfect rounded rectangle for a slightly uneven stroke shape — two
+   different polygons so "design" and "engineering" don't look identical —
+   with a small opposing rotation on each so neither reads as mechanically
+   placed. Color stays `inherit` (the surrounding heading's own ink) — the
+   highlight is the entire signal, the same way a real highlighter never
+   changes the color of the ink beneath it. Verified: --color-highlight-mark
+   with the inherited --color-text on top hits 13.08:1 (light) / 6.46:1
+   (dark), both far past the 4.5:1 floor.
 
    Padding/margin are em, not the spacing scale: a highlight mark needs to
    scale with the font size it sits inside (17px body copy vs a 40px h1), and
    a fixed spacing-scale step can't do that. The negative inline margin pulls
    the highlighted box back in by the same amount the padding pushed it out,
-   so adjacent words don't shift position — only the tint appears. Both words
+   so adjacent words don't shift position — only the mark appears. Both words
    are single, unbreakable tokens ("design", "engineering"), so there's no
    multi-line inline-background artifacting to guard against. */
 .concept-design,
 .concept-engineering {
-  background: var(--color-tint-brand);
-  border-radius: var(--radius-sm);
+  position: relative;
+  background: var(--color-highlight-mark);
+  mix-blend-mode: multiply;
   padding-inline: 0.15em;
   margin-inline: -0.15em;
   color: inherit;
+}
+[data-theme="dark"] .concept-design,
+[data-theme="dark"] .concept-engineering {
+  mix-blend-mode: screen;
+}
+.concept-design {
+  clip-path: polygon(1% 14%, 98% 0%, 100% 84%, 2% 100%);
+  transform: rotate(-0.6deg);
+}
+.concept-engineering {
+  clip-path: polygon(0% 4%, 99% 12%, 98% 96%, 1% 88%);
+  transform: rotate(0.5deg);
 }
 
 /* Page-lead: intro paragraph under a section-title, reused across
@@ -792,11 +836,12 @@ pre,
    here.
 
    Hover: whisper shadow plus a 1px rise, motion-safe and pointer-gated.
-   Interactive cards (.work-card, .highlight-card, .writing-item) opt in via
-   .is-liftable. Keyboard users get the same treatment through :focus-within,
-   on top of the focus ring itself. */
+   Interactive cards (.work-card, .writing-item) opt in via .is-liftable.
+   Keyboard users get the same treatment through :focus-within, on top of
+   the focus ring itself. (.highlight-card moved to the .sticky-note
+   material below — a note is paper sitting on the page, not a flat UI
+   card, so it deliberately does not share this fill/radius.) */
 .card-surface,
-.highlight-card,
 .writing-item,
 .case-stat,
 .compare-col,
@@ -922,6 +967,23 @@ pre,
     display: block;
   }
 }
+/* Without this, each tile's own intrinsic ratio (a mix of SVG art and a
+   .webp photo) decided the box's height, so align-items: stretch on the
+   card gave every row a different height depending on which tile it held.
+   One ratio for every tile, matching .more-item-media img's identical
+   pattern below. */
+.work-card-media img {
+  aspect-ratio: 4 / 3;
+  inline-size: 100%;
+  object-fit: cover;
+}
+/* A card with no media at all (nothing to reveal on hover) spans the full
+   row instead of leaving its image track an empty hole. */
+@container (min-width: 40em) {
+  .work-card:not(:has(.work-card-media)) {
+    grid-template-columns: 1fr;
+  }
+}
 @media (prefers-reduced-motion: no-preference) {
   .work-card-media {
     transition: opacity var(--duration-base) var(--ease);
@@ -1006,6 +1068,44 @@ pre,
   letter-spacing: 0;
 }
 
+/* ------ Sticky note ------
+   One physical-object component, reused wherever the site needs a paper
+   note rather than a flat UI card: the homepage stat strip (--stat), the
+   drag-anywhere tip (--tip), and a case study's margin annotations
+   (--margin). Shares --dx/--dy/--base-rot/--hover-rot/--hover-scale with
+   .tool-sticker/.about-photo below — the same "physical object resting on
+   the page" transform stack, --radius-sm, not --radius-md (that radius
+   belongs to the flat .card-surface family; a note is not a UI card). */
+.sticky-note {
+  --dx: 0px;
+  --dy: 0px;
+  --base-rot: 0deg;
+  --hover-rot: 0deg;
+  --hover-scale: 1;
+  position: relative;
+  background: var(--color-note-bg);
+  color: var(--color-note-text);
+  border: 1px solid var(--color-note-edge);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-note);
+  font-family: var(--font-hand);
+  font-size: var(--text-hand);
+  transform: translate3d(var(--dx), var(--dy), 0)
+    rotate(calc(var(--base-rot) + var(--hover-rot))) scale(var(--hover-scale));
+}
+/* .reveal/.reveal.is-visible (further down) set `transform` directly for the
+   scroll-entrance animation, which would otherwise wipe out the tilt above
+   outright (same specificity, later in the cascade). These two-class
+   overrides compose both effects instead of picking one; they don't need
+   to be near the .reveal rules to win — two classes beats one regardless
+   of source order. */
+.sticky-note.reveal {
+  transform: rotate(var(--base-rot)) translateY(var(--reveal-rise));
+}
+.sticky-note.reveal.is-visible {
+  transform: rotate(var(--base-rot));
+}
+
 /* ------ Highlights strip (homepage stat cards) ------ */
 .highlight-list {
   list-style: none;
@@ -1018,36 +1118,57 @@ pre,
   .highlight-list {
     grid-template-columns: repeat(5, 1fr);
   }
+  /* A small bleed past the paper's own edge onto the mat, the same
+     cancel-the-container-padding-then-go-further technique #about's
+     scrapbook photos use above — just a smaller push (--space-04, not
+     --space-09), since these five cards read as one continuous row, not
+     a single object meant to dominate the mat. Only above this
+     breakpoint: below it the paper runs edge-to-edge and there is no mat
+     for the end cards to bleed onto. */
+  .highlight-list > :first-child {
+    margin-inline-start: calc(-1 * var(--paper-margin-inline) - var(--space-04));
+  }
+  .highlight-list > :last-child {
+    margin-inline-end: calc(-1 * var(--paper-margin-inline) - var(--space-04));
+  }
 }
-/* Fill and hover come from the card contract above; only geometry here. */
-.highlight-card {
-  position: relative;
+.sticky-note--stat {
   display: grid;
-  gap: var(--space-02);
-  padding: var(--space-05);
+  gap: var(--space-03);
+  padding: var(--space-06);
 }
+/* A small, alternating tilt per card — much smaller than the sticker
+   board's decorative +-12 deg swing below, since these hold real numbers
+   that must stay easy to scan, not a pile of loose stickers. */
+.highlight-list .sticky-note--stat:nth-child(5n+1) { --base-rot: -3deg; }
+.highlight-list .sticky-note--stat:nth-child(5n+2) { --base-rot: 2deg; }
+.highlight-list .sticky-note--stat:nth-child(5n+3) { --base-rot: -1.5deg; }
+.highlight-list .sticky-note--stat:nth-child(5n+4) { --base-rot: 3deg; }
+.highlight-list .sticky-note--stat:nth-child(5n+5) { --base-rot: -2.5deg; }
 /* tabular-nums so the five stat values line up as a row of figures rather
-   than as five independently-spaced strings. */
+   than as five independently-spaced strings. Stays on --font-heading (not
+   --font-hand) — a handwritten face on the large scannable number would
+   undercut the "quick read" job this element does. */
 .highlight-number {
   font-family: var(--font-heading);
   font-size: var(--text-h3);
   font-weight: 600;
   line-height: var(--leading-tight);
-  color: var(--color-text);
+  color: var(--color-note-text);
   font-variant-numeric: tabular-nums;
 }
 .highlight-label {
   position: static;
-  font-size: var(--text-small);
+  font-size: var(--text-hand);
   line-height: var(--leading-dense);
-  color: var(--color-text-secondary);
+  color: var(--color-note-text);
   text-decoration: none;
 }
 .highlight-label::after {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
 }
 @media (hover: hover) {
   .highlight-label:hover {
@@ -1109,6 +1230,28 @@ pre,
   inline-size: 100%;
   block-size: auto;
   pointer-events: none; /* clicks/taps always resolve to the button, never the image */
+}
+/* Below 48em, the grid-cell math scatterStickers() (js/main.js) relies on
+   breaks down: a sticker's own minimum width (7rem) is often wider than
+   the board's own scatter cell at this width, so "each sticker gets its
+   own cell" no longer holds and stickers overlap (measured: dozens of
+   overlapping pairs at 375px). js/main.js skips scatterStickers() below
+   this same breakpoint, leaving every custom property at its zero
+   default, so this rule only has to replace the absolute scatter with a
+   plain, non-overlapping grid. Dragging still works exactly as before —
+   picking up a sticker reparents it to <body> with an inline
+   position: absolute that overrides this rule regardless of viewport. */
+@media (max-width: 47.99em) {
+  .sticker-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-04);
+    min-block-size: auto;
+  }
+  .tool-sticker {
+    position: static;
+    inline-size: 100%;
+  }
 }
 
 /* ------ Draggable objects ------
@@ -1288,65 +1431,56 @@ pre,
   margin-block-start: calc(-1 * var(--space-04)); /* slight tuck, not a full gap — reads as one stack, not two separate cards */
 }
 
-/* ------ Play hint ------
+/* ------ Play hint (sticky-note--tip) ------
    One-time dismissible tip introducing the drag-anywhere feature and the
    mat color picker — js/main.js §10 builds this only if the visitor
    hasn't already dismissed it (a single localStorage flag), and only
-   reveals it once an IntersectionObserver reports the About section
-   (the first draggable surface on the page) has actually been reached.
-   A floating top-center toast, not inline content — floating chrome gets
-   the same --color-bg/--shadow-float treatment as .surface-picker-panel,
-   not the flat --color-bg-subtle used for cards resting IN the page.
+   reveals it once an IntersectionObserver reports the sticker board has
+   actually scrolled into view. Sits as a normal-flow sibling right before
+   .sticker-board (not position: fixed, not appended to <body>) — a
+   contextual note near the thing it explains, not a global floating toast.
 
    opacity/visibility are hidden unconditionally, NOT gated behind
    prefers-reduced-motion — unlike a decorative reveal, "hidden until the
-   About section is reached" is this component's actual function. Only
+   sticker board is reached" is this component's actual function. Only
    the fade/rise TRANSITION itself is motion-gated below, so a
-   reduced-motion visitor still only sees the toast appear at the right
+   reduced-motion visitor still only sees the note appear at the right
    scroll position, just without the animated entrance. visibility (not
    opacity alone) also keeps the close button out of the tab order while
    hidden — a keyboard user tabbing through shouldn't be able to land on
    an invisible control. */
-.play-hint {
-  position: fixed;
-  inset-block-start: var(--space-12);
-  inset-inline: var(--space-05);
-  margin-inline: auto;
-  max-inline-size: 26rem;
-  z-index: 10; /* above the header (8) and surface picker (9) — a toast should never hide behind either */
+.sticky-note--tip {
+  --base-rot: -1.5deg;
   display: flex;
   align-items: center;
   gap: var(--space-04);
-  padding: var(--space-04) var(--space-05);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
-  background: var(--color-bg);
-  box-shadow: var(--shadow-float);
-  color: var(--color-text);
+  padding: var(--space-05) var(--space-06);
+  margin-block-end: var(--space-06);
+  max-inline-size: 32rem;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(calc(-1 * var(--reveal-rise)));
+  transform: rotate(var(--base-rot)) translateY(calc(-1 * var(--reveal-rise)));
   pointer-events: none;
 }
-.play-hint.is-visible {
+.sticky-note--tip.is-visible {
   opacity: 1;
   visibility: visible;
-  transform: none;
+  transform: rotate(var(--base-rot));
   pointer-events: auto;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .play-hint {
+  .sticky-note--tip {
     transition: opacity var(--duration-reveal) var(--ease-entrance),
       transform var(--duration-reveal) var(--ease-entrance);
   }
 }
-.play-hint p {
+.sticky-note--tip p {
   margin: 0;
   max-inline-size: none;
-  font-size: var(--text-small);
+  font-size: var(--text-hand);
   line-height: var(--leading-dense);
 }
-.play-hint-close {
+.sticky-note--tip-close {
   appearance: none;
   flex-shrink: 0;
   inline-size: 2rem;
@@ -1357,20 +1491,20 @@ pre,
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--color-text-secondary);
+  color: var(--color-note-text);
   cursor: pointer;
   transition: color var(--duration-fast) var(--ease);
 }
 @media (hover: hover) {
-  .play-hint-close:hover {
-    color: var(--color-text);
+  .sticky-note--tip-close:hover {
+    color: var(--color-accent);
   }
 }
-.play-hint-close:active {
+.sticky-note--tip-close:active {
   transform: scale(0.96);
 }
 @media (prefers-reduced-motion: reduce) {
-  .play-hint-close:active {
+  .sticky-note--tip-close:active {
     transform: none;
   }
 }
@@ -1445,13 +1579,19 @@ pre,
 .facts-bar {
   display: grid;
   gap: var(--space-05);
-  margin-block-start: var(--space-08);
+  margin-block: var(--space-08);
   padding-block: var(--space-06);
   border-block: 1px solid var(--color-border);
 }
 @container (min-width: 40em) {
   .facts-bar {
-    grid-template-columns: repeat(4, 1fr);
+    /* 2 columns, not 4: 5 facts (Role/Team/Timeline/Status/Scope) into a
+       4-up grid always wrapped the 5th into a half-empty row. Scope (always
+       last in markup) spans both columns on its own closing row instead. */
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .fact:last-child {
+    grid-column: 1 / -1;
   }
 }
 .fact dt {
@@ -1474,9 +1614,44 @@ pre,
   display: grid;
   gap: var(--space-05);
 }
+/* Every <p> caps at --measure (65ch) sitewide, but .prose itself has no
+   width cap, so on a wide paper the reading column stops well short of the
+   full container the hero above it just used edge to edge — an unused
+   right-hand gap with nothing to justify it. Above 72em (comfortably past
+   the 64em step where the paper reaches clamp(44rem,60vw,80rem), so the
+   main column never gets squeezed below 65ch to make room), give that
+   space to a margin column for .sticky-note--margin annotations (the NDA
+   note, and any .case-quote a case study happens to have) — grid
+   placement only, no `order`, so DOM/tab/reading order is untouched. */
+@container (min-width: 72em) {
+  .prose {
+    grid-template-columns: minmax(0, var(--measure)) 1fr;
+    column-gap: var(--space-07);
+    align-items: start;
+  }
+  .prose > :not(.sticky-note--margin) {
+    grid-column: 1;
+  }
+  .sticky-note--margin {
+    grid-column: 2;
+  }
+}
+.sticky-note--margin {
+  --base-rot: -1.5deg;
+  padding: var(--space-06);
+}
 .prose h2 {
   font-size: var(--text-h2);
   margin-block-start: var(--space-07);
+}
+/* h3 had no .prose-specific rule at all, so it only ever got the same 16px
+   grid gap as a plain paragraph — a subsection heading (e.g. "Typography"
+   under "Foundations") read no differently from a new sentence, which is
+   what made that stretch of the case study look cramped. Between the base
+   gap and h2's own step: a real, three-tier rhythm (paragraph 16px < h3
+   subsection 24px < h2 section 48px total). */
+.prose h3 {
+  margin-block-start: var(--space-06);
 }
 /* Inline code is its own style, not a slice of the code-block palette:
    brand tint behind brand ink, so an identifier inside a sentence reads as a
@@ -1756,17 +1931,14 @@ pre,
 }
 
 /* ------ NDA disclosure callout (case studies) ------
-   The callout gesture: ivory fill plus one marked edge in the accent. The
-   fill is what makes it a callout rather than a quote, and marking one edge
-   rather than ringing all four keeps it from reading as another card. */
+   Promoted to the .sticky-note--margin material (paper fill, shadow, tilt,
+   handwriting font, defined below) so it reads as a deliberate, confident
+   annotation rather than small print apologetically tucked above the first
+   heading — following an NDA is a professionalism signal, and it should
+   look like one. */
 .nda-note {
-  border-inline-start: 3px solid var(--color-accent);
-  background: var(--color-bg-subtle);
-  padding: var(--space-04) var(--space-05);
-  border-radius: var(--radius-sm);
-  font-size: var(--text-small);
+  font-size: var(--text-hand);
   line-height: var(--leading-dense);
-  color: var(--color-text-secondary);
 }
 
 /* ------ Placeholder note (unwritten narrative sections) ------
@@ -1828,16 +2000,12 @@ pre,
   font-weight: 500;
 }
 
-/* ------ Case study: pull quote ------ */
-.case-quote {
-  border-inline-start: 3px solid var(--color-accent);
-  padding-inline-start: var(--space-05);
-  padding-block: var(--space-02);
-}
+/* ------ Case study: pull quote ------
+   Also promoted to .sticky-note--margin — see the NDA note above for why. */
 .case-quote p {
   font-size: var(--text-h3);
   font-weight: 400;
-  color: var(--color-text);
+  color: inherit;
   max-inline-size: none;
 }
 

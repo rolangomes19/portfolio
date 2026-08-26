@@ -1233,7 +1233,16 @@
 
     const stickerBoard = document.querySelector(".sticker-board");
     if (stickerBoard) {
-      scatterStickers(stickerBoard);
+      // Below 48em (matching styles.css's own breakpoint for this
+      // component), the scatter grid's own math no longer guarantees
+      // non-overlapping cells, so the CSS falls back to a plain grid
+      // instead and scattering is skipped entirely rather than fighting
+      // that layout with inline left/top percentages. Click-to-open-popover
+      // still gets wired up either way — only the scatter/rotation is
+      // viewport-gated, not the sticker's actual functionality.
+      if (window.matchMedia("(min-width: 48em)").matches) {
+        scatterStickers(stickerBoard);
+      }
       // openToolPopover is declared later, in §11 — safe to reference here
       // because `function` declarations hoist, and this callback only
       // ever actually RUNS later, from a click, by which point §11's
@@ -1269,18 +1278,18 @@
   }
 
   /* ------------------------------------------------------------------
-     10. Play hint
+     10. Play hint (sticky-note--tip)
      One-time dismissible tip introducing §9's drag-anywhere feature and
-     the surface picker (section 4) — a floating toast (top-center,
-     position: fixed in styles.css), not inline content, so it needs its
-     OWN IntersectionObserver watching the About SECTION rather than the
-     hint element itself (which is how the earlier inline version got
-     away with reusing §3's reveal machinery — nothing to watch until the
-     element existed at the trigger point in the flow; a toast exists
-     from the moment it's built, so watching itself would just fire
-     immediately at the top of the page).
+     the surface picker (section 4) — a contextual note sitting right
+     before the sticker board (normal document flow, not position: fixed,
+     not appended to <body>), so it needs its OWN IntersectionObserver
+     watching the sticker board itself rather than reusing §3's reveal
+     machinery — the note exists in the DOM from the moment it's built
+     (inserted ahead of the board it's about to explain), so watching
+     itself would just fire immediately rather than waiting for the
+     visitor to actually scroll to the stickers.
 
-     Unlike a decorative reveal, "hidden until the About section is
+     Unlike a decorative reveal, "hidden until the sticker board is
      reached" is this component's actual function, not an animation
      nicety — so styles.css hides it (opacity/visibility) unconditionally,
      not gated behind reduced-motion, and only the FADE transition itself
@@ -1291,18 +1300,18 @@
      already dismissed, there's simply no tip — nothing else depends on it.
   ------------------------------------------------------------------ */
   if (!localStorage.getItem("hintDismissed") && "IntersectionObserver" in window) {
-    const aboutSection = document.getElementById("about");
-    if (aboutSection) {
+    const stickerBoardEl = document.querySelector("#skills .sticker-board");
+    if (stickerBoardEl) {
       const hint = document.createElement("div");
-      hint.className = "play-hint";
+      hint.className = "sticky-note sticky-note--tip";
 
       const text = document.createElement("p");
       text.textContent =
-        "Photos and tool stickers can be dragged anywhere on the page — even past the paper, onto the mat. The mat's own color is yours to change too, from the swatch in the bottom corner.";
+        "Photos and tool stickers can be dragged anywhere on the page, even past the paper, onto the mat. The mat's own color is yours to change too, from the swatch in the bottom corner.";
 
       const closeBtn = document.createElement("button");
       closeBtn.type = "button";
-      closeBtn.className = "play-hint-close";
+      closeBtn.className = "sticky-note--tip-close";
       closeBtn.setAttribute("aria-label", "Dismiss tip");
       closeBtn.innerHTML =
         '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M2 2 L12 12 M12 2 L2 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
@@ -1312,7 +1321,7 @@
       });
 
       hint.append(text, closeBtn);
-      document.body.appendChild(hint);
+      stickerBoardEl.before(hint);
 
       const hintIo = new IntersectionObserver(
         (entries) => {
@@ -1325,7 +1334,7 @@
         },
         { threshold: 0.1 }
       );
-      hintIo.observe(aboutSection);
+      hintIo.observe(stickerBoardEl);
     }
   }
 

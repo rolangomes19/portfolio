@@ -381,22 +381,40 @@ the whole `.surface-picker`, `aria-hidden` since the button's own
 nudge, gated `@media (hover: hover)`. The one-time "Play hint" banner (see
 below) mentions this control too, for visitors who never hover it.
 
-### Play hint (`.play-hint`)
-A small dismissible toast, `position: fixed` top-center, built once by
-`js/main.js` §10 and revealed only once an `IntersectionObserver` reports
-the About section — the first draggable surface a visitor reaches — has
-actually scrolled into view. Introduces both the drag-anywhere feature
-(Draggable objects, above) and the surface picker. Dismissal is a single
-`localStorage.hintDismissed` flag; once set, the toast never appears again.
+### Sticky note (`.sticky-note`)
+One physical-object component, reused wherever the site needs a paper note
+rather than a flat UI card: the homepage Highlights strip (`--stat`), the
+drag-anywhere tip (`--tip`), and a case study's margin annotations
+(`--margin`, the NDA note and any pull quote). Shares the same
+`--dx/--dy/--base-rot/--hover-rot/--hover-scale` transform stack as
+`.tool-sticker`/`.about-photo` — a note is a physical object resting on the
+page, not a flat card, so it gets `--radius-sm` (matching those two) rather
+than `--radius-md` (the flat `.card-surface` family's radius). Paper fill
+(`--color-note-bg`/`--color-note-text`), elevation (`--shadow-note`), and
+label typography (`--font-hand`, the self-hosted Caveat variable font) are
+all dedicated tokens, distinct from the flat-card system, verified at
+≥4.5:1 in both themes. `--font-hand` is applied to label/annotation text
+only, never the large `.highlight-number` stat figures (stays on
+`--font-heading` for scannability) and never under `[dir="rtl"]` (Caveat has
+no Arabic coverage — falls back to `--font-sans-arabic`, same as every
+other component).
 
-- **Its own observer, not the shared reveal machinery.** Earlier this
-  lived inline right after the About heading and could reuse `[data-reveal]`/
-  `.reveal` (§8), since nothing needed watching until the element existed
-  at the trigger point in the flow. As a toast it exists from the moment
-  it's built, so it needs its own `IntersectionObserver` watching the
-  About *section*, not itself.
+### Play hint (`.sticky-note.sticky-note--tip`)
+A dismissible tip, built once by `js/main.js` §10 and revealed only once an
+`IntersectionObserver` reports the sticker board has actually scrolled into
+view. Introduces both the drag-anywhere feature (Draggable objects, above)
+and the surface picker. Dismissal is a single `localStorage.hintDismissed`
+flag; once set, the tip never appears again. Sits as a normal-flow sibling
+right before `.sticker-board` (not `position: fixed`, not appended to
+`<body>`) — a contextual note near the thing it explains, not a floating
+global toast.
+
+- **Its own observer, not the shared reveal machinery.** The note exists in
+  the DOM from the moment it's built (inserted ahead of the board it's
+  about to explain), so it needs its own `IntersectionObserver` watching
+  the sticker board itself, not the note.
 - **Hidden unconditionally, not gated behind reduced motion.** Unlike a
-  decorative reveal, "hidden until the About section is reached" is this
+  decorative reveal, "hidden until the sticker board is reached" is this
   component's actual function, not an animation nicety — so
   `opacity`/`visibility` are hidden by default in plain CSS, and only the
   fade/rise *transition* is wrapped in
@@ -405,7 +423,7 @@ actually scrolled into view. Introduces both the drag-anywhere feature
   animated entrance.
 - **`visibility`, not `opacity` alone**, keeps the close button out of the
   tab order while hidden — otherwise a keyboard user tabbing through the
-  page could land on an invisible control before the toast ever appears.
+  page could land on an invisible control before the note ever appears.
 
 ### Surface texture
 
@@ -536,6 +554,12 @@ Carbon-style scale (tokens `--space-01` … `--space-12`):
   | `.highlight-list` | 48em | 2 cols → 5 cols |
   | `.work-item`, `.about-grid`, `.facts-bar`, `.footer-grid` | 40em | stacked → side-by-side |
   | `.more-work-grid` | 34em | 1 col → 2 cols |
+  | `.prose` margin column (`.sticky-note--margin`) | 72em | single column → main column + margin annotations |
+
+  `.facts-bar` specifically: 2 columns at 40em, not 4 — a case study's 5 facts
+  (Role/Team/Timeline/Status/Scope) always put the last one, Scope, on its own
+  full-width closing row (`.fact:last-child { grid-column: 1 / -1 }`), so a
+  5-item list never wraps into a half-empty row.
 
 - 8px rhythm: everything snaps to the scale. No magic numbers.
 

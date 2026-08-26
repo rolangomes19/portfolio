@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hub Platform Modernization - Rolan Gomes</title>
+  <meta name="description" content="Case study: five projects on one platform over 16 months. A Power Pages migration forced a Bootstrap 3 to 5 rebuild, which surfaced WCAG 2.4.3 accessibility work. Azure AD B2C restyling and spinner standardization followed during the same visual system upgrade. All of it shipped to production." />
+  <link rel="icon" type="image/svg+xml" href="../assets/rolan-favicon-svg.svg" />
+
+  <script>
+    (function () {
+      var t = localStorage.getItem("theme");
+      if (!t && window.matchMedia("(prefers-color-scheme: dark)").matches) t = "dark";
+      if (t) document.documentElement.dataset.theme = t;
+      if (localStorage.getItem("lang") === "ar") {
+        document.documentElement.lang = "ar";
+        document.documentElement.dir = "rtl";
+      }
+      var mc = localStorage.getItem("matColor");
+      if (mc) document.documentElement.style.setProperty("--color-mat", mc);
+      // Apply a cached mat-driven accent too, so a returning visitor with a
+      // customised mat never sees a flash of the default accent before
+      // js/main.js re-derives it. See main.js section 4b for how this blob
+      // is produced; this block only ever reads it.
+      var at = localStorage.getItem("accentTokens");
+      if (at) {
+        try {
+          var set = JSON.parse(at)[document.documentElement.dataset.theme === "dark" ? "dark" : "light"];
+          if (set) {
+            var s = document.documentElement.style;
+            s.setProperty("--color-accent", set.accent);
+            s.setProperty("--color-accent-hover", set.hover);
+            s.setProperty("--color-on-accent", set.on);
+            s.setProperty("--color-tint-brand", set.tint);
+          }
+        } catch (e) {}
+      }
+    })();
+  </script>
+
+  <!-- Fonts: all self-hosted. Inter (body), Commissioner (headings/buttons),
+       Geist Mono (mono/meta), Estedad (RTL — headings, buttons, and body). -->
+  <link rel="preload" href="../assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/Commissioner-Variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin />
+
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script src="../js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="../index.html"><span class="icon-directional" aria-hidden="true">←</span> Rolan Gomes</a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-panel" data-i18n-label="nav.toggle" aria-label="Menu">
+        <span class="nav-toggle-icon" aria-hidden="true"></span>
+      </button>
+
+      <div class="site-nav-panel" id="site-nav-panel">
+        <nav class="site-nav" aria-label="Main">
+          <ul>
+            <li><a href="../index.html#work" data-i18n="nav.work">Works</a></li>
+            <li><a href="../index.html#about" data-i18n="nav.about">About</a></li>
+            <li><a href="../index.html#contact" data-i18n="nav.contact">Contact</a></li>
+          </ul>
+        </nav>
+        <div class="header-controls">
+          <button class="toggle-btn" type="button" data-lang-toggle aria-pressed="false" data-i18n="toggle.lang">العربية</button>
+          <button class="toggle-btn" type="button" data-theme-toggle aria-pressed="false" data-i18n-label="toggle.theme" aria-label="Toggle dark mode">
+            <span aria-hidden="true">◐</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <section class="section case-hero" aria-labelledby="case-title">
+      <div class="container" data-reveal-intro>
+        <span class="eyebrow">June 2024 – October 2025 · Platform modernization · Power Pages · Bootstrap · Azure AD B2C</span>
+        <h1 id="case-title">Hub Platform Modernization</h1>
+        <p class="case-summary">Five projects, over a year and a half, on one platform. A Power Pages data-model migration existed only to unlock Bootstrap 5. That led to a front-end rebuild, which surfaced accessibility debt. Around the same time, the Azure AD B2C sign-up and sign-in flows still didn’t match the new visual system, and a spinner problem nobody had gotten around to needed fixing too. None of this was planned as one project. I had a hand in fixing every piece of it.</p>
+
+        <dl class="facts-bar">
+          <div class="fact"><dt>Role</dt><dd>Design for the visual system upgrade. Front-end code for the Bootstrap rebuild, the Azure AD B2C flows, and the spinner fix. I had no role on the Power Pages data-model migration itself, that was backend platform work, but it’s the reason everything else on this page had to happen.</dd></div>
+          <div class="fact"><dt>Team</dt><dd>The Hub platform team, throughout. This case study covers my thread through five connected efforts, not a claim on the whole program.</dd></div>
+          <div class="fact"><dt>Timeline</dt><dd>June–July 2024: Power Pages migration and Bootstrap rebuild. September 2024: accessibility remediation. December 2024: Azure AD B2C alignment. October 2025: spinner standardization. Not a planned sequence. Each piece got picked up once it became the next blocker.</dd></div>
+          <div class="fact"><dt>Status</dt><dd>Shipped, every piece in production</dd></div>
+          <div class="fact"><dt>Scope</dt><dd>~20 pages · 14+ components · 6 side panels · 4 modals · 3 forms · 11 Azure AD B2C flows</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <article class="section">
+      <div class="container prose" data-reveal-children>
+
+        <p class="nda-note sticky-note sticky-note--margin">Detailed UI masked per NDA. Process artifacts and metrics shared with permission.</p>
+
+        <h2>Why one upgrade became five projects</h2>
+        <p>Power Pages ran on Bootstrap 3 from 2014 until Microsoft added Bootstrap 5 support in 2023. That support only works on Power Pages’ enhanced data model. You can’t create or run a Bootstrap 5 site on the older standard data model. So the Hub platform’s Bootstrap upgrade, which touched every page, every component, and the visual system underneath all of it, couldn’t start until the data model changed first. The accessibility debt from the rebuild traces back to that dependency directly. The Azure AD B2C flows and the spinner cleanup don’t trace back to it the same way. They share the same platform and the same era, but neither one was gated by the data-model migration.</p>
+        <p>The Power Pages migration itself wasn’t mine. That part is straightforward Microsoft platform work: it moves site configuration from custom Dataverse tables into the standard solution tables Microsoft updates directly. That means faster provisioning and no more manually applying package updates to stay current. I’m including it here because without it, none of the next four sections exist.</p>
+
+        <h2>Bootstrap 3 to 5: the rebuild, not a patch</h2>
+        <p>Microsoft ships a migration tool for this exact jump. It fixes the known Bootstrap 4 and 5 breaking changes, mainly a full rename of data attributes across every interactive component (<code>data-toggle</code> became <code>data-bs-toggle</code>, <code>data-dismiss</code> became <code>data-bs-dismiss</code>, and so on). It doesn’t touch how your own custom code holds together underneath those classes. We ran it. It broke pages. Years of styling had spread across global CSS, page-level CSS, and inline styles, with no consistent pattern. The tool converted each instance differently, and some components came out structurally broken.</p>
+        <p>We decided to stop trying to fix what the tool produced and rebuild the front end from scratch instead. We called it “bombing it down.” The visual design stayed close to the existing product. We cleaned it up and made better use of space, but didn’t reinvent it. Every line of HTML and CSS got rewritten instead of patched. The real risk was the JavaScript and the Dynamics 365 backend wired into that markup. A missed class name or element ID could silently break a working feature behind a page that looked fine. We kept the old codebase as a reference and checked every wired connection against it by hand. Two people did this, neither of us professional developers, against a live D365-backed platform, in 2024, before AI coding assistants were part of anyone’s daily workflow.</p>
+        <p>There were no visual regressions, because there was nothing left to regress to. We eliminated fourteen of roughly twenty page-level CSS files outright. What remained went into one global stylesheet built on CSS variables. A color or type change that used to mean hunting through a dozen files now means editing one token in one place.</p>
+        <p>This is also where <a href="blueprint-design-system.html">Blueprint Design System</a> starts. The short version of that story, told on Blueprint’s own page, is that the same button showed up four different ways. Here’s what actually happened during this rebuild: components across the platform had different semantic HTML structures and pulled their styling from different places, inline, page-level, and global, all at once, for what was supposed to be one component. We fixed that one audit and one rebuilt component at a time, and that’s where the token-based system on Blueprint’s page began. Read that case study for where the system went next.</p>
+
+        <h2>Accessibility: from fixing flags to fixing patterns</h2>
+        <p>Testing the rebuilt front end with Deque Axe surfaced 35 Critical and Serious violations: 8 Critical and 27 Serious. My job wasn’t only closing each one the tool flagged. It was finding the pattern behind them so the same mistake didn’t get reintroduced later.</p>
+        <p>The hardest category was focus order, <code>tabindex</code>. The obvious fix is an explicit numeric value on every focusable element, but that’s also the fragile one. It locks in a fixed sequence. Any future change to that page, a new component inserted, a section reordered, risks breaking the sequence or letting a required element get skipped. WCAG 2.4.3 exists for exactly this reason. The more durable fix follows the DOM’s natural order instead of overriding it. That’s more work up front, but far less likely to quietly break six months later.</p>
+        <p>We tested it ourselves first, then ran a formal QA pass with Axe in the QA environment, signed off by the QA accessibility tester. The change that mattered longer-term: aria labels, alt text, and the rest went in from the start on everything built afterward. QA now catches a regression before it ships instead of after.</p>
+
+        <h2>Azure AD B2C: styling what you can’t see</h2>
+        <p>Registration, sign-in, forgot password, MFA verification and its variants, email and password changes, terms acceptance, feedback and issue reporting. Eleven flows in total. These pages already ran on Bootstrap 5, separate from the Power Pages upgrade, so the problem was never a version gap. It was years of inline styling: the same component styled multiple different ways across different flows, broken layouts, and branding that no longer matched the rest of the platform.</p>
+        <p>The real constraint here is architectural. Azure AD B2C renders these pages by merging your own hosted HTML with its own injected form controls at runtime, in the user’s browser. Those controls are the actual input fields, buttons, and validation logic. Your source file only contains a shell and a single placeholder div. The interactive elements you need to style don’t exist anywhere you can open and read. The only way to know their structure is to render the page and inspect the live DOM, then write CSS and JavaScript backward from what you find. Microsoft’s own docs call this out: if you’re hooking JavaScript to those elements, you have to pin a specific page layout version, or Microsoft can change the injected markup without warning.</p>
+        <p>That’s a harder problem than a normal styling pass. It was also my first fully solo build, design and code, start to finish. It took two weeks. I paired with QA at the dev stage instead of waiting for a full QA cycle, which kept the later testing pass short. Some of the accessibility issues from the previous section showed up here too, and got fixed the same way.</p>
+
+        <h2>Spinner standardization: the loose end</h2>
+        <p>Three different spinners had accumulated with no coordination. FontAwesome’s came bundled with Power Pages by default. Fluent UI’s arrived through Microsoft D365 integrations and iframes. And one custom spinner had been built by a developer for a specific feature. None of this was anyone’s decision. Nobody had defined what a loading state should look like or behave like on this platform.</p>
+        <p>First I documented every instance’s markup and styling. Then I used GitHub Copilot to help trace each spinner back to where it was called from and how, before deciding on a replacement plan. Bootstrap’s own spinner became the target, since it was already the most compatible option with the rest of the rebuilt front end. Execution differed by origin. FontAwesome’s spinners got a small JavaScript swap from <code>fa-spin</code> to Bootstrap’s <code>spinner-border</code> classes. The custom spinner was replaced outright. Fluent UI’s needed its own JavaScript replacement, since it had no equivalent class-based swap available. Altogether, the consolidation compressed an estimated 10-day UI standardization sprint into 5 days.</p>
+        <p>This should have shipped with the original Bootstrap rebuild. It didn’t, for the same reason most of these threads got spread out: there wasn’t enough time or in-house expertise to take it on alongside everything else at once. It landed over a year later instead, on its own, but it’s still part of the same upgrade.</p>
+
+        <h2>Outcomes</h2>
+        <p>Everything on this page shipped to production. No exceptions, no post-launch visibility gap.</p>
+
+        <h2>What I’d do differently</h2>
+        <p>Document while the work is still fresh. I wrote this up more than a year after some of it happened, which meant reconstructing decisions and constraints from memory instead of from notes. The sharpest details, the ones that actually explain a decision instead of just describing it, are the first to fade.</p>
+        <p>One more note: this project is what moved me from being read as a visual designer to someone who can work and speak like a developer. That shift runs through every section above.</p>
+
+      </div>
+    </article>
+
+    <nav class="section" aria-label="Case study navigation">
+      <div class="container case-nav" data-reveal>
+        <a class="btn btn-secondary" href="ai-design-to-code.html"><span class="icon-directional" aria-hidden="true">←</span> Prev: AI-generated frontend POC</a>
+        <a class="btn btn-secondary" href="ai-process-framework.html">Next: AI process framework <span class="icon-directional" aria-hidden="true">→</span></a>
+      </div>
+    </nav>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p class="colophon">
+        Built with HTML, CSS, and vanilla JS. WCAG&nbsp;2.2&nbsp;AA, RTL-ready.
+        © <span data-year>2026</span> Rolan Gomes.
+      </p>
+    </div>
+  </footer>
+
+  <div class="surface-picker">
+    <button type="button" class="surface-picker-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="surface-picker-panel" aria-label="Customize mat color">
+      <span class="surface-picker-trigger-swatch" aria-hidden="true"></span>
+    </button>
+    <div class="surface-picker-panel" id="surface-picker-panel" hidden>
+      <div class="surface-picker-group">
+        <span class="surface-picker-label" id="surface-picker-mat-label">Cutting mat</span>
+        <div class="surface-picker-swatches" role="radiogroup" aria-labelledby="surface-picker-mat-label">
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="true" tabindex="0" data-color="#095848" style="--swatch:#095848" aria-label="Green"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#141414" style="--swatch:#141414" aria-label="Charcoal"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0b3556" style="--swatch:#0b3556" aria-label="Navy"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#1B365D" style="--swatch:#1B365D" aria-label="Ink blue"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#30302e" style="--swatch:#30302e" aria-label="Graphite"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#3d3d3a" style="--swatch:#3d3d3a" aria-label="Slate"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#504e49" style="--swatch:#504e49" aria-label="Olive"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#6b6a64" style="--swatch:#6b6a64" aria-label="Smoke grey"></button>
+        </div>
+        <div class="surface-picker-custom">
+          <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>
+          <input type="color" id="surface-picker-custom-input" value="#095848" />
+          <button type="button" class="surface-picker-reset" data-surface-reset>Reset to default</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

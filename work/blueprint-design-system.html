@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Blueprint Design System — Rolan Gomes</title>
-  <meta name="description" content="Case study: building the Blueprint Design System from the ground up for the Hub platform — a three-tier OKLCH token model, a brand color corrected for AA contrast, an elevation model built on shadow rather than tint, and the Code Connect links that made an 80% LLM design-to-code conversion rate possible." />
-  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <title>Blueprint Design System - Rolan Gomes</title>
+  <meta name="description" content="Case study: building the Blueprint Design System from the ground up for the Hub platform. A three-tier OKLCH token model, a brand color corrected for AA contrast, an elevation model built on shadow rather than tint, and the Code Connect links that made an 80% LLM design-to-code conversion rate possible." />
+  <link rel="icon" type="image/svg+xml" href="../assets/rolan-favicon-svg.svg" />
 
   <script>
     (function () {
@@ -82,16 +82,16 @@
       <div class="container" data-reveal-intro>
         <span class="eyebrow">May 2025 – present · Design systems · Figma · Code Connect</span>
         <h1 id="case-title">Blueprint Design System</h1>
-        <p class="case-summary">The Hub platform had five squads shipping the same button five different ways, and no bridge between Figma and code besides screenshots and goodwill. I led design on the system that fixed both, working alongside a UX Lead Architect and a frontend engineer — an Atomic Design component hierarchy sitting on top of a three-tier OKLCH token architecture, and the Code Connect links that turned out to be exactly what an LLM needed too.</p>
+        <p class="case-summary">The Hub platform had five squads shipping the same button five different ways, and no bridge between Figma and code besides screenshots and goodwill. I led design on the system that fixed both, working alongside a UX Lead Architect and a frontend engineer: an Atomic Design component hierarchy sitting on top of a three-tier OKLCH token architecture, and the Code Connect links that turned out to be exactly what an LLM needed too.</p>
 
         <dl class="facts-bar">
           <div class="fact"><dt>Role</dt><dd>Design, definitions, documentation, foundational architecture</dd></div>
           <div class="fact"><dt>Team</dt>
             <dd>
               <ul class="team-list">
-                <li>Nabarun Chakravarty — UX Lead Architect</li>
-                <li>Rolan Gomes — UX Designer</li>
-                <li>Satvik Nayak — UX Engineer (joined partway through Phase&nbsp;1)</li>
+                <li>Nabarun Chakravarty, UX Lead Architect</li>
+                <li>Rolan Gomes, UX Designer</li>
+                <li>Satvik Nayak, UX Engineer (joined partway through Phase&nbsp;1)</li>
               </ul>
             </dd>
           </div>
@@ -114,14 +114,14 @@
     <article class="section">
       <div class="container prose" data-reveal-children>
 
-        <p class="nda-note">Detailed UI masked per NDA. Process artifacts and metrics shared with permission. <!-- PLACEHOLDER: confirm written sign-off covering the published (not just interview-walkthrough) version before this goes live — see Master Profile §11.15.1 --></p>
+        <p class="nda-note sticky-note sticky-note--margin">Detailed UI masked per NDA. Process artifacts and metrics shared with permission. <!-- PLACEHOLDER: confirm written sign-off covering the published (not just interview-walkthrough) version before this goes live, see Master Profile §11.15.1 --></p>
 
         <h2>Context</h2>
         <p>The brand system at a top-20 US accounting and consulting firm was built for print and editorial. Nobody had thought much about product. Into that gap, engineering teams filled in their own interpretations, on whatever stack they were already on, with nothing to check their work against.</p>
 
         <p>I saw the trigger up close. Inside a single project, the same button showed up four different ways, built by four different developers who'd each made their own reasonable call. No shared framework, no single source of truth. Teams that should have been building the same thing were quietly building four different things instead.</p>
 
-        <p>That's when it stopped being a nice-to-have and turned into a real problem worth fixing. I took it to the firm's internal IT Director and pitched building a design system. The pitch got approved — not as a funded line item with set hours, but as permission to work on it whenever sprint commitments left room. Meeting the deadlines the team set for itself meant putting in time outside working hours; that's what actually got Phase 1 built.</p>
+        <p>That's when it stopped being a nice-to-have and turned into a real problem worth fixing. I took it to the firm's internal IT Director and pitched building a design system. The pitch got approved, not as a funded line item with set hours, but as permission to work on it whenever sprint commitments left room. Meeting the deadlines the team set for itself meant putting in time outside working hours; that's what actually got Phase 1 built.</p>
 
         <h2>Why a style guide wouldn't have fixed this</h2>
         <p>Multiple versions of the same component meant nobody had unified control over how it looked or worked. A single bug fix meant hunting down every page it touched and fixing it there too, one at a time. Simple problems turned tedious fast.</p>
@@ -136,36 +136,36 @@
         <h2>Two phases, and the pivot between them</h2>
         <p>Phase 1 was Figma and documentation, nothing else. The task was to audit the most heavily used components inside the Hub platform, then rebuild them from scratch as a proper component kit, starting underneath the components entirely: color, typography, spacing, elevation, iconography, all the atomic pieces, before a single component got touched.</p>
 
-        <p>The pivot to Phase 2 happened partway through, almost by accident. It became clear that a well-documented design system doesn't just keep Figma tidy — it makes a design-to-code workflow possible. Once I saw that, Phase 2 more or less defined itself. Satvik Nayak, a frontend engineer with real depth in React, Base UI, Radix UI, and Tailwind CSS, joined the team partway through Phase 1 — and his technical depth is what made Phase 2 possible in the first place; we planned it together once he was on board. It wasn't a random hire either: upcoming projects, and pieces of the ones already running, were headed toward React anyway. So the plan became simple — move fast, get components into real code, and prove it out on the task management work inside the Hub platform first.</p>
+        <p>The pivot to Phase 2 happened partway through, almost by accident. It became clear that a well-documented design system doesn't just keep Figma tidy. It makes a design-to-code workflow possible. Once I saw that, Phase 2 more or less defined itself. Satvik Nayak, a frontend engineer with real depth in React, Base UI, Radix UI, and Tailwind CSS, joined the team partway through Phase 1, and his technical depth is what made Phase 2 possible in the first place; we planned it together once he was on board. It wasn't a random hire either: upcoming projects, and pieces of the ones already running, were headed toward React anyway. So the plan became simple: move fast, get components into real code, and prove it out on the task management work inside the Hub platform first.</p>
 
-        <div class="case-quote">
+        <div class="case-quote sticky-note sticky-note--margin">
           <p>This was never a one-person job. I reported to Nabarun, our UX Lead Architect, who had final say. Within that, I had the liberty to decide color, typography, elevation, and iconography based on research and judgment, brought to him for review and sign-off. With Satvik on Phase 2, it worked differently again: he owned how everything came together in code, Code Connect included, with just as much say in his half as I had in mine.</p>
         </div>
 
         <h2>Composition model: Atomic Design</h2>
-        <p>Everything under Foundations and everything in the component kit follows Brad Frost's Atomic Design methodology — atoms, molecules, organisms, templates, and pages, each level built from the one below it. I didn't bolt this on after the fact; it's the reason Phase 1 was sequenced the way it was. Foundations got built first, and a single component wasn't touched until color, typography, spacing, elevation, and iconography were locked. That's Atomic Design's own build order, applied without ever naming it in the earlier drafts of this case study — an omission worth correcting, since it's the methodology the whole system runs on.</p>
+        <p>Everything under Foundations and everything in the component kit follows Brad Frost's Atomic Design methodology: atoms, molecules, organisms, templates, and pages, each level built from the one below it. I didn't bolt this on after the fact; it's the reason Phase 1 was sequenced the way it was. Foundations got built first, and a single component wasn't touched until color, typography, spacing, elevation, and iconography were locked. That's Atomic Design's own build order, applied without ever naming it in the earlier drafts of this case study, an omission worth correcting since it's the methodology the whole system runs on.</p>
 
-        <p>One distinction matters here, because it's easy to get wrong: the token tiers (Primitive → Semantic → Component, covered in the next section) and the Atomic Design tiers (atoms → molecules → organisms) are two different hierarchies, not the same one under two names. Token tiers describe how a <em>value</em> resolves — how <code>#004DFF</code> becomes <code>Brand/Primary</code> becomes the background of a solid button. Atomic Design describes how a <em>component</em> gets composed — how a Button and a Tooltip combine into an icon-only button, and how that combines with others into a toolbar. Foundations sit <em>underneath</em> atoms, supplying the values every atom is built from, the same way protons and electrons sit underneath a chemical atom without being atoms themselves.</p>
+        <p>One distinction matters here, because it's easy to get wrong: the token tiers (Primitive → Semantic → Component, covered in the next section) and the Atomic Design tiers (atoms → molecules → organisms) are two different hierarchies, not the same one under two names. Token tiers describe how a <em>value</em> resolves: how <code>#004DFF</code> becomes <code>Brand/Primary</code> becomes the background of a solid button. Atomic Design describes how a <em>component</em> gets composed: how a Button and a Tooltip combine into an icon-only button, and how that combines with others into a toolbar. Foundations sit <em>underneath</em> atoms, supplying the values every atom is built from, the same way protons and electrons sit underneath a chemical atom without being atoms themselves.</p>
 
         <dl class="prop-list">
-          <dt>Subatomic (Foundations)</dt><dd>Color primitives, type scale, spacing scale, elevation shadows, icon spec. Raw values, not independently functional in a UI — a <code>Space/4</code> token or an OKLCH value doesn't do anything on its own.</dd>
+          <dt>Subatomic (Foundations)</dt><dd>Color primitives, type scale, spacing scale, elevation shadows, icon spec. Raw values, not independently functional in a UI. A <code>Space/4</code> token or an OKLCH value doesn't do anything on its own.</dd>
           <dt>Atoms</dt><dd>Button, Input, Label, Icon, Avatar, Badge, Checkbox, Radio. The smallest components that are still functional on their own. Can't be broken down further without losing what makes them useful.</dd>
           <dt>Molecules</dt><dd>Icon-only button + Tooltip, Split Button, Connected Button Group, Form Field (Label + Input + helper/error text). Small, purpose-built groups of atoms. Each one does exactly one job.</dd>
           <dt>Organisms</dt><dd>Data Table (rows/columns of text, numbers, indicator icons, icon-button actions, dropdowns, status pills, checkboxes, redirecting actions). Distinct, complex sections of an interface, composed of molecules, atoms, or other organisms.</dd>
-          <dt>Templates</dt><dd>Page Frame (Header + Footer, D365 Power Pages–style), Modal/Drawer Frame (scrim + container). Page-level layout with components placed, content structure defined, no final content yet.</dd>
-          <dt>Pages</dt><dd>Task management proof of concept (Hub platform, Phase 2). Templates with real content in place — the point where the system gets tested against actual use.</dd>
+          <dt>Templates</dt><dd>Page Frame (Header + Footer, in the style of D365 Power Pages), Modal/Drawer Frame (scrim + container). Page-level layout with components placed, content structure defined, no final content yet.</dd>
+          <dt>Pages</dt><dd>Task management proof of concept (Hub platform, Phase 2). Templates with real content in place, the point where the system gets tested against actual use.</dd>
         </dl>
 
         <p>Foundations, covered next, is the subatomic layer: the raw material every atom in the system is built from.</p>
 
         <h2>Foundations</h2>
 
-        <p>This is the subatomic layer — the raw material every atom in the component kit is built from. None of it is directly usable in a UI on its own; a font-weight primitive or a shadow value only becomes something a user interacts with once it's assembled into an atom like Button or Input.</p>
+        <p>This is the subatomic layer: the raw material every atom in the component kit is built from. None of it is directly usable in a UI on its own; a font-weight primitive or a shadow value only becomes something a user interacts with once it's assembled into an atom like Button or Input.</p>
 
         <h3>Typography: brand identity meets product legibility</h3>
         <p>Phase 1 launched with the brand's own editorial fonts: Anton, Montserrat, Lora. On a product screen, none of them held up. Anton is all caps with thick strokes, built for huge display sizes, and it turns into a mess at title scale in a real interface. Montserrat's characters run wide, so anything data-dense started to feel cramped.</p>
 
-        <p>The fix was <strong>Inter Tight</strong> for display and headings — the condensed cut specifically, since it stays legible at large sizes without losing authority — <strong>Roboto Flex</strong> for body text, a variable font built for dense data, and <strong>Roboto Mono</strong> for IDs, code, and anything meant to be read by a machine as much as a person.</p>
+        <p>The fix was <strong>Inter Tight</strong> for display and headings, the condensed cut specifically, since it stays legible at large sizes without losing authority, <strong>Roboto Flex</strong> for body text, a variable font built for dense data, and <strong>Roboto Mono</strong> for IDs, code, and anything meant to be read by a machine as much as a person.</p>
 
         <p>One more typeface is worth calling out on its own, because it's a real accessibility feature rather than a legibility fix. <strong>Atkinson Hyperlegible Next</strong> sits in the system as a user-facing preference: turn it on, and it swaps the body font across every text style in the product, with nothing else changing. Not scale, not size, not line-height.</p>
 
@@ -195,12 +195,12 @@
         <h3>Token architecture: three tiers, one direction of flow</h3>
         <p>Blueprint runs on a three-tier token model. Primitive values sit at the bottom. Semantic tokens, named for what they mean rather than what they look like, sit in the middle. Component tokens sit on top, and those are what a React component actually reads. Everything flows one direction, primitive to semantic to component. A component never reaches down and grabs a primitive directly.</p>
 
-        <p>Blue was the first color decision in the design system, and every other hue was built downstream of it. The anchor blue, <code>#004DFF</code>, was chosen to hold up against black as much as against white, since blue elements are frequently paired with black text and used directly on black backgrounds in banners, buttons, and marketing graphics. That decision anchored blue-500 in OKLCH, and every other hue in the system — red, green, yellow, the tinted greys — was then built by holding lightness constant against that same blue-500 anchor and adjusting hue and chroma. That's also why the one deliberate break from the pattern (yellow's anchor moving to 600 instead of 500) reads as a considered exception rather than an inconsistency.</p>
+        <p>Blue was the first color decision in the design system, and every other hue was built downstream of it. The anchor blue, <code>#004DFF</code>, was chosen to hold up against black as much as against white, since blue elements are frequently paired with black text and used directly on black backgrounds in banners, buttons, and marketing graphics. That decision anchored blue-500 in OKLCH, and every other hue in the system (red, green, yellow, the tinted greys) was then built by holding lightness constant against that same blue-500 anchor and adjusting hue and chroma. That's also why the one deliberate break from the pattern (yellow's anchor moving to 600 instead of 500) reads as a considered exception rather than an inconsistency.</p>
 
         <figure>
           <!-- PLACEHOLDER image -->
           <img src="../assets/images/tokens-bds.svg" width="1200" height="480" alt="Blueprint token architecture diagram: brand guideline #0050FF is substituted to #004DFF at the primitive layer for accessibility, then aliased to a semantic Brand/Primary token, which is consumed by a Button/Solid/Brand/BG component token" loading="lazy" decoding="async" />
-          <figcaption>Fig 2 — The three-tier token model, with the brand-to-accessible substitution shown at the point where it actually happens.</figcaption>
+          <figcaption>Fig 2: The three-tier token model, with the brand-to-accessible substitution shown at the point where it actually happens.</figcaption>
         </figure>
 
         <ul class="detail-list">
@@ -211,11 +211,11 @@
         </ul>
 
         <h3>Spacing: one base unit, two tiers built to overlap on purpose</h3>
-        <p>Spacing follows the same three-tier discipline as everything else. The primitive layer is a flat numeric scale — <code>Space/0</code> through <code>Space/16</code> — where every step is a multiple of a single 4&nbsp;px base unit: 0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, up to 64 at <code>Space/16</code>. 4&nbsp;px was the deliberate choice over an 8&nbsp;px grid: it divides cleanly across common screen densities (1x, 1.5x, 2x, 3x) and lands on a whole pixel at every step, so nothing in the system ever needs to round.</p>
+        <p>Spacing follows the same three-tier discipline as everything else. The primitive layer is a flat numeric scale, <code>Space/0</code> through <code>Space/16</code>, where every step is a multiple of a single 4&nbsp;px base unit: 0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, up to 64 at <code>Space/16</code>. 4&nbsp;px was the deliberate choice over an 8&nbsp;px grid: it divides cleanly across common screen densities (1x, 1.5x, 2x, 3x) and lands on a whole pixel at every step, so nothing in the system ever needs to round.</p>
 
-        <p>Components never read that primitive scale directly. A semantic layer sits between the raw numbers and the components, split into two purpose-specific tiers. <strong>Component</strong> spacing handles padding and gaps inside a single component — <code>None</code> 0, <code>XS</code> 4, <code>SM</code> 8, <code>MD</code> 12, <code>LG</code> 16, <code>XL</code> 20. <strong>Layout</strong> spacing handles the distance between components and sections — <code>XS</code> 16, <code>SM</code> 24, <code>MD</code> 32, <code>LG</code> 40, <code>XL</code> 48. The two tiers deliberately overlap at 16&nbsp;px: <code>Component/LG</code> and <code>Layout/XS</code> both alias back to the same <code>Space/4</code> primitive. That's not a naming accident — it's the seam where component-level density hands off to layout-level structure.</p>
+        <p>Components never read that primitive scale directly. A semantic layer sits between the raw numbers and the components, split into two purpose-specific tiers. <strong>Component</strong> spacing handles padding and gaps inside a single component: <code>None</code> 0, <code>XS</code> 4, <code>SM</code> 8, <code>MD</code> 12, <code>LG</code> 16, <code>XL</code> 20. <strong>Layout</strong> spacing handles the distance between components and sections: <code>XS</code> 16, <code>SM</code> 24, <code>MD</code> 32, <code>LG</code> 40, <code>XL</code> 48. The two tiers deliberately overlap at 16&nbsp;px: <code>Component/LG</code> and <code>Layout/XS</code> both alias back to the same <code>Space/4</code> primitive. That's not a naming accident. It's the seam where component-level density hands off to layout-level structure.</p>
 
-        <p>The rule that keeps the scale from eroding is simple and absolute: no raw pixel values inside a layout, ever, only a named token. A component's internal padding reaches for a Component token; the margin around that component reaches for a Layout token. Nesting follows the same logic outward — an outer block steps down to an inner one, never the reverse. And the scale doesn't flex at a breakpoint: spacing tokens keep the same value across screen sizes, because re-tuning a layout's rhythm per breakpoint is exactly the kind of per-developer judgment call this system exists to remove.</p>
+        <p>The rule that keeps the scale from eroding is simple and absolute: no raw pixel values inside a layout, ever, only a named token. A component's internal padding reaches for a Component token; the margin around that component reaches for a Layout token. Nesting follows the same logic outward: an outer block steps down to an inner one, never the reverse. And the scale doesn't flex at a breakpoint: spacing tokens keep the same value across screen sizes, because re-tuning a layout's rhythm per breakpoint is exactly the kind of per-developer judgment call this system exists to remove.</p>
         <figure>
           <img src="../assets/images/spacing.svg" width="1200" height="1130" alt="Spacing scale in the design system" loading="lazy" decoding="async" />
           <figcaption>Spacing scale in the design system</figcaption>
@@ -223,14 +223,14 @@
         <h3>Color system: a method, applied consistently, broken once on purpose</h3>
         <p>The order I built these in matters. It's really the whole story. I started with the brand's blue, converted it to OKLCH, and stretched it into an 11-stop ramp. Then, holding lightness constant at every stop, I built red, green, and yellow off that same structure, so all four families would behave the same way moving from light to dark. For slate, I took a desaturated version of the brand blue and grew it into a full grey scale, using Adobe Spectrum as a reference rather than guessing.</p>
 
-        <p>Yellow broke the pattern. Holding lightness constant, the way I had for every other color, gave me a yellow that looked muddy and dark — nothing like a warning color should look. So I didn't force it: I moved yellow's anchor up to the 600 stop instead, while blue, red, and green kept theirs at 500. Every color, from its anchor stop down to the darkest step, is AA-marked for white backgrounds. One method, used everywhere, broken on purpose in the one place it stopped working, with the reason written down next to it.</p>
+        <p>Yellow broke the pattern. Holding lightness constant, the way I had for every other color, gave me a yellow that looked muddy and dark, nothing like a warning color should look. So I didn't force it: I moved yellow's anchor up to the 600 stop instead, while blue, red, and green kept theirs at 500. Every color, from its anchor stop down to the darkest step, is AA-marked for white backgrounds. One method, used everywhere, broken on purpose in the one place it stopped working, with the reason written down next to it.</p>
 
         <figure>
-          <img src="../assets/images/color-bds.svg" width="1200" height="1037" alt="Four semantic color ramps — blue, red, green, and yellow — anchored at stop 500, except yellow which anchors at stop 600 as a marked, intentional exception" loading="lazy" decoding="async" />
-          <figcaption>Fig 3 — Four intents, one 11-stop structure, one deliberate exception. APCA Lc scores at anchor: Blue 76, Red 77, Green 72, Yellow 72.</figcaption>
+          <img src="../assets/images/color-bds.svg" width="1200" height="1037" alt="Four semantic color ramps (blue, red, green, and yellow) anchored at stop 500, except yellow which anchors at stop 600 as a marked, intentional exception" loading="lazy" decoding="async" />
+          <figcaption>Fig 3: Four intents, one 11-stop structure, one deliberate exception. APCA Lc scores at anchor: Blue 76, Red 77, Green 72, Yellow 72.</figcaption>
         </figure>
 
-        <p>Every color in the system means something specific. Blue is action, brand, anything in-process. Green is success. Yellow is warning. Red I named <strong>Critical</strong>, and that word choice was deliberate — not "destructive," not "danger." Red in this system isn't only for destructive actions; it's for anything that needs a user's immediate attention, and destructive is just one flavor of that. Critical says the whole truth; the other two words only say part of it.</p>
+        <p>Every color in the system means something specific. Blue is action, brand, anything in-process. Green is success. Yellow is warning. Red I named <strong>Critical</strong>, and that word choice was deliberate: not "destructive," not "danger." Red in this system isn't only for destructive actions; it's for anything that needs a user's immediate attention, and destructive is just one flavor of that. Critical says the whole truth; the other two words only say part of it.</p>
 
         <p>Info never got its own hue. It's folded into blue on purpose, because when a brand's main color is already blue, people read blue as informational anyway. I wrote that reasoning straight into the token descriptions, so it reads as a decision, not something that just happened to work out that way.</p>
 
@@ -252,17 +252,17 @@
         <p>The Button is the component that started all of this. Four different implementations in one project were what got the whole pitch approved in the first place. It's also the clearest place to see the token layers actually working together, since every variant is just a combination of choices across a few independent dimensions.</p>
 
         <dl class="prop-list">
-          <dt>Style</dt><dd>Solid · Outline · Ghost — controls visual weight and prominence in hierarchy.</dd>
-          <dt>Intent</dt><dd>Positive · Neutral · Critical — maps to semantic color families.</dd>
+          <dt>Style</dt><dd>Solid · Outline · Ghost. Controls visual weight and prominence in hierarchy.</dd>
+          <dt>Intent</dt><dd>Positive · Neutral · Critical. Maps to semantic color families.</dd>
           <dt>Size</dt><dd>Medium (36&nbsp;px) · Small (24&nbsp;px) · Icon · Icon-small.</dd>
           <dt>Shape</dt><dd>Rect (4&nbsp;px radius) · Pill (fully rounded).</dd>
-          <dt>States</dt><dd>Enabled · Hover · Active/Pressed · Focus · Disabled · Loading — six, not five: loading gets its own treatment.</dd>
+          <dt>States</dt><dd>Enabled · Hover · Active/Pressed · Focus · Disabled · Loading. Six, not five: loading gets its own treatment.</dd>
         </dl>
 
         <figure>
           <!-- PLACEHOLDER image -->
           <img src="../assets/images/button.svg" width="1200" height="987" alt="Anatomy of a Blueprint button showing the container background token, radius token, leading icon slot, label with matched horizontal padding, and trailing icon slot" loading="lazy" decoding="async" />
-          <figcaption>Fig 5 — Solid, Critical, Medium. Every visual property binds to a semantic token; the component itself carries no hardcoded values.</figcaption>
+          <figcaption>Fig 5: Solid, Critical, Medium. Every visual property binds to a semantic token; the component itself carries no hardcoded values.</figcaption>
         </figure>
 
         <p>Most design systems handle icon padding with a table: one row for leading-icon-only, one for trailing, one for both, one for neither. I skipped the table; the rule here is simpler. The label's own horizontal padding always matches the button's overall padding at that size, half a rem at Medium, a quarter rem at Small, on both sides, no matter which icon slots are filled. Run the math and it lands on the same numbers a four-row table would give you. It's one rule instead of four.</p>
@@ -294,7 +294,7 @@ export type ButtonProps =
   (LabelledButtonProps | IconOnlyButtonProps) &amp;
   React.ButtonHTMLAttributes&lt;HTMLButtonElement&gt;</code></pre>
 
-        <p>Button is the atom everything else in the component kit builds on. It doesn't combine with anything else to become useful — it already is. But it's also the piece that molecules like the icon-only button's Tooltip wrapper, the Split Button, and the Connected Button Group all start from, which is why getting its states, sizing, and accessibility contract right mattered more than any other single component in the system.</p>
+        <p>Button is the atom everything else in the component kit builds on. It doesn't combine with anything else to become useful. It already is. But it's also the piece that molecules like the icon-only button's Tooltip wrapper, the Split Button, and the Connected Button Group all start from, which is why getting its states, sizing, and accessibility contract right mattered more than any other single component in the system.</p>
 
         <figure>
           <!-- PLACEHOLDER image -->
@@ -303,43 +303,43 @@ export type ButtonProps =
         </figure>
 
         <h2>Molecule: Icon-only Button + Tooltip</h2>
-        <p>The clearest molecule in the system is small on purpose. An icon-only button is an Atom (Button) that, alone, fails a basic usability requirement — it has no visible text, so a screen reader user and a keyboard user who can see the screen but has no label to read both lose information a labelled button gives away for free. Pairing it with a Tooltip atom fixes that. Together, the two atoms take on a property neither one has by itself: an icon-only control that's fully identifiable no matter how someone is navigating the interface. That's the molecule test from Atomic Design — a group of atoms that, combined, does something none of them does alone.</p>
+        <p>The clearest molecule in the system is small on purpose. An icon-only button is an Atom (Button) that, alone, fails a basic usability requirement: it has no visible text, so a screen reader user and a keyboard user who can see the screen but has no label to read both lose information a labelled button gives away for free. Pairing it with a Tooltip atom fixes that. Together, the two atoms take on a property neither one has by itself: an icon-only control that's fully identifiable no matter how someone is navigating the interface. That's the molecule test from Atomic Design: a group of atoms that, combined, does something none of them does alone.</p>
 
         <p>The pairing isn't optional or left to whoever's building the screen to remember. The component's TypeScript types won't compile for an icon-only button unless both <code>aria-label</code> and <code>tooltip</code> are supplied, and the component wraps itself in the Tooltip atom automatically whenever <code>iconOnly</code> is <code>true</code>. The molecule is enforced at the type level, not just documented in prose.</p>
 
-        <p>Split Button and Connected Button Group are the same molecule pattern applied one level up — both compositions of the Button atom, both fully designed and documented in the Docsite as designed-but-not-built, the same status the "Documentation as a first-class artifact" section describes for the system generally. A Split Button pairs a primary action with a secondary dropdown trigger, sharing a single visual container; a Connected Button Group takes a row of Button atoms and removes the spacing and corner radius between them so the row reads as one control instead of several. Neither needed a new foundational decision — like the icon-only button, both are Button, recombined.</p>
+        <p>Split Button and Connected Button Group are the same molecule pattern applied one level up, both compositions of the Button atom, both fully designed and documented in the Docsite as designed-but-not-built, the same status the "Documentation as a first-class artifact" section describes for the system generally. A Split Button pairs a primary action with a secondary dropdown trigger, sharing a single visual container; a Connected Button Group takes a row of Button atoms and removes the spacing and corner radius between them so the row reads as one control instead of several. Neither needed a new foundational decision. Like the icon-only button, both are Button, recombined.</p>
 
         <h2>Organism: Data Table</h2>
-        <p>The data table is the clearest proof that the hierarchy compounds. Every piece of it already exists somewhere earlier in this case study — the table itself introduces almost nothing new. What it does introduce is composition at scale: the same small set of atoms and molecules, repeated and combined differently across dozens of rows, each row still behaving predictably because every cell type resolves back to a component that was already defined once.</p>
+        <p>The data table is the clearest proof that the hierarchy compounds. Every piece of it already exists somewhere earlier in this case study. The table itself introduces almost nothing new. What it does introduce is composition at scale: the same small set of atoms and molecules, repeated and combined differently across dozens of rows, each row still behaving predictably because every cell type resolves back to a component that was already defined once.</p>
 
         <p><strong>Composition, by cell type:</strong></p>
         <ul class="detail-list">
-          <li><strong>Text and numeric cells</strong> — the Label atom, styled off the same type scale as everywhere else in the system. Numeric columns right-align by convention; text columns left-align.</li>
-          <li><strong>Indicator icons</strong> — the Icon atom, used to flag a row-level condition (a warning, a flag, an attachment) without consuming a full column of text.</li>
-          <li><strong>Icon-button actions</strong> — the Icon Button molecule (Button atom + Tooltip atom, covered above) reused directly, unmodified, inside a table cell. This is the compounding in action: a molecule built for one context works in a completely different one without a single change.</li>
-          <li><strong>Dropdowns</strong> — a menu trigger molecule (Button atom or Icon Button molecule, paired with a menu/listbox), used for inline row actions or filtering without leaving the table.</li>
-          <li><strong>Status pills</strong> — a Badge atom carrying semantic color intent (the same six intents from the Color System section — action, critical, success, warning, and so on), so a status pill's color always means the same thing here as it does anywhere else in the product.</li>
-          <li><strong>Checkboxes</strong> — the Checkbox atom, used for row selection and bulk actions.</li>
-          <li><strong>Redirecting actions</strong> — a row-level action (an icon button or a whole-row click target) that routes to one of two destinations: a full page navigation for a deep, standalone view, or a right-side drawer for a lighter, in-context look without losing the table underneath it. Which destination a given table uses is a product decision made per use case, not something the table component enforces on its own.</li>
+          <li><strong>Text and numeric cells</strong>: the Label atom, styled off the same type scale as everywhere else in the system. Numeric columns right-align by convention; text columns left-align.</li>
+          <li><strong>Indicator icons</strong>: the Icon atom, used to flag a row-level condition (a warning, a flag, an attachment) without consuming a full column of text.</li>
+          <li><strong>Icon-button actions</strong>: the Icon Button molecule (Button atom + Tooltip atom, covered above) reused directly, unmodified, inside a table cell. This is the compounding in action: a molecule built for one context works in a completely different one without a single change.</li>
+          <li><strong>Dropdowns</strong>: a menu trigger molecule (Button atom or Icon Button molecule, paired with a menu/listbox), used for inline row actions or filtering without leaving the table.</li>
+          <li><strong>Status pills</strong>: a Badge atom carrying semantic color intent (the same six intents from the Color System section: action, critical, success, warning, and so on), so a status pill's color always means the same thing here as it does anywhere else in the product.</li>
+          <li><strong>Checkboxes</strong>: the Checkbox atom, used for row selection and bulk actions.</li>
+          <li><strong>Redirecting actions</strong>: a row-level action (an icon button or a whole-row click target) that routes to one of two destinations: a full page navigation for a deep, standalone view, or a right-side drawer for a lighter, in-context look without losing the table underneath it. Which destination a given table uses is a product decision made per use case, not something the table component enforces on its own.</li>
         </ul>
 
-        <p>A table row is a Molecule — a fixed set of cell-level atoms and molecules arranged in a line, functioning as a unit. The table itself, with its header row, its body of repeated row molecules, and (where present) pagination or bulk-action controls, is the Organism — a distinct, complex section of the interface built entirely from pieces defined once, upstream, and never redefined here. Nothing in the table needed a new color, a new spacing value, or a new interaction pattern. That's the payoff of building foundations before atoms and atoms before molecules: by the time you need something as complex as a data table, you're assembling, not designing from scratch.</p>
+        <p>A table row is a Molecule: a fixed set of cell-level atoms and molecules arranged in a line, functioning as a unit. The table itself, with its header row, its body of repeated row molecules, and (where present) pagination or bulk-action controls, is the Organism: a distinct, complex section of the interface built entirely from pieces defined once, upstream, and never redefined here. Nothing in the table needed a new color, a new spacing value, or a new interaction pattern. That's the payoff of building foundations before atoms and atoms before molecules: by the time you need something as complex as a data table, you're assembling, not designing from scratch.</p>
 
         <h2>Templates: Page Frame + Modal/Drawer Frame</h2>
         <p>Two templates carry the system from components into layout.</p>
 
-        <p><strong>Page Frame</strong> attaches a Header and a Footer to a blank canvas, and every new page created in the Hub platform starts from it. Neither the header nor the footer gets rebuilt or re-attached per page — the template handles that once, the same way Microsoft's Power Pages configures page layout in Dynamics 365: a base template every new page inherits from, not a convention every page author has to remember to follow. That's the actual value of a template in Atomic Design terms — it's not a design decision, it's the removal of a decision a page author would otherwise have to make (and could get wrong) every single time.</p>
+        <p><strong>Page Frame</strong> attaches a Header and a Footer to a blank canvas, and every new page created in the Hub platform starts from it. Neither the header nor the footer gets rebuilt or re-attached per page. The template handles that once, the same way Microsoft's Power Pages configures page layout in Dynamics 365: a base template every new page inherits from, not a convention every page author has to remember to follow. That's the actual value of a template in Atomic Design terms: it's not a design decision, it's the removal of a decision a page author would otherwise have to make (and could get wrong) every single time.</p>
 
-        <p><strong>Modal/Drawer Frame</strong> pairs a background scrim with a container, and the same template serves two different placements: a centered modal and a right-side drawer. The scrim and the container are the constant. Position, entry animation, and width are what change between the two. Building this as one template instead of two means a scrim-behavior fix — dismiss-on-click-outside, focus trapping, whatever it is — only has to happen once and both placements inherit it.</p>
+        <p><strong>Modal/Drawer Frame</strong> pairs a background scrim with a container, and the same template serves two different placements: a centered modal and a right-side drawer. The scrim and the container are the constant. Position, entry animation, and width are what change between the two. Building this as one template instead of two means a scrim-behavior fix (dismiss-on-click-outside, focus trapping, whatever it is) only has to happen once and both placements inherit it.</p>
 
-        <p>Both templates sit exactly where Atomic Design says they should: below Pages, above Organisms. Neither one is a component, and neither one has final content in it — they're the layout skeleton a Page (like the task management proof of concept) gets poured into.</p>
+        <p>Both templates sit exactly where Atomic Design says they should: below Pages, above Organisms. Neither one is a component, and neither one has final content in it. They're the layout skeleton a Page (like the task management proof of concept) gets poured into.</p>
 
         <h2>Process &amp; governance</h2>
 
         <h3>Governance: a real intake process, not a placeholder</h3>
-        <p>When a team wants a new component added, it doesn't just get built. Design sits down with dev and whoever's asking for it — could be a BA, a QA, a PO, anyone actually using the system day to day — and we work through three questions together: does something like this already exist? How often would it really get used? Is this a one-project need, or something other teams will want too? That conversation is what decides whether it gets built at all.</p>
+        <p>When a team wants a new component added, it doesn't just get built. Design sits down with dev and whoever's asking for it (could be a BA, a QA, a PO, anyone actually using the system day to day) and we work through three questions together: does something like this already exist? How often would it really get used? Is this a one-project need, or something other teams will want too? That conversation is what decides whether it gets built at all.</p>
 
-        <p>Part of "does something like this already exist" is a tier question, not just a naming one: is what's being requested actually a new atom, or is it a molecule that can be assembled from atoms already in the kit? A lot of requests that sound like new components turn out to be a new combination of existing ones — which changes the scope of the work from "design and build something new" to "document a new composition," a much smaller lift.</p>
+        <p>Part of "does something like this already exist" is a tier question, not just a naming one: is what's being requested actually a new atom, or is it a molecule that can be assembled from atoms already in the kit? A lot of requests that sound like new components turn out to be a new combination of existing ones. That changes the scope of the work from "design and build something new" to "document a new composition," a much smaller lift.</p>
 
         <p>If the answer's yes, it gets designed against the foundational layer already in place, broken down into its smallest parts, and scoped properly before anyone opens a design file. Then it gets built in code and documented the same way everything else is: anatomy, usage, behavior, accessibility. Only after all of that does it become an official part of the system.</p>
 
@@ -350,7 +350,7 @@ export type ButtonProps =
           <div class="compare-col">
             <h4>Token-separated versioning</h4>
             <p>Tokens and CSS publish on their own, separate from the React component packages. If a team only needs an updated color or a spacing tweak, they bump the token package alone, with no risk of accidentally pulling in a React behavior change they never asked for.</p>
-            <p>Teams not using React — plain HTML and CSS, vanilla JS, mobile eventually — get the same primitives too, without carrying any framework weight. Style Dictionary handles the pipeline from raw JSON tokens to whatever gets distributed.</p>
+            <p>Teams not using React (plain HTML and CSS, vanilla JS, mobile eventually) get the same primitives too, without carrying any framework weight. Style Dictionary handles the pipeline from raw JSON tokens to whatever gets distributed.</p>
           </div>
           <div class="compare-col">
             <h4>Figma-synchronous versioning</h4>
@@ -360,14 +360,14 @@ export type ButtonProps =
         </div>
 
         <h3>Documentation as a first-class artifact</h3>
-        <p>Documentation lives in a custom Docsite, built on the firm's internal DevOps wiki. Every component page follows the exact same structure: definitions, anatomy, properties, a code snippet in both React and plain HTML and CSS, accessibility notes. Read one page, and you already know where to find anything on any other page. The Docsite's navigation follows the same hierarchy: Foundations first, then Atoms, then Molecules, then Organisms — so browsing the sidebar top to bottom is, itself, a walkthrough of how the system composes, without anyone having to read an explanation of the methodology first.</p>
+        <p>Documentation lives in a custom Docsite, built on the firm's internal DevOps wiki. Every component page follows the exact same structure: definitions, anatomy, properties, a code snippet in both React and plain HTML and CSS, accessibility notes. Read one page, and you already know where to find anything on any other page. The Docsite's navigation follows the same hierarchy: Foundations first, then Atoms, then Molecules, then Organisms. Browsing the sidebar top to bottom is, itself, a walkthrough of how the system composes, without anyone having to read an explanation of the methodology first.</p>
 
         <p>There's a small discipline in there worth pointing out. The docs separate what's actually built from what's only planned: a split button and a connected button group are both fully designed and written up in the docsite right now, and both are labeled plainly as not yet built. It's the same honesty I used for the Phase 1 and Phase 2 status up top, just applied one level deeper.</p>
 
         <h3>Cross-functional alignment, built for two consumers</h3>
         <p>Token naming isn't something we negotiated case by case. It's mechanical. CSS files map directly onto Figma's variable collections, flowing from Primitives to Semantics to Components. Component styles get written into <code>index.css</code> through Tailwind v4's <code>@theme</code> directive, so a raw token like <code>color.blue.900</code> turns into <code>--color-blue-900</code> in CSS without anyone having to think about it twice.</p>
 
-        <p>Design and engineering barely disagreed on naming, and there's a real reason for that: the structure was built for two readers from day one — human developers, and, as it turned out, LLMs too. That's not something bolted on later. It's a big part of why the design-to-code proof of concept hit 80% conversion accuracy. The token structure was never retrofitted for AI; it was built to work for both from the start, alongside the human developer experience, not instead of it.</p>
+        <p>Design and engineering barely disagreed on naming, and there's a real reason for that: the structure was built for two readers from day one: human developers, and, as it turned out, LLMs too. That's not something bolted on later. It's a big part of why the design-to-code proof of concept hit 80% conversion accuracy. The token structure was never retrofitted for AI; it was built to work for both from the start, alongside the human developer experience, not instead of it.</p>
 
         <h2>Outcomes</h2>
         <p>None of this has shipped to end users yet. What follows is what I can actually measure so far, kept honest about which number is which, since it's easy to blur two different kinds of progress into one impressive-sounding stat.</p>
@@ -393,7 +393,7 @@ export type ButtonProps =
         </ul>
 
         <h2>Reflection</h2>
-        <p>The lesson that cost me the most wasn't technical. I built Phase 1 mostly outside my sprint commitments — real hours, real learning — but I sat on submitting it for review far longer than I should have, convinced it wasn't ready yet. I was young in my career and wanted to prove myself, and that zeal for perfection didn't make the work better. It just delayed a genuinely solid system from getting the scrutiny and momentum it needed. Perfection is the enemy of done, and I learned that the hard way instead of early. Understanding it sooner wouldn't have meant cutting corners — it would have meant moving the same good work forward faster.</p>
+        <p>The lesson that cost me the most wasn't technical. I built Phase 1 mostly outside my sprint commitments (real hours, real learning), but I sat on submitting it for review far longer than I should have, convinced it wasn't ready yet. I was young in my career and wanted to prove myself, and that zeal for perfection didn't make the work better. It just delayed a genuinely solid system from getting the scrutiny and momentum it needed. Perfection is the enemy of done, and I learned that the hard way instead of early. Understanding it sooner wouldn't have meant cutting corners. It would have meant moving the same good work forward faster.</p>
 
       </div>
     </article>
