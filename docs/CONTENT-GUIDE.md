@@ -54,17 +54,43 @@ Search the codebase for `<!-- PLACEHOLDER` — every one marks content to replac
   showing variants and tokens"), not "screenshot of Figma".
 - Compression: squoosh.app or `npx @squoosh/cli`.
 
-## 4. Arabic content (phase 2)
+## 4. Arabic content
 
-v1 ships English content with a functioning RTL/direction toggle (UI chrome
-strings are already bilingual via `data-i18n`). When ready for full Arabic:
+The site ships a three-way content-mode toggle: `en` (original technical
+English) / `en-simple` (a Simplified Technical English draft, ASD-STE100
+inspired) / `ar` (Arabic, translated from the `en-simple` draft — short,
+controlled-vocabulary source text translates far more reliably than dense
+technical prose). All three live on the same page/URL via the `STRINGS`
+object in `js/main.js` plus `data-i18n`/`data-i18n-label`/`data-i18n-desc`/
+`data-i18n-title`/`data-i18n-meta-description` attributes — there is no
+paired-page (`work/slug.ar.html`) architecture; that earlier plan was
+superseded once en-simple made full-body translation practical.
 
-- Translate professionally — machine-translated portfolio copy reads badly to
-  native speakers and undermines the "detail-oriented" claim.
-- Add strings to the `STRINGS` object in `js/main.js` for UI, and use
-  `data-i18n` attributes; long-form content can become paired pages
-  (`work/slug.ar.html`) later.
-- Keep proper nouns (Wipfli, Figma, WCAG) in Latin script inside `<bdi>`.
+**Scope, decided and shipped**: `index.html` and three case studies —
+`work/blueprint-design-system.html`, `work/hub-modernization.html`,
+`work/speery-health.html` (displayed as "Healthcare SaaS Redesign", an
+NDA-safe label) — have full `en-simple`/`ar` content for every heading and
+paragraph. No other page (`more-work.html`, `writing/*`, the other 3 case
+studies, `about.html`, `contact.html`) has body content in any mode beyond
+`en` — they still get the shared nav/footer chrome toggle, nothing more.
+Don't re-litigate this scope without a reason; extending it means writing
+STE + Arabic for the newly-added page from scratch.
+
+- Every `data-i18n` value is set via `innerHTML`, not `textContent` —
+  several paragraphs carry inline `<strong>`/`<code>`/`<em>`/`<a>` markup
+  that would otherwise flatten into literal angle-bracket text on a mode
+  switch. Every value is authored site copy, never user input.
+- `en` key values must be an exact copy of the original static HTML
+  (including inline tags) — they're what makes switching back to `en` from
+  `en-simple`/`ar` actually restore the original, since `data-i18n` only
+  ever *writes* a value it has.
+- Terminology is locked in `docs/AR-GLOSSARY.md` — check it (and extend it,
+  never re-decide a rendering already in it) before adding new Arabic
+  strings.
+- Digits inside Arabic prose use Eastern Arabic-Indic numerals (٠١٢٣…) — a
+  deliberate, sitewide policy, not a per-string choice.
+- A native-speaker proofread pass is still recommended before treating the
+  shipped Arabic as final — see `docs/AR-GLOSSARY.md`'s closing note.
 
 ## 5. Tone rules
 

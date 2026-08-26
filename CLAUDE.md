@@ -16,7 +16,7 @@ because that is the entire point.
 ## Tech stack (do not change without asking)
 
 - Plain **HTML + CSS + vanilla JS**. No frameworks, no build step, no npm dependencies.
-- Fonts: all self-hosted variable fonts in `assets/fonts/` — Inter (body, from rsms.me/inter/), Commissioner (headings + buttons, from kosbarts/Commissioner), Geist Mono (mono/meta, from vercel/geist-font), Estedad (RTL — headings, buttons, and body, from aminabedi68/Estedad).
+- Fonts: all self-hosted in `assets/fonts/` — Inter (body, from rsms.me/inter/), Commissioner (headings + buttons, from kosbarts/Commissioner), Geist Mono (mono/meta, from vercel/geist-font), El Messiri (RTL headings + buttons, from Google Fonts) and Harmattan (RTL body + mono/meta, from Google Fonts).
 - Hosting target: any static host (GitHub Pages / Vercel / Netlify).
 - Local preview: `npx serve .` or VS Code Live Server. Never require a build.
 
@@ -75,8 +75,9 @@ portfolio/
 - The `<html>` element carries `lang` and `dir`. The direction toggle in `main.js`
   switches `en/ltr ↔ ar/rtl`. UI strings come from the `data-i18n` mechanism in
   `main.js` — add new UI strings there in both languages.
-- Arabic text renders in `--font-sans-arabic` (handled by `[dir="rtl"]` rules in
-  `tokens.css` / `styles.css`). Never letter-space Arabic text
+- Arabic text renders in `--font-sans-arabic-heading` (El Messiri, headings/buttons)
+  or `--font-sans-arabic-body` (Harmattan, body/mono/eyebrow), handled by `[dir="rtl"]`
+  rules in `tokens.css` / `styles.css`. Never letter-space Arabic text
   (`[dir="rtl"] { letter-spacing: 0 }` is already global — don't override).
 - Numbers, phone numbers, and email addresses stay LTR inside RTL text: wrap them
   in `<bdi>` or `dir="ltr"` spans.

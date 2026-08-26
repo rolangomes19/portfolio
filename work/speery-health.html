@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Speery Health - Rolan Gomes</title>
-  <meta name="description" content="Case study: rebuilding an AI-generated healthcare SaaS prototype into a systematic, trustworthy interface for enterprise buyers — a three-axis semantic tagging system, an information-architecture rebuild, and a Figma handoff, solo, in two weeks." />
+  <title data-i18n-title="meta.speery.title">Healthcare SaaS Redesign - Rolan Gomes</title>
+  <meta name="description" data-i18n-meta-description="meta.speery.description" content="Case study: rebuilding an AI-generated healthcare SaaS prototype into a systematic, trustworthy interface for enterprise buyers — a three-axis semantic tagging system, an information-architecture rebuild, and a Figma handoff, solo, in two weeks." />
   <link rel="icon" type="image/svg+xml" href="../assets/rolan-favicon-svg.svg" />
 
   <script>
@@ -12,7 +12,7 @@
       var t = localStorage.getItem("theme");
       if (!t && window.matchMedia("(prefers-color-scheme: dark)").matches) t = "dark";
       if (t) document.documentElement.dataset.theme = t;
-      if (localStorage.getItem("lang") === "ar") {
+      if (localStorage.getItem("mode") === "ar") {
         document.documentElement.lang = "ar";
         document.documentElement.dir = "rtl";
       }
@@ -47,7 +47,7 @@
 
   <header class="site-header">
     <div class="container">
-      <a class="site-logo" href="../index.html"><span class="icon-directional" aria-hidden="true">←</span> Rolan Gomes</a>
+      <a class="site-logo" href="../index.html"><span class="icon-directional" aria-hidden="true">←</span> <span data-i18n="brand.name">Rolan Gomes</span></a>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-panel" data-i18n-label="nav.toggle" aria-label="Menu">
         <span class="nav-toggle-icon" aria-hidden="true"></span>
       </button>
@@ -61,10 +61,31 @@
           </ul>
         </nav>
         <div class="header-controls">
-          <button class="toggle-btn" type="button" data-lang-toggle aria-pressed="false" data-i18n="toggle.lang">العربية</button>
-          <button class="toggle-btn" type="button" data-theme-toggle aria-pressed="false" data-i18n-label="toggle.theme" aria-label="Toggle dark mode">
+          <div class="mode-select">
+            <button type="button" class="mode-select-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="mode-select-panel">
+              <span data-mode-select-label>English</span>
+              <svg class="mode-select-chevron" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="mode-select-panel" id="mode-select-panel" hidden>
+              <button type="button" class="mode-select-option" data-mode-option="en" aria-pressed="true">English</button>
+              <button type="button" class="mode-select-option" data-mode-option="en-simple" aria-pressed="false">Simple English</button>
+              <button type="button" class="mode-select-option" data-mode-option="ar" aria-pressed="false">عربي</button>
+            </div>
+          </div>
+          <button class="toggle-btn theme-icon-toggle" type="button" data-theme-toggle aria-pressed="false" data-i18n-label="toggle.theme" aria-label="Toggle dark mode">
             <span aria-hidden="true">◐</span>
           </button>
+          <div class="mobile-controls">
+            <div class="segmented-bar" role="group" aria-label="Language and content mode">
+              <button type="button" class="segmented-bar-btn" data-mode-option="en" aria-pressed="true">English</button>
+              <button type="button" class="segmented-bar-btn" data-mode-option="en-simple" aria-pressed="false">Simple English</button>
+              <button type="button" class="segmented-bar-btn" data-mode-option="ar" aria-pressed="false">عربي</button>
+            </div>
+            <div class="segmented-bar" role="group" aria-label="Theme">
+              <button type="button" class="segmented-bar-btn" data-theme-option="light" aria-pressed="true">Light mode</button>
+              <button type="button" class="segmented-bar-btn" data-theme-option="dark" aria-pressed="false">Dark mode</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -75,8 +96,8 @@
     <section class="section case-hero" aria-labelledby="case-title">
       <div class="container" data-reveal-intro>
         <span class="eyebrow">December 2025 · Healthcare SaaS · Figma · AI-to-production</span>
-        <h1 id="case-title">Speery Health</h1>
-        <p class="case-summary">Speery Health (name modified for NDA) builds an AI-powered platform for pharma companies to capture and analyze HCP feedback. Their first version was vibe-coded: functional, fast to build, and structurally empty, colors that meant nothing, no hierarchy, nothing in the interface a healthcare enterprise buyer could trust. I rebuilt it alone, in two weeks, as a system built for two readers, a person scanning it and, eventually, an LLM reasoning over it, then handed the file to the client's own engineering team to build.</p>
+        <h1 id="case-title" data-i18n="case.speery.title">Healthcare SaaS Redesign</h1>
+        <p class="case-summary" data-i18n="case.speery.summary">This healthcare startup (name and identifying details modified for NDA) builds an AI-powered platform for pharma companies to capture and analyze HCP feedback. Their first version was vibe-coded: functional, fast to build, and structurally empty, colors that meant nothing, no hierarchy, nothing in the interface a healthcare enterprise buyer could trust. I rebuilt it alone, in two weeks, as a system built for two readers, a person scanning it and, eventually, an LLM reasoning over it, then handed the file to the client's own engineering team to build.</p>
 
         <dl class="facts-bar">
           <div class="fact"><dt>Role</dt><dd>Design, end to end. Figma only, build handed to the client's engineering team.</dd></div>
@@ -94,7 +115,7 @@
         <p class="nda-note">Company and product names modified per NDA. The screens and prototype shown are unmodified design work, shared with permission.</p>
 
         <h2>Explore the prototype</h2>
-        <p>This is the actual file, not a recording of it. Click through it the way a stakeholder review would, every transition is real Smart Animate, including the hover states on cards and the filter toolbar, not static frames stitched together.</p>
+        <p data-i18n="case.speery.explore.p1">This is the actual file, not a recording of it. Click through it the way a stakeholder review would, every transition is real Smart Animate, including the hover states on cards and the filter toolbar, not static frames stitched together.</p>
 
         <iframe
           class="figma-embed"
@@ -102,13 +123,13 @@
           height="640"
           src="https://www.figma.com/embed?embed_host=share&amp;url=https%3A%2F%2Fwww.figma.com%2Fproto%2FOPbEctl0aS6t7FJBb4pNHf%2FPersonal-Work%3Fnode-id%3D0-1%26p%3Df%26viewport%3D411%252C558%252C0.13%26t%3DJJkaSYDAi6hSJm8M-0%26scaling%3Dscale-down%26content-scaling%3Dfixed%26starting-point-node-id%3D1%253A5602"
           allowfullscreen
-          title="Speery Health interactive Figma prototype"
+          title="Healthcare SaaS Redesign interactive Figma prototype"
           loading="lazy"></iframe>
 
         <h2>Context</h2>
-        <p>The client had a working, AI-generated prototype and wanted to bring it to healthcare enterprise buyers as professional software, not as an AI demo. It worked. It just didn't hold together. The same red or blue showed up on a metric, a chart, and a status tag with no shared logic tying any of it together, and nothing about the interface signaled that this system could be trusted with a hospital's or a pharma company's data.</p>
+        <p data-i18n="case.speery.context.p1">The client had a working, AI-generated prototype and wanted to bring it to healthcare enterprise buyers as professional software, not as an AI demo. It worked. It just didn't hold together. The same red or blue showed up on a metric, a chart, and a status tag with no shared logic tying any of it together, and nothing about the interface signaled that this system could be trusted with a hospital's or a pharma company's data.</p>
 
-        <p>An AI agent can generate a functionally complete interface fast. It can't originate a system, a color that always means the same thing, a tag hierarchy that still works past the tenth card, an accessibility decision made on purpose. That gap, between functionally complete and actually systematic, is what two weeks went toward closing.</p>
+        <p data-i18n="case.speery.context.p2">An AI agent can generate a functionally complete interface fast. It can't originate a system, a color that always means the same thing, a tag hierarchy that still works past the tenth card, an accessibility decision made on purpose. That gap, between functionally complete and actually systematic, is what two weeks went toward closing.</p>
 
         <figure>
           <img src="../assets/images/speery/old-vibe-coded-ui.webp" width="3146" height="1932" alt="The original vibe-coded interface: dashboard metrics, charts, and status tags each using color inconsistently, with no shared logic tying them together" loading="lazy" decoding="async" />
@@ -116,9 +137,9 @@
         </figure>
 
         <h2>Why the colors needed logic, not just consistency</h2>
-        <p>The vibe-coded UI used a lot of color, applied inconsistently, meaning nothing from one screen to the next. The fix started with a rule, not a palette: every status a user needs to read at a glance gets a color <strong>and</strong> an icon <strong>and</strong> a label, always in that same combination, everywhere in the product. Every insight card carries three of these independently, type (Observation, Insight, Actionable, Impact), priority (High, Medium, Low), and sentiment (Positive, Neutral, Negative), so a card can be high-priority and negative at once and still read clearly, something a single flat color code can't do.</p>
+        <p data-i18n="case.speery.colorlogic.p1">The vibe-coded UI used a lot of color, applied inconsistently, meaning nothing from one screen to the next. The fix started with a rule, not a palette: every status a user needs to read at a glance gets a color <strong>and</strong> an icon <strong>and</strong> a label, always in that same combination, everywhere in the product. Every insight card carries three of these independently, type (Observation, Insight, Actionable, Impact), priority (High, Medium, Low), and sentiment (Positive, Neutral, Negative), so a card can be high-priority and negative at once and still read clearly, something a single flat color code can't do.</p>
 
-        <p>That rule serves two readers at once. A pharma professional scanning fifty cards needs to tell severity apart without stopping to think, and a colorblind user needs the same information without relying on color at all. The client's own brief made the second reader explicit too: templates and components that scale into an enterprise product, built on a semantic system specific enough that its logic could eventually be extrapolated by an AI or LLM system downstream, not just read by a person.</p>
+        <p data-i18n="case.speery.colorlogic.p2">That rule serves two readers at once. A pharma professional scanning fifty cards needs to tell severity apart without stopping to think, and a colorblind user needs the same information without relying on color at all. The client's own brief made the second reader explicit too: templates and components that scale into an enterprise product, built on a semantic system specific enough that its logic could eventually be extrapolated by an AI or LLM system downstream, not just read by a person.</p>
 
         <figure>
           <img src="../assets/images/speery/tag-anatomy-diagram.svg" width="1200" height="603" alt="Diagram of an insight card annotated with its three independent tag axes — type, priority, and sentiment — each unpacked below into its full range of color-coded values" loading="lazy" decoding="async" />
@@ -132,13 +153,13 @@
 
         <h2>The system, screen by screen</h2>
 
-        <p><strong>Dashboard.</strong> Same underlying data as the vibe-coded version, restructured into named, scannable sections, AI-Generated Weekly Summary split into Top Risks vs. Top Opportunities, Activity Overview, Quality &amp; Efficiency Metrics, Strategic Intelligence, Network &amp; Geography, Departmental Deep Dives. This is the clearest single artifact for information re-architecture over visual polish.</p>
+        <p data-i18n="case.speery.screens.dashboard"><strong>Dashboard.</strong> Same underlying data as the vibe-coded version, restructured into named, scannable sections, AI-Generated Weekly Summary split into Top Risks vs. Top Opportunities, Activity Overview, Quality &amp; Efficiency Metrics, Strategic Intelligence, Network &amp; Geography, Departmental Deep Dives. This is the clearest single artifact for information re-architecture over visual polish.</p>
 
-        <p><strong>Manage Insights.</strong> Card view, a selection mode for bulk actions, and a table view for power users who want the same data dense and sortable. The tagging system above carries through identically across all three.</p>
+        <p data-i18n="case.speery.screens.manage"><strong>Manage Insights.</strong> Card view, a selection mode for bulk actions, and a table view for power users who want the same data dense and sortable. The tagging system above carries through identically across all three.</p>
 
-        <p><strong>Collapsed sidebar.</strong> For a user who lives in this tool all day, the sidebar collapses to icons with sub-navigation on hover, trading a persistent label for screen space given back to the data.</p>
+        <p data-i18n="case.speery.screens.sidebar"><strong>Collapsed sidebar.</strong> For a user who lives in this tool all day, the sidebar collapses to icons with sub-navigation on hover, trading a persistent label for screen space given back to the data.</p>
 
-        <p><strong>HCP Profile.</strong> A doctor's record: identity, an engagement timeline, tabbed content for Publications, Clinical Trials, and Speaking &amp; Social. The AI Recommendations panel sits visually apart, a distinct violet accent and a confidence percentage on every suggestion, so the model's opinion is never mistaken for a fact in the record.</p>
+        <p data-i18n="case.speery.screens.hcp"><strong>HCP Profile.</strong> A doctor's record: identity, an engagement timeline, tabbed content for Publications, Clinical Trials, and Speaking &amp; Social. The AI Recommendations panel sits visually apart, a distinct violet accent and a confidence percentage on every suggestion, so the model's opinion is never mistaken for a fact in the record.</p>
 
         <figure>
           <img src="../assets/images/speery/component-showcase-grid.svg" width="1600" height="1022" alt="Component showcase grid: an insight card, a table row, both sidebar states side by side, and the violet-accented AI recommendation card" loading="lazy" decoding="async" />
@@ -146,14 +167,14 @@
         </figure>
 
         <h2>Built to be read twice</h2>
-        <p>Most of my systems work starts before the AI touches anything. This project starts after it, reading AI output critically and rebuilding the logic underneath it without a rewrite from scratch. An AI agent can generate a functionally complete interface in minutes. It can't decide what a color should always mean, or notice a tag hierarchy stopping working past the tenth card.</p>
+        <p data-i18n="case.speery.readtwice.p1">Most of my systems work starts before the AI touches anything. This project starts after it, reading AI output critically and rebuilding the logic underneath it without a rewrite from scratch. An AI agent can generate a functionally complete interface in minutes. It can't decide what a color should always mean, or notice a tag hierarchy stopping working past the tenth card.</p>
 
-        <p>The brief asked for a system specific enough to be read by an AI downstream, not just a person, the same instinct behind Blueprint's token structure being built for both a human developer and an LLM from day one, arrived at independently on a completely different project. That's a pattern in how I work, not a one-off claim, see <a href="blueprint-design-system.html">Blueprint Design System</a>.</p>
+        <p data-i18n="case.speery.readtwice.p2">The brief asked for a system specific enough to be read by an AI downstream, not just a person, the same instinct behind Blueprint's token structure being built for both a human developer and an LLM from day one, arrived at independently on a completely different project. That's a pattern in how I work, not a one-off claim, see <a href="blueprint-design-system.html">Blueprint Design System</a>.</p>
 
-        <p>One place execution didn't fully meet that brief, worth saying plainly rather than glossing over: a system meant to be machine-legible depends on naming discipline everywhere, not just in the color logic. Several interactive layers in the file still carry Figma's auto-generated names. Invisible to a person clicking through, and exactly the kind of thing that breaks a model trying to reason over the file's structure later.</p>
+        <p data-i18n="case.speery.readtwice.p3">One place execution didn't fully meet that brief, worth saying plainly rather than glossing over: a system meant to be machine-legible depends on naming discipline everywhere, not just in the color logic. Several interactive layers in the file still carry Figma's auto-generated names. Invisible to a person clicking through, and exactly the kind of thing that breaks a model trying to reason over the file's structure later.</p>
 
         <h2>Motion</h2>
-        <p>Screen transitions run at 300ms with an ease-in-and-out curve, Smart Animate genuinely morphing shared layers like the sidebar and header rather than cutting between screens. Card and filter-toolbar hovers sit at 100ms, fast enough to read as instant. Nothing bounces. This is a professional healthcare dashboard whose literal brief was to build trust, and a playful interface would have undercut that. Explore the actual timing in the embed above rather than a description of it.</p>
+        <p data-i18n="case.speery.motion.p1">Screen transitions run at 300ms with an ease-in-and-out curve, Smart Animate genuinely morphing shared layers like the sidebar and header rather than cutting between screens. Card and filter-toolbar hovers sit at 100ms, fast enough to read as instant. Nothing bounces. This is a professional healthcare dashboard whose literal brief was to build trust, and a playful interface would have undercut that. Explore the actual timing in the embed above rather than a description of it.</p>
 
         <h2>Outcomes</h2>
 
@@ -164,7 +185,7 @@
           </li>
         </ul>
 
-        <p>Design delivered and handed off to the client's engineering team within a two-week freelance engagement. As an outside contributor, there's no visibility into post-launch metrics from here. This case study documents the design decisions and system architecture, not measured production outcomes, kept honest rather than implying a number that isn't there.</p>
+        <p data-i18n="case.speery.outcomes.p1">Design delivered and handed off to the client's engineering team within a two-week freelance engagement. As an outside contributor, there's no visibility into post-launch metrics from here. This case study documents the design decisions and system architecture, not measured production outcomes, kept honest rather than implying a number that isn't there.</p>
 
       </div>
     </article>
@@ -180,10 +201,7 @@
 
   <footer class="site-footer">
     <div class="container">
-      <p class="colophon">
-        Built with HTML, CSS, and vanilla JS. WCAG&nbsp;2.2&nbsp;AA, RTL-ready.
-        © <span data-year>2026</span> Rolan Gomes.
-      </p>
+      <p class="colophon" data-i18n="footer.colophon">© 2026 Rolan Gomes. Built with loads of imagination, love and Claude Code.</p>
     </div>
   </footer>
 
