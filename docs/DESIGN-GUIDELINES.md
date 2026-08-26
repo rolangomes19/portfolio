@@ -484,7 +484,8 @@ Both textures are static (no animation), so there's nothing to gate behind
 | Body | InterVariable (Inter), self-hosted from rsms.me/inter/ | Weight 400 (Regular) only; `letter-spacing: -0.02em` (`--tracking-body`) — Inter's own recommended tight tracking for text sizes |
 | Headings (h1–h4) | InterVariable | Weight 600; `letter-spacing: normal` (doesn't inherit body's -2%); `font-feature-settings: var(--font-feature-alt)` enables Inter's full character-variant bundle (single-story a, open digits, alternate 1/3, compact f/t, etc.) — the modern equivalent of the old "Inter UI var alt" cut, which is no longer published as a separate family/file |
 | Eyebrows, meta, tags, code | IBM Plex Mono | Weight 400; uppercase eyebrows with `letter-spacing: 0.08em` (LTR only) |
-| Arabic (RTL) | IBM Plex Sans Arabic | Applied via `[dir="rtl"]`; letter-spacing forced to 0; falls back to InterVariable for any Latin text mixed into RTL content |
+| Arabic (RTL) headings/buttons | El Messiri | Applied via `[dir="rtl"] h1-h6, .btn` (substitutes for Commissioner); letter-spacing forced to 0 |
+| Arabic (RTL) body/mono/eyebrow | Harmattan | Applied via `[dir="rtl"] body, .eyebrow, .mono` (substitutes for Inter and Geist Mono); letter-spacing forced to 0; falls back to InterVariable for any Latin text mixed into RTL content |
 
 Type scale — headings are sized in `cqi` (1% of the paper's width), so type
 scales with the sheet rather than the window. The rem values are guard rails,

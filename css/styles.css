@@ -23,9 +23,9 @@
    a one-time, manual regeneration of the asset, not a build step. Full
    Unicode originals covered dozens of scripts (Cyrillic, Greek,
    Vietnamese...) this Latin-only site never renders through them —
-   Arabic is Estedad's job entirely, never these three. Re-run the
-   subset (command in the perf plan doc) if a future edit needs a
-   character outside that range; the font will otherwise silently fall
+   Arabic is El Messiri's and Harmattan's job entirely, never these three.
+   Re-run the subset (command in the perf plan doc) if a future edit needs
+   a character outside that range; the font will otherwise silently fall
    back to the browser's system sans/mono for just that character. */
 @font-face {
   font-family: "InterVariable";
@@ -35,12 +35,11 @@
   src: url("../assets/fonts/InterVariable.woff2") format("woff2");
 }
 
-/* ------ Fonts: self-hosted Commissioner, Estedad, Geist Mono ------
+/* ------ Fonts: self-hosted Commissioner, Geist Mono ------
    Commissioner (headings + button/link labels) and Geist Mono (all
    monospace/meta text) downloaded from their GitHub source repos
-   (kosbarts/Commissioner, vercel/geist-font). Estedad (all Arabic text —
-   headings, buttons, body) downloaded from aminabedi68/Estedad. All three
-   are single variable-font files, same pattern as InterVariable above. */
+   (kosbarts/Commissioner, vercel/geist-font) — single variable-font files,
+   same pattern as InterVariable above. */
 @font-face {
   font-family: "Commissioner";
   font-style: normal;
@@ -48,12 +47,25 @@
   font-display: swap;
   src: url("../assets/fonts/Commissioner-Variable.woff2") format("woff2");
 }
+/* El Messiri (RTL headings/buttons, substituting for Commissioner) and
+   Harmattan (RTL body/eyebrow/mono, substituting for Inter and Geist Mono)
+   — both from Google Fonts, downloaded and self-hosted per this site's
+   convention. Harmattan only ships a single Regular weight upstream;
+   there is no bold cut to fall back to for Arabic strong/heading-weight
+   text. */
 @font-face {
-  font-family: "Estedad";
+  font-family: "El Messiri";
   font-style: normal;
-  font-weight: 100 900;
+  font-weight: 400 700;
   font-display: swap;
-  src: url("../assets/fonts/Estedad-Variable.woff2") format("woff2");
+  src: url("../assets/fonts/ElMessiri-Variable.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Harmattan";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/Harmattan-Regular.woff2") format("woff2");
 }
 @font-face {
   font-family: "Geist Mono";
@@ -481,7 +493,7 @@ pre,
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-pill);
   color: var(--color-text);
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: var(--text-body);
   cursor: pointer;
   /* padding-inline, not padding-left/right — physical properties do not
@@ -506,6 +518,175 @@ pre,
   .toggle-btn[aria-pressed="true"]:hover {
     background: var(--color-accent-hover);
     border-color: var(--color-accent-hover);
+  }
+}
+
+/* ------ Mode select (desktop) ------
+   A compact trigger (current selection + chevron) that opens a small
+   popover listbox — the "minimal select" look, replacing the old 3-way
+   segmented bar at desktop widths. Open/close mechanics mirror the
+   surface picker and mobile nav panel elsewhere in this file: trigger
+   click toggles, outside click and Escape both close, aria-expanded is
+   the single source of truth (js/main.js §2). Hidden below the same
+   64em breakpoint the nav hamburger uses — .mobile-controls below takes
+   over there instead. */
+.mode-select {
+  display: none;
+  position: relative;
+}
+@media (min-width: 64em) {
+  .mode-select {
+    display: inline-flex;
+  }
+}
+.mode-select-trigger {
+  min-inline-size: 2.75rem;
+  min-block-size: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-02);
+  background: var(--color-surface-interactive);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  cursor: pointer;
+  padding-inline: var(--space-04);
+  transition: background var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease);
+}
+@media (hover: hover) {
+  .mode-select-trigger:hover {
+    background: var(--color-tint-brand);
+    border-color: var(--color-accent);
+  }
+}
+.mode-select-chevron {
+  flex-shrink: 0;
+  transition: transform var(--duration-fast) var(--ease);
+}
+.mode-select-trigger[aria-expanded="true"] .mode-select-chevron {
+  transform: rotate(180deg);
+}
+.mode-select-panel {
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block-start: calc(100% + var(--space-02));
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-02);
+  min-inline-size: 11rem;
+  padding: var(--space-02);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-float);
+}
+/* [hidden]'s UA-stylesheet `display: none` and this file's own `.mode-select-panel`
+   rule above are equal specificity (0,1,0 each) — as author CSS, this one
+   always wins the cascade regardless of source order, which silently kept
+   the panel visible (and open on page load) despite the `hidden` attribute
+   js/main.js sets. The extra attribute selector here outweighs it. */
+.mode-select-panel[hidden] {
+  display: none;
+}
+.mode-select-option {
+  display: block;
+  inline-size: 100%;
+  padding: var(--space-03) var(--space-04);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-pill);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  text-align: start;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease),
+    color var(--duration-fast) var(--ease);
+}
+@media (hover: hover) {
+  .mode-select-option:hover {
+    background: var(--color-tint-brand);
+  }
+}
+.mode-select-option[aria-pressed="true"] {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+@media (hover: hover) {
+  .mode-select-option[aria-pressed="true"]:hover {
+    background: var(--color-accent-hover);
+  }
+}
+
+/* ------ Segmented bar (mobile — mode + theme) ------
+   Same pill vocabulary as .toggle-btn, stretched full-width with full
+   text labels (not the desktop trigger's abbreviated form), used only
+   inside .mobile-controls below 64em. Two of these stack there: one for
+   content mode (en/en-simple/ar), one for theme (light/dark) — the
+   desktop equivalents (.mode-select, the circular .toggle-btn) hide at
+   that width instead of doubling up. */
+.segmented-bar {
+  display: flex;
+  align-items: stretch;
+  inline-size: 100%;
+  background: var(--color-surface-interactive);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+}
+.segmented-bar-btn {
+  flex: 1;
+  min-block-size: 2.75rem;
+  padding-inline: var(--space-03);
+  background: transparent;
+  border: none;
+  border-inline-start: 1px solid var(--color-border-strong);
+  color: var(--color-text);
+  font-size: var(--text-body);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease),
+    color var(--duration-fast) var(--ease);
+}
+.segmented-bar-btn:first-child {
+  border-inline-start: none;
+  border-start-start-radius: var(--radius-pill);
+  border-end-start-radius: var(--radius-pill);
+}
+.segmented-bar-btn:last-child {
+  border-start-end-radius: var(--radius-pill);
+  border-end-end-radius: var(--radius-pill);
+}
+@media (hover: hover) {
+  .segmented-bar-btn:hover {
+    background: var(--color-tint-brand);
+  }
+}
+.segmented-bar-btn[aria-pressed="true"] {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+@media (hover: hover) {
+  .segmented-bar-btn[aria-pressed="true"]:hover {
+    background: var(--color-accent-hover);
+  }
+}
+.mobile-controls {
+  display: none;
+}
+@media (max-width: 63.99em) {
+  .mobile-controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-04);
+    inline-size: 100%;
+  }
+  /* The desktop-only controls this replaces at narrow widths. */
+  .mode-select,
+  .theme-icon-toggle {
+    display: none;
   }
 }
 
@@ -807,6 +988,9 @@ pre,
 @media (prefers-reduced-motion: no-preference) {
   .btn,
   .toggle-btn,
+  .mode-select-trigger,
+  .mode-select-option,
+  .segmented-bar-btn,
   .surface-picker-swatch,
   .surface-picker-reset,
   .lightbox-close {
@@ -817,6 +1001,9 @@ pre,
   }
   .btn:active,
   .toggle-btn:active,
+  .mode-select-trigger:active,
+  .mode-select-option:active,
+  .segmented-bar-btn:active,
   .surface-picker-swatch:active,
   .surface-picker-reset:active,
   .lightbox-close:active {
@@ -938,29 +1125,38 @@ pre,
   padding: var(--space-07) var(--space-06);
 }
 
-/* Edge-to-edge, not inset: no padding of its own, so it fills the row from
-   block-start to block-end and reaches the row's outer inline edge — the
-   image occupies its full half of the card, not a padded island inside it.
-   Corner radius stays var(--radius-md) as a deliberate aesthetic choice
-   (matches the card-fill vocabulary used elsewhere), not a padding-derived
-   one — there's no surrounding inset left to be concentric with.
+/* Photo-frame treatment, not edge-to-edge: a white mat around a scaled-down
+   image, a paper shadow, and a per-card random tilt (--base-rot, set once by
+   js/main.js on load) — the same "physical object resting on the page"
+   vocabulary as .about-photo/.sticky-note, reused here rather than
+   reinvented. Centered in its grid cell (align-self/justify-self override
+   the row's own align-items: stretch) so the tilt has room to rotate into
+   without clipping against the row's edges.
 
    At rest this is invisible — opacity: 0, not display: none — so the grid
    column it occupies still exists (the row doesn't reflow to one column and
-   back when a card is hovered) and a real thumbnail, once one is added here,
-   has somewhere to fade into. Default reading is text only: description and
-   tags, no placeholder box competing for attention. The media surfaces only
-   when a visitor is actually looking at that card, via hover or — since this
-   opacity: 0 box carries no information (aria-hidden, presently empty) and
-   is purely decorative — keyboard focus-within on the row's own link. */
+   back when a card is hovered) and the thumbnail has somewhere to fade
+   into. Default reading is text only: description and tags, no placeholder
+   box competing for attention. The media surfaces only when a visitor is
+   actually looking at that card, via hover or — since this opacity: 0 box
+   carries no information (aria-hidden) and is purely decorative — keyboard
+   focus-within on the row's own link. On reveal it also gets the same
+   hover-rotate/hover-scale bump .tool-sticker and .about-photo use, so it
+   arrives with a little wiggle instead of a flat fade. */
 .work-card-media {
   display: none;
-  border-radius: var(--radius-md);
-  background: var(--color-surface-interactive);
-  outline: 1px solid var(--color-image-edge);
-  outline-offset: -1px;
-  min-block-size: 12rem;
+  align-self: center;
+  justify-self: center;
+  inline-size: 85%;
+  background: #faf9f5;
+  padding: var(--space-03) var(--space-03) var(--space-06);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-paper);
   opacity: 0;
+  --base-rot: 0deg;
+  --hover-rot: 0deg;
+  --hover-scale: 1;
+  transform: rotate(calc(var(--base-rot) + var(--hover-rot))) scale(var(--hover-scale));
 }
 @container (min-width: 40em) {
   .work-card-media {
@@ -973,9 +1169,12 @@ pre,
    One ratio for every tile, matching .more-item-media img's identical
    pattern below. */
 .work-card-media img {
+  display: block;
   aspect-ratio: 4 / 3;
   inline-size: 100%;
   object-fit: cover;
+  outline: 1px solid var(--color-image-edge);
+  outline-offset: -1px;
 }
 /* A card with no media at all (nothing to reveal on hover) spans the full
    row instead of leaving its image track an empty hole. */
@@ -983,10 +1182,17 @@ pre,
   .work-card:not(:has(.work-card-media)) {
     grid-template-columns: 1fr;
   }
+  /* Fixed row height so the card's footprint doesn't depend on how much
+     description/tag text a given case study happens to have — the photo
+     frame centers vertically inside this regardless of content length. */
+  .work-card {
+    min-block-size: 18rem;
+  }
 }
 @media (prefers-reduced-motion: no-preference) {
   .work-card-media {
-    transition: opacity var(--duration-base) var(--ease);
+    transition: opacity var(--duration-base) var(--ease),
+      transform var(--duration-base) var(--ease);
   }
 }
 /* Media reveal is independent of is-liftable: a gated card (no link, no
@@ -994,10 +1200,14 @@ pre,
    implies nothing about clickability. */
 .work-card:focus-within .work-card-media {
   opacity: 1;
+  --hover-rot: 3deg;
+  --hover-scale: 1.06;
 }
 @media (hover: hover) {
   .work-card:hover .work-card-media {
     opacity: 1;
+    --hover-rot: 3deg;
+    --hover-scale: 1.06;
   }
 }
 
@@ -1662,6 +1872,10 @@ pre,
   color: var(--color-accent);
   border-radius: var(--radius-sm);
   padding: 0.1em 0.4em;
+  /* Inline code (an attribute name, a short value like aria-busy="true")
+     reads as one token — never let it break mid-snippet onto a second
+     line just because it lands near the paragraph's wrap point. */
+  white-space: nowrap;
 }
 
 .prose figure {
@@ -2085,6 +2299,9 @@ pre,
   padding: 0;
   font-size: var(--text-mono);
   line-height: var(--leading-body);
+  /* Block code needs its own line breaks back — .prose code's nowrap
+     above is only for short inline snippets, not a multi-line listing. */
+  white-space: pre;
 }
 
 /* ------ Case study: two-column comparison ------ */

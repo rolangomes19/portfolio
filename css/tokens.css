@@ -195,9 +195,12 @@
      no font-variation-settings override is needed beyond weight. */
   --font-heading: "Commissioner", var(--font-sans);
   --font-mono: "Geist Mono", ui-monospace, "SF Mono", monospace;
-  /* Estedad covers ALL Arabic text — headings, buttons, and body — not just
-     body copy, per the brief. It replaces IBM Plex Sans Arabic entirely. */
-  --font-sans-arabic: "Estedad", "InterVariable", system-ui, sans-serif;
+  /* El Messiri substitutes for Commissioner (headings/buttons) in RTL;
+     Harmattan substitutes for Inter (body) and Geist Mono (eyebrow/mono)
+     in RTL. Previously a single face (Estedad) covered all three roles —
+     see the RTL override below for where each token applies. */
+  --font-sans-arabic-heading: "El Messiri", "Commissioner", "InterVariable", system-ui, sans-serif;
+  --font-sans-arabic-body: "Harmattan", "InterVariable", system-ui, sans-serif;
   /* Handwriting face for the sticky-note component's label/annotation text
      only (never headings, body copy, or RTL — Caveat has no Arabic coverage,
      see the RTL override below). Falls back to the heading font rather than
@@ -282,6 +285,7 @@
 
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
+  --radius-xl: 1.25rem;
   /* Actions are pills, labels are chips. kami specifies pill buttons for its
      one screen template and small-radius chips for tags; keeping the two
      shapes distinct is what stops a tag from reading as a button. */
@@ -483,12 +487,14 @@
 }
 
 /* ------ RTL: Arabic type ------
-   Estedad takes over — headings, buttons, AND body (--font-heading is
-   overridden too, since h1-h6/.btn set it explicitly and would otherwise
-   win over body's inherited font-family). Arabic must never be
-   letter-spaced. */
+   Two faces split the roles that were LTR's three: El Messiri substitutes
+   for Commissioner (headings, buttons — --font-heading is overridden too,
+   since h1-h6/.btn set it explicitly and would otherwise win over body's
+   inherited font-family), Harmattan substitutes for both Inter (body) and
+   Geist Mono (.eyebrow/.mono, which set --font-mono explicitly and would
+   otherwise win the same way). Arabic must never be letter-spaced. */
 [dir="rtl"] body {
-  font-family: var(--font-sans-arabic);
+  font-family: var(--font-sans-arabic-body);
   letter-spacing: 0;
 }
 [dir="rtl"] h1,
@@ -497,12 +503,18 @@
 [dir="rtl"] h4,
 [dir="rtl"] h5,
 [dir="rtl"] h6,
-[dir="rtl"] .btn {
-  font-family: var(--font-sans-arabic);
+[dir="rtl"] .btn,
+[dir="rtl"] .site-logo {
+  font-family: var(--font-sans-arabic-heading);
   letter-spacing: 0;
 }
 [dir="rtl"] .eyebrow,
-[dir="rtl"] .mono {
+[dir="rtl"] .mono,
+[dir="rtl"] .mode-select-trigger,
+[dir="rtl"] .mode-select-option,
+[dir="rtl"] .segmented-bar-btn,
+[dir="rtl"] .toggle-btn {
+  font-family: var(--font-sans-arabic-body);
   letter-spacing: 0;
 }
 /* Caveat has no Arabic coverage — without this, RTL content inside a
@@ -510,6 +522,6 @@
    via --font-hand's own fallback chain, inconsistent with every other
    Arabic string on the site. */
 [dir="rtl"] .sticky-note {
-  font-family: var(--font-sans-arabic);
+  font-family: var(--font-sans-arabic-body);
   letter-spacing: 0;
 }

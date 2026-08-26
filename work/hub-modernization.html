@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hub Platform Modernization - Rolan Gomes</title>
-  <meta name="description" content="Case study: five projects on one platform over 16 months. A Power Pages migration forced a Bootstrap 3 to 5 rebuild, which surfaced WCAG 2.4.3 accessibility work. Azure AD B2C restyling and spinner standardization followed during the same visual system upgrade. All of it shipped to production." />
+  <title data-i18n-title="meta.hub.title">Hub Platform Modernization - Rolan Gomes</title>
+  <meta name="description" data-i18n-meta-description="meta.hub.description" content="Case study: five projects on one platform over 16 months. A Power Pages migration forced a Bootstrap 3 to 5 rebuild, which surfaced WCAG 2.4.3 accessibility work. Azure AD B2C restyling and spinner standardization followed during the same visual system upgrade. All of it shipped to production." />
   <link rel="icon" type="image/svg+xml" href="../assets/rolan-favicon-svg.svg" />
 
   <script>
@@ -12,7 +12,7 @@
       var t = localStorage.getItem("theme");
       if (!t && window.matchMedia("(prefers-color-scheme: dark)").matches) t = "dark";
       if (t) document.documentElement.dataset.theme = t;
-      if (localStorage.getItem("lang") === "ar") {
+      if (localStorage.getItem("mode") === "ar") {
         document.documentElement.lang = "ar";
         document.documentElement.dir = "rtl";
       }
@@ -53,7 +53,7 @@
 
   <header class="site-header">
     <div class="container">
-      <a class="site-logo" href="../index.html"><span class="icon-directional" aria-hidden="true">←</span> Rolan Gomes</a>
+      <a class="site-logo" href="../index.html"><span class="icon-directional" aria-hidden="true">←</span> <span data-i18n="brand.name">Rolan Gomes</span></a>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-panel" data-i18n-label="nav.toggle" aria-label="Menu">
         <span class="nav-toggle-icon" aria-hidden="true"></span>
       </button>
@@ -67,10 +67,31 @@
           </ul>
         </nav>
         <div class="header-controls">
-          <button class="toggle-btn" type="button" data-lang-toggle aria-pressed="false" data-i18n="toggle.lang">العربية</button>
-          <button class="toggle-btn" type="button" data-theme-toggle aria-pressed="false" data-i18n-label="toggle.theme" aria-label="Toggle dark mode">
+          <div class="mode-select">
+            <button type="button" class="mode-select-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="mode-select-panel">
+              <span data-mode-select-label>English</span>
+              <svg class="mode-select-chevron" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="mode-select-panel" id="mode-select-panel" hidden>
+              <button type="button" class="mode-select-option" data-mode-option="en" aria-pressed="true">English</button>
+              <button type="button" class="mode-select-option" data-mode-option="en-simple" aria-pressed="false">Simple English</button>
+              <button type="button" class="mode-select-option" data-mode-option="ar" aria-pressed="false">عربي</button>
+            </div>
+          </div>
+          <button class="toggle-btn theme-icon-toggle" type="button" data-theme-toggle aria-pressed="false" data-i18n-label="toggle.theme" aria-label="Toggle dark mode">
             <span aria-hidden="true">◐</span>
           </button>
+          <div class="mobile-controls">
+            <div class="segmented-bar" role="group" aria-label="Language and content mode">
+              <button type="button" class="segmented-bar-btn" data-mode-option="en" aria-pressed="true">English</button>
+              <button type="button" class="segmented-bar-btn" data-mode-option="en-simple" aria-pressed="false">Simple English</button>
+              <button type="button" class="segmented-bar-btn" data-mode-option="ar" aria-pressed="false">عربي</button>
+            </div>
+            <div class="segmented-bar" role="group" aria-label="Theme">
+              <button type="button" class="segmented-bar-btn" data-theme-option="light" aria-pressed="true">Light mode</button>
+              <button type="button" class="segmented-bar-btn" data-theme-option="dark" aria-pressed="false">Dark mode</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -82,7 +103,7 @@
       <div class="container" data-reveal-intro>
         <span class="eyebrow">June 2024 – October 2025 · Platform modernization · Power Pages · Bootstrap · Azure AD B2C</span>
         <h1 id="case-title">Hub Platform Modernization</h1>
-        <p class="case-summary">Five projects, over a year and a half, on one platform. A Power Pages data-model migration existed only to unlock Bootstrap 5. That led to a front-end rebuild, which surfaced accessibility debt. Around the same time, the Azure AD B2C sign-up and sign-in flows still didn’t match the new visual system, and a spinner problem nobody had gotten around to needed fixing too. None of this was planned as one project. I had a hand in fixing every piece of it.</p>
+        <p class="case-summary" data-i18n="case.hub.summary">Five projects, over a year and a half, on one platform. A Power Pages data-model migration existed only to unlock Bootstrap 5. That led to a front-end rebuild, which surfaced accessibility debt. Around the same time, the Azure AD B2C sign-up and sign-in flows still didn’t match the new visual system, and a spinner problem nobody had gotten around to needed fixing too. None of this was planned as one project. I had a hand in fixing every piece of it.</p>
 
         <dl class="facts-bar">
           <div class="fact"><dt>Role</dt><dd>Design for the visual system upgrade. Front-end code for the Bootstrap rebuild, the Azure AD B2C flows, and the spinner fix. I had no role on the Power Pages data-model migration itself, that was backend platform work, but it’s the reason everything else on this page had to happen.</dd></div>
@@ -100,36 +121,36 @@
         <p class="nda-note sticky-note sticky-note--margin">Detailed UI masked per NDA. Process artifacts and metrics shared with permission.</p>
 
         <h2>Why one upgrade became five projects</h2>
-        <p>Power Pages ran on Bootstrap 3 from 2014 until Microsoft added Bootstrap 5 support in 2023. That support only works on Power Pages’ enhanced data model. You can’t create or run a Bootstrap 5 site on the older standard data model. So the Hub platform’s Bootstrap upgrade, which touched every page, every component, and the visual system underneath all of it, couldn’t start until the data model changed first. The accessibility debt from the rebuild traces back to that dependency directly. The Azure AD B2C flows and the spinner cleanup don’t trace back to it the same way. They share the same platform and the same era, but neither one was gated by the data-model migration.</p>
-        <p>The Power Pages migration itself wasn’t mine. That part is straightforward Microsoft platform work: it moves site configuration from custom Dataverse tables into the standard solution tables Microsoft updates directly. That means faster provisioning and no more manually applying package updates to stay current. I’m including it here because without it, none of the next four sections exist.</p>
+        <p data-i18n="case.hub.why.p1">Power Pages ran on Bootstrap 3 from 2014 until Microsoft added Bootstrap 5 support in 2023. That support only works on Power Pages’ enhanced data model. You can’t create or run a Bootstrap 5 site on the older standard data model. So the Hub platform’s Bootstrap upgrade, which touched every page, every component, and the visual system underneath all of it, couldn’t start until the data model changed first. The accessibility debt from the rebuild traces back to that dependency directly. The Azure AD B2C flows and the spinner cleanup don’t trace back to it the same way. They share the same platform and the same era, but neither one was gated by the data-model migration.</p>
+        <p data-i18n="case.hub.why.p2">The Power Pages migration itself wasn’t mine. That part is straightforward Microsoft platform work: it moves site configuration from custom Dataverse tables into the standard solution tables Microsoft updates directly. That means faster provisioning and no more manually applying package updates to stay current. I’m including it here because without it, none of the next four sections exist.</p>
 
         <h2>Bootstrap 3 to 5: the rebuild, not a patch</h2>
-        <p>Microsoft ships a migration tool for this exact jump. It fixes the known Bootstrap 4 and 5 breaking changes, mainly a full rename of data attributes across every interactive component (<code>data-toggle</code> became <code>data-bs-toggle</code>, <code>data-dismiss</code> became <code>data-bs-dismiss</code>, and so on). It doesn’t touch how your own custom code holds together underneath those classes. We ran it. It broke pages. Years of styling had spread across global CSS, page-level CSS, and inline styles, with no consistent pattern. The tool converted each instance differently, and some components came out structurally broken.</p>
-        <p>We decided to stop trying to fix what the tool produced and rebuild the front end from scratch instead. We called it “bombing it down.” The visual design stayed close to the existing product. We cleaned it up and made better use of space, but didn’t reinvent it. Every line of HTML and CSS got rewritten instead of patched. The real risk was the JavaScript and the Dynamics 365 backend wired into that markup. A missed class name or element ID could silently break a working feature behind a page that looked fine. We kept the old codebase as a reference and checked every wired connection against it by hand. Two people did this, neither of us professional developers, against a live D365-backed platform, in 2024, before AI coding assistants were part of anyone’s daily workflow.</p>
-        <p>There were no visual regressions, because there was nothing left to regress to. We eliminated fourteen of roughly twenty page-level CSS files outright. What remained went into one global stylesheet built on CSS variables. A color or type change that used to mean hunting through a dozen files now means editing one token in one place.</p>
-        <p>This is also where <a href="blueprint-design-system.html">Blueprint Design System</a> starts. The short version of that story, told on Blueprint’s own page, is that the same button showed up four different ways. Here’s what actually happened during this rebuild: components across the platform had different semantic HTML structures and pulled their styling from different places, inline, page-level, and global, all at once, for what was supposed to be one component. We fixed that one audit and one rebuilt component at a time, and that’s where the token-based system on Blueprint’s page began. Read that case study for where the system went next.</p>
+        <p data-i18n="case.hub.bootstrap.p1">Microsoft ships a migration tool for this exact jump. It fixes the known Bootstrap 4 and 5 breaking changes, mainly a full rename of data attributes across every interactive component (<code>data-toggle</code> became <code>data-bs-toggle</code>, <code>data-dismiss</code> became <code>data-bs-dismiss</code>, and so on). It doesn’t touch how your own custom code holds together underneath those classes. We ran it. It broke pages. Years of styling had spread across global CSS, page-level CSS, and inline styles, with no consistent pattern. The tool converted each instance differently, and some components came out structurally broken.</p>
+        <p data-i18n="case.hub.bootstrap.p2">We decided to stop trying to fix what the tool produced and rebuild the front end from scratch instead. We called it “bombing it down.” The visual design stayed close to the existing product. We cleaned it up and made better use of space, but didn’t reinvent it. Every line of HTML and CSS got rewritten instead of patched. The real risk was the JavaScript and the Dynamics 365 backend wired into that markup. A missed class name or element ID could silently break a working feature behind a page that looked fine. We kept the old codebase as a reference and checked every wired connection against it by hand. Two people did this, neither of us professional developers, against a live D365-backed platform, in 2024, before AI coding assistants were part of anyone’s daily workflow.</p>
+        <p data-i18n="case.hub.bootstrap.p3">There were no visual regressions, because there was nothing left to regress to. We eliminated fourteen of roughly twenty page-level CSS files outright. What remained went into one global stylesheet built on CSS variables. A color or type change that used to mean hunting through a dozen files now means editing one token in one place.</p>
+        <p data-i18n="case.hub.bootstrap.p4">This is also where <a href="blueprint-design-system.html">Blueprint Design System</a> starts. The short version of that story, told on Blueprint’s own page, is that the same button showed up four different ways. Here’s what actually happened during this rebuild: components across the platform had different semantic HTML structures and pulled their styling from different places, inline, page-level, and global, all at once, for what was supposed to be one component. We fixed that one audit and one rebuilt component at a time, and that’s where the token-based system on Blueprint’s page began. Read that case study for where the system went next.</p>
 
         <h2>Accessibility: from fixing flags to fixing patterns</h2>
-        <p>Testing the rebuilt front end with Deque Axe surfaced 35 Critical and Serious violations: 8 Critical and 27 Serious. My job wasn’t only closing each one the tool flagged. It was finding the pattern behind them so the same mistake didn’t get reintroduced later.</p>
-        <p>The hardest category was focus order, <code>tabindex</code>. The obvious fix is an explicit numeric value on every focusable element, but that’s also the fragile one. It locks in a fixed sequence. Any future change to that page, a new component inserted, a section reordered, risks breaking the sequence or letting a required element get skipped. WCAG 2.4.3 exists for exactly this reason. The more durable fix follows the DOM’s natural order instead of overriding it. That’s more work up front, but far less likely to quietly break six months later.</p>
-        <p>We tested it ourselves first, then ran a formal QA pass with Axe in the QA environment, signed off by the QA accessibility tester. The change that mattered longer-term: aria labels, alt text, and the rest went in from the start on everything built afterward. QA now catches a regression before it ships instead of after.</p>
+        <p data-i18n="case.hub.a11y.p1">Testing the rebuilt front end with Deque Axe surfaced 35 Critical and Serious violations: 8 Critical and 27 Serious. My job wasn’t only closing each one the tool flagged. It was finding the pattern behind them so the same mistake didn’t get reintroduced later.</p>
+        <p data-i18n="case.hub.a11y.p2">The hardest category was focus order, <code>tabindex</code>. The obvious fix is an explicit numeric value on every focusable element, but that’s also the fragile one. It locks in a fixed sequence. Any future change to that page, a new component inserted, a section reordered, risks breaking the sequence or letting a required element get skipped. WCAG 2.4.3 exists for exactly this reason. The more durable fix follows the DOM’s natural order instead of overriding it. That’s more work up front, but far less likely to quietly break six months later.</p>
+        <p data-i18n="case.hub.a11y.p3">We tested it ourselves first, then ran a formal QA pass with Axe in the QA environment, signed off by the QA accessibility tester. The change that mattered longer-term: aria labels, alt text, and the rest went in from the start on everything built afterward. QA now catches a regression before it ships instead of after.</p>
 
         <h2>Azure AD B2C: styling what you can’t see</h2>
-        <p>Registration, sign-in, forgot password, MFA verification and its variants, email and password changes, terms acceptance, feedback and issue reporting. Eleven flows in total. These pages already ran on Bootstrap 5, separate from the Power Pages upgrade, so the problem was never a version gap. It was years of inline styling: the same component styled multiple different ways across different flows, broken layouts, and branding that no longer matched the rest of the platform.</p>
-        <p>The real constraint here is architectural. Azure AD B2C renders these pages by merging your own hosted HTML with its own injected form controls at runtime, in the user’s browser. Those controls are the actual input fields, buttons, and validation logic. Your source file only contains a shell and a single placeholder div. The interactive elements you need to style don’t exist anywhere you can open and read. The only way to know their structure is to render the page and inspect the live DOM, then write CSS and JavaScript backward from what you find. Microsoft’s own docs call this out: if you’re hooking JavaScript to those elements, you have to pin a specific page layout version, or Microsoft can change the injected markup without warning.</p>
-        <p>That’s a harder problem than a normal styling pass. It was also my first fully solo build, design and code, start to finish. It took two weeks. I paired with QA at the dev stage instead of waiting for a full QA cycle, which kept the later testing pass short. Some of the accessibility issues from the previous section showed up here too, and got fixed the same way.</p>
+        <p data-i18n="case.hub.b2c.p1">Registration, sign-in, forgot password, MFA verification and its variants, email and password changes, terms acceptance, feedback and issue reporting. Eleven flows in total. These pages already ran on Bootstrap 5, separate from the Power Pages upgrade, so the problem was never a version gap. It was years of inline styling: the same component styled multiple different ways across different flows, broken layouts, and branding that no longer matched the rest of the platform.</p>
+        <p data-i18n="case.hub.b2c.p2">The real constraint here is architectural. Azure AD B2C renders these pages by merging your own hosted HTML with its own injected form controls at runtime, in the user’s browser. Those controls are the actual input fields, buttons, and validation logic. Your source file only contains a shell and a single placeholder div. The interactive elements you need to style don’t exist anywhere you can open and read. The only way to know their structure is to render the page and inspect the live DOM, then write CSS and JavaScript backward from what you find. Microsoft’s own docs call this out: if you’re hooking JavaScript to those elements, you have to pin a specific page layout version, or Microsoft can change the injected markup without warning.</p>
+        <p data-i18n="case.hub.b2c.p3">That’s a harder problem than a normal styling pass. It was also my first fully solo build, design and code, start to finish. It took two weeks. I paired with QA at the dev stage instead of waiting for a full QA cycle, which kept the later testing pass short. Some of the accessibility issues from the previous section showed up here too, and got fixed the same way.</p>
 
         <h2>Spinner standardization: the loose end</h2>
-        <p>Three different spinners had accumulated with no coordination. FontAwesome’s came bundled with Power Pages by default. Fluent UI’s arrived through Microsoft D365 integrations and iframes. And one custom spinner had been built by a developer for a specific feature. None of this was anyone’s decision. Nobody had defined what a loading state should look like or behave like on this platform.</p>
-        <p>First I documented every instance’s markup and styling. Then I used GitHub Copilot to help trace each spinner back to where it was called from and how, before deciding on a replacement plan. Bootstrap’s own spinner became the target, since it was already the most compatible option with the rest of the rebuilt front end. Execution differed by origin. FontAwesome’s spinners got a small JavaScript swap from <code>fa-spin</code> to Bootstrap’s <code>spinner-border</code> classes. The custom spinner was replaced outright. Fluent UI’s needed its own JavaScript replacement, since it had no equivalent class-based swap available. Altogether, the consolidation compressed an estimated 10-day UI standardization sprint into 5 days.</p>
-        <p>This should have shipped with the original Bootstrap rebuild. It didn’t, for the same reason most of these threads got spread out: there wasn’t enough time or in-house expertise to take it on alongside everything else at once. It landed over a year later instead, on its own, but it’s still part of the same upgrade.</p>
+        <p data-i18n="case.hub.spinner.p1">Three different spinners had accumulated with no coordination. FontAwesome’s came bundled with Power Pages by default. Fluent UI’s arrived through Microsoft D365 integrations and iframes. And one custom spinner had been built by a developer for a specific feature. None of this was anyone’s decision. Nobody had defined what a loading state should look like or behave like on this platform.</p>
+        <p data-i18n="case.hub.spinner.p2">First I documented every instance’s markup and styling. Then I used GitHub Copilot to help trace each spinner back to where it was called from and how, before deciding on a replacement plan. Bootstrap’s own spinner became the target, since it was already the most compatible option with the rest of the rebuilt front end. Execution differed by origin. FontAwesome’s spinners got a small JavaScript swap from <code>fa-spin</code> to Bootstrap’s <code>spinner-border</code> classes. The custom spinner was replaced outright. Fluent UI’s needed its own JavaScript replacement, since it had no equivalent class-based swap available. Altogether, the consolidation compressed an estimated 10-day UI standardization sprint into 5 days.</p>
+        <p data-i18n="case.hub.spinner.p3">This should have shipped with the original Bootstrap rebuild. It didn’t, for the same reason most of these threads got spread out: there wasn’t enough time or in-house expertise to take it on alongside everything else at once. It landed over a year later instead, on its own, but it’s still part of the same upgrade.</p>
 
         <h2>Outcomes</h2>
-        <p>Everything on this page shipped to production. No exceptions, no post-launch visibility gap.</p>
+        <p data-i18n="case.hub.outcomes.p1">Everything on this page shipped to production. No exceptions, no post-launch visibility gap.</p>
 
         <h2>What I’d do differently</h2>
-        <p>Document while the work is still fresh. I wrote this up more than a year after some of it happened, which meant reconstructing decisions and constraints from memory instead of from notes. The sharpest details, the ones that actually explain a decision instead of just describing it, are the first to fade.</p>
-        <p>One more note: this project is what moved me from being read as a visual designer to someone who can work and speak like a developer. That shift runs through every section above.</p>
+        <p data-i18n="case.hub.reflect.p1">Document while the work is still fresh. I wrote this up more than a year after some of it happened, which meant reconstructing decisions and constraints from memory instead of from notes. The sharpest details, the ones that actually explain a decision instead of just describing it, are the first to fade.</p>
+        <p data-i18n="case.hub.reflect.p2">One more note: this project is what moved me from being read as a visual designer to someone who can work and speak like a developer. That shift runs through every section above.</p>
 
       </div>
     </article>
@@ -145,10 +166,7 @@
 
   <footer class="site-footer">
     <div class="container">
-      <p class="colophon">
-        Built with HTML, CSS, and vanilla JS. WCAG&nbsp;2.2&nbsp;AA, RTL-ready.
-        © <span data-year>2026</span> Rolan Gomes.
-      </p>
+      <p class="colophon" data-i18n="footer.colophon">© 2026 Rolan Gomes. Built with loads of imagination, love and Claude Code.</p>
     </div>
   </footer>
 

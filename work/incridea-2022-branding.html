@@ -12,7 +12,7 @@
       var t = localStorage.getItem("theme");
       if (!t && window.matchMedia("(prefers-color-scheme: dark)").matches) t = "dark";
       if (t) document.documentElement.dataset.theme = t;
-      if (localStorage.getItem("lang") === "ar") {
+      if (localStorage.getItem("mode") === "ar") {
         document.documentElement.lang = "ar";
         document.documentElement.dir = "rtl";
       }
@@ -53,7 +53,7 @@
 
   <header class="site-header">
     <div class="container">
-      <a class="site-logo" href="../index.html"><span class="icon-directional" aria-hidden="true">←</span> Rolan Gomes</a>
+      <a class="site-logo" href="../index.html"><span class="icon-directional" aria-hidden="true">←</span> <span data-i18n="brand.name">Rolan Gomes</span></a>
       <nav class="site-nav" aria-label="Main">
         <ul>
           <li><a href="../index.html#work" data-i18n="nav.work">Works</a></li>
@@ -62,10 +62,31 @@
         </ul>
       </nav>
       <div class="header-controls">
-        <button class="toggle-btn" type="button" data-lang-toggle aria-pressed="false" data-i18n="toggle.lang">العربية</button>
-        <button class="toggle-btn" type="button" data-theme-toggle aria-pressed="false" data-i18n-label="toggle.theme" aria-label="Toggle dark mode">
+        <div class="mode-select">
+          <button type="button" class="mode-select-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="mode-select-panel">
+            <span data-mode-select-label>English</span>
+            <svg class="mode-select-chevron" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="mode-select-panel" id="mode-select-panel" hidden>
+            <button type="button" class="mode-select-option" data-mode-option="en" aria-pressed="true">English</button>
+            <button type="button" class="mode-select-option" data-mode-option="en-simple" aria-pressed="false">Simple English</button>
+            <button type="button" class="mode-select-option" data-mode-option="ar" aria-pressed="false">عربي</button>
+          </div>
+        </div>
+        <button class="toggle-btn theme-icon-toggle" type="button" data-theme-toggle aria-pressed="false" data-i18n-label="toggle.theme" aria-label="Toggle dark mode">
           <span aria-hidden="true">◐</span>
         </button>
+        <div class="mobile-controls">
+          <div class="segmented-bar" role="group" aria-label="Language and content mode">
+            <button type="button" class="segmented-bar-btn" data-mode-option="en" aria-pressed="true">English</button>
+            <button type="button" class="segmented-bar-btn" data-mode-option="en-simple" aria-pressed="false">Simple English</button>
+            <button type="button" class="segmented-bar-btn" data-mode-option="ar" aria-pressed="false">عربي</button>
+          </div>
+          <div class="segmented-bar" role="group" aria-label="Theme">
+            <button type="button" class="segmented-bar-btn" data-theme-option="light" aria-pressed="true">Light mode</button>
+            <button type="button" class="segmented-bar-btn" data-theme-option="dark" aria-pressed="false">Dark mode</button>
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -118,10 +139,7 @@
 
   <footer class="site-footer">
     <div class="container">
-      <p class="colophon">
-        Built with HTML, CSS, and vanilla JS. WCAG&nbsp;2.2&nbsp;AA, RTL-ready.
-        © <span data-year>2026</span> Rolan Gomes.
-      </p>
+      <p class="colophon" data-i18n="footer.colophon">© 2026 Rolan Gomes. Built with loads of imagination, love and Claude Code.</p>
     </div>
   </footer>
 
