@@ -304,7 +304,15 @@
     <section id="skills" class="section" aria-labelledby="skills-title">
       <div class="container">
         <h2 id="skills-title" class="section-title" data-reveal data-i18n="skills.title">Here's my toolbox!</h2>
-        <span class="eyebrow" data-reveal data-i18n="skills.eyebrow">DRAG THE SKILL STICKERS AROUND OR CLICK THEM TO READ MORE ON HOW I USE THEM. ENJOY!!!</span>
+        <!-- Two copies, CSS-toggled by the same 48em breakpoint that
+             disables dragging (js/main.js §9) — dragging is a desktop-only
+             capability now, so the copy pointing visitors at it shouldn't
+             show where it doesn't apply. A live media-query display swap
+             (below, in styles.css) rather than a JS check: it then tracks
+             the actual current viewport with no reload needed, same
+             reasoning as the drag gate itself. -->
+        <span class="eyebrow skills-eyebrow-desktop" data-reveal data-i18n="skills.eyebrow">DRAG THE SKILL STICKERS AROUND OR CLICK THEM TO READ MORE ON HOW I USE THEM. ENJOY!!!</span>
+        <span class="eyebrow skills-eyebrow-mobile" data-reveal data-i18n="skills.eyebrow.mobile">YOU CAN DRAG THE SKILL STICKERS AROUND ONLY ON DESKTOP MODE, AS BEING USABLE &gt;&gt;&gt; BEING FUN! YOU CAN STILL CLICK THE STICKERS TO LEARN MORE!</span>
 
         <!-- Each sticker's on-screen position/rotation is scattered by
              js/main.js §9 on load, then made draggable by §9's shared
