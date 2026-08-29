@@ -177,8 +177,6 @@
           <dt>Pages</dt><dd>Task management proof of concept (Hub platform, Phase 2). Templates with real content in place, the point where the system gets tested against actual use.</dd>
         </dl>
 
-        <p data-i18n="case.bds.foundationsBridge">Foundations, covered next, is the subatomic layer: the raw material every atom in the system is built from.</p>
-
         <h2>Foundations</h2>
 
         <p data-i18n="case.bds.foundationsIntro">This is the subatomic layer: the raw material every atom in the component kit is built from. None of it is directly usable in a UI on its own; a font-weight primitive or a shadow value only becomes something a user interacts with once it's assembled into an atom like Button or Input.</p>
@@ -326,7 +324,7 @@ export type ButtonProps =
         <h2>Molecule: Icon-only Button + Tooltip</h2>
         <p data-i18n="case.bds.molecule.p1">The clearest molecule in the system is small on purpose. An icon-only button is an Atom (Button) that, alone, fails a basic usability requirement: it has no visible text, so a screen reader user and a keyboard user who can see the screen but has no label to read both lose information a labelled button gives away for free. Pairing it with a Tooltip atom fixes that. Together, the two atoms take on a property neither one has by itself: an icon-only control that's fully identifiable no matter how someone is navigating the interface. That's the molecule test from Atomic Design: a group of atoms that, combined, does something none of them does alone.</p>
 
-        <p data-i18n="case.bds.molecule.p2">The pairing isn't optional or left to whoever's building the screen to remember. The component's TypeScript types won't compile for an icon-only button unless both <code>aria-label</code> and <code>tooltip</code> are supplied, and the component wraps itself in the Tooltip atom automatically whenever <code>iconOnly</code> is <code>true</code>. The molecule is enforced at the type level, not just documented in prose.</p>
+        <p data-i18n="case.bds.molecule.p2">That pairing isn't optional or left to memory: as covered in the Button section, the component's types won't compile without both <code>aria-label</code> and <code>tooltip</code>, and it wraps itself in the Tooltip atom automatically. The molecule is enforced at the type level, not just documented in prose.</p>
 
         <p data-i18n="case.bds.molecule.p3">Split Button and Connected Button Group are the same molecule pattern applied one level up, both compositions of the Button atom, both fully designed and documented in the Docsite as designed-but-not-built, the same status the "Documentation as a first-class artifact" section describes for the system generally. A Split Button pairs a primary action with a secondary dropdown trigger, sharing a single visual container; a Connected Button Group takes a row of Button atoms and removes the spacing and corner radius between them so the row reads as one control instead of several. Neither needed a new foundational decision. Like the icon-only button, both are Button, recombined.</p>
 
