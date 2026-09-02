@@ -850,10 +850,24 @@ cards *within* it.
   the left edge by the same 48px in RTL as they do off the right in LTR).
 - **Mobile crop**: below `48em` the paper runs edge-to-edge with the
   viewport, so "past the paper's edge" would otherwise mean "past the
-  viewport, causing horizontal scroll." `body` gets `overflow: clip` (both
+  viewport, causing horizontal scroll." `#main` gets `overflow: clip` (both
   axes — leaving one at `visible` forces UAs to compute it as `auto` instead,
   reopening exactly the scroll this exists to prevent) at that same
-  breakpoint, right next to the rule that turns the mat image off.
+  breakpoint, right next to the rule that turns the mat image off. This is
+  set on `#main`, not `body` or `html`: `body`'s overflow propagates up to
+  become the *viewport's own* used overflow (`clip` turning into `hidden`
+  in that propagated form), and iOS Safari has long-standing WebKit bugs
+  locking up native touch-scroll on a root scroller with `overflow: hidden`
+  until a pinch-zoom forces a relayout — this caused a reported case of the
+  page being stuck on the first section on iPhone until the visitor
+  pinch-zoomed. Setting it on `html` directly avoids that propagation path
+  but is worse: the spec defines `clip` as having no scrolling user
+  interface at all on the element it's set on, and combined with this
+  site's global `scroll-behavior: smooth`, even `window.scrollTo()`
+  silently no-ops — verified directly — which would break every in-page
+  anchor link on mobile, not just touch-scroll. `#main` is a plain
+  descendant box, so clipping it never touches the viewport's own overflow
+  either way, while still covering every section that bleeds.
 - **Content**: real photos now (`rolan-sq.jpg`, `rolan-extend.webp`, both
   genuinely 800×800 — `width`/`height` attributes match, no layout shift).
   Alt text describes what's actually in each photo.

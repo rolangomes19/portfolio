@@ -131,6 +131,7 @@
 
       "skills.title": "Here's my toolbox!",
       "skills.eyebrow": "DRAG THE SKILL STICKERS AROUND OR CLICK THEM TO READ MORE ON HOW I USE THEM. ENJOY!!!",
+      "skills.eyebrow.mobile": "YOU CAN DRAG THE SKILL STICKERS AROUND ONLY ON DESKTOP MODE, AS BEING USABLE >>> BEING FUN! YOU CAN STILL CLICK THE STICKERS TO LEARN MORE!",
       "skills.figma": "I have used Figma to build pixel perfect designs for web and mobile applications. I build responsive layouts and create interactive prototypes and also a Design System, if you have somehow missed that information so far :p",
       "skills.illustrator": "I have used Adobe Illustrator to create vector graphics and illustrations for various projects. My tool of choice for creating scalable graphics and logos.",
       "skills.photoshop": "Photoshop is where the retouching and digital artwork happens.",
@@ -308,6 +309,7 @@
 
       "skills.title": "Here are my tools.",
       "skills.eyebrow": "DRAG THE STICKERS. CLICK A STICKER TO READ MORE.",
+      "skills.eyebrow.mobile": "YOU CAN ONLY DRAG THE STICKERS ON DESKTOP. USABLE BEATS FUN. YOU CAN STILL CLICK A STICKER TO READ MORE.",
       "skills.figma": "I use Figma to design for web and mobile. I build responsive layouts. I make interactive prototypes. I also built a Design System in Figma.",
       "skills.illustrator": "I use Adobe Illustrator to make vector graphics and illustrations. It is my tool for scalable graphics and logos.",
       "skills.photoshop": "I use Photoshop to retouch photos and create digital art.",
@@ -511,6 +513,7 @@
 
       "skills.title": "أدواتي",
       "skills.eyebrow": "اسحب الملصقات. اضغط على أي ملصق لقراءة المزيد.",
+      "skills.eyebrow.mobile": "يمكنك سحب ملصقات المهارات في وضع سطح المكتب فقط، فسهولة الاستخدام أهم من المرح! لا يزال بإمكانك الضغط على أي ملصق لقراءة المزيد!",
       "skills.figma": "أستخدم Figma لتصميم واجهات الويب والجوال. أبني تخطيطات متجاوبة. أصنع نماذج أولية تفاعلية. كما بنيت نظام تصميم في Figma.",
       "skills.illustrator": "أستخدم Adobe Illustrator لصنع رسومات متجهة وتوضيحات. إنها أداتي المفضلة للرسومات القابلة للتكبير والشعارات.",
       "skills.photoshop": "أستخدم Photoshop لتعديل الصور وصنع الأعمال الفنية الرقمية.",
@@ -1648,9 +1651,19 @@
   ------------------------------------------------------------------ */
   if ("PointerEvent" in window) {
     const DRAG_THRESHOLD = 8; // px of movement before a pointerdown counts as a drag, not a click
+    // Shared with styles.css's own `@media (min-width: 48em)` gate on
+    // `.draggable`'s touch-action — a MediaQueryList's `.matches` is live,
+    // re-read on every pointerdown below, unlike a plain width check done
+    // once at setup time. That's the point: .about-photo is wired up
+    // unconditionally (desktopOnly: true, below) so the same instance
+    // keeps working correctly across a resize/DevTools device-toolbar
+    // toggle with no reload — a one-time check would keep whatever was
+    // true at page load.
+    const desktopMQ = window.matchMedia("(min-width: 48em)");
 
     function makeDraggable(el, options) {
       const onClick = options && options.onClick;
+      const desktopOnly = options && options.desktopOnly;
       el.classList.add("draggable");
       el.setAttribute("draggable", "false"); // no native image drag-ghost fighting pointer capture
 
@@ -1766,6 +1779,13 @@
       }
 
       el.addEventListener("pointerdown", (e) => {
+        // Checked live, every press — not just once when this listener was
+        // wired up — so an element that's desktop-only stays inert on a
+        // narrow viewport regardless of how wide the page was when it
+        // first loaded. Returning here (no preventDefault, no listeners
+        // added) leaves the touch entirely alone for the browser's own
+        // native scroll to handle.
+        if (desktopOnly && !desktopMQ.matches) return;
         if (e.pointerType === "mouse" && e.button !== 0) return;
         if (activePointerId !== null) return; // already mid-drag from another pointer
 
@@ -1808,7 +1828,7 @@
        (wPct/hPct below), not just its cell — at the 2x size pass this
        stopped being optional: a sticker placed near a cell's far edge
        with no regard for its own width could render partly outside
-       .sticker-board, which below 48em means partly clipped by body's
+       .sticker-board, which below 48em means partly clipped by #main's
        overflow: clip (measured: a sticker's right edge landing 66px past
        a 375px viewport, invisibly cut off, with no scrollbar to reveal
        it).
@@ -1879,7 +1899,20 @@
       });
     }
 
-    document.querySelectorAll(".about-photo").forEach((el) => makeDraggable(el));
+    // desktopOnly: true — below 48em a pointerdown-driven drag fights a
+    // touch scroll on a phone. Concretely, a swipe that happens to start on
+    // a photo got read as a drag instead of a page scroll, so the photo
+    // would jump to wherever the finger ended up (on every scroll gesture
+    // that grazed it, well past where it started) AND permanently leave
+    // .about-photos' flex flow once dropped (it gets reparented to <body>
+    // and absolutely positioned — see beginDrag above), collapsing the
+    // space reserved for the photo stack. makeDraggable() itself checks the
+    // current viewport live on every press (see desktopMQ above), so this
+    // stays correct across a resize/DevTools toggle with no page reload —
+    // unlike .tool-sticker below, which is a genuinely different component
+    // per breakpoint (scattered layout vs. plain grid) and so is built once
+    // at load for whichever one applies then.
+    document.querySelectorAll(".about-photo").forEach((el) => makeDraggable(el, { desktopOnly: true }));
 
     // Work-card photo frames: not draggable, just a fixed per-card tilt so
     // each thumbnail reads as a loosely-placed physical photo rather than a
@@ -1908,16 +1941,18 @@
       // ever actually RUNS later, from a click, by which point §11's
       // setup has already finished (everything in this file runs
       // synchronously, top to bottom, well before any user interaction).
-      // Below 48em, skip makeDraggable's drag machinery entirely — a plain
-      // click listener still opens the popover (and still answers keyboard
-      // Enter/Space, same as any button), but there's no pointerdown-driven
-      // drag to fight a touch scroll on a phone.
+      // Always makeDraggable() with desktopOnly: true — same as .about-photo
+      // above — rather than branching on isMobileViewport (computed once,
+      // above) the way the scatter/grid layout choice does a few lines up.
+      // A drag actually starting is gated by makeDraggable's own live
+      // desktopMQ check on every press, so it stays correctly disabled
+      // across a resize/DevTools toggle with no reload; a plain click
+      // listener wired up once for "mobile at load" would NOT re-disable
+      // itself if the page started mobile and got wider, or vice versa.
+      // onClick still answers a plain tap AND keyboard Enter/Space either
+      // way — see makeDraggable's own click listener below.
       stickerBoard.querySelectorAll(".tool-sticker").forEach((el) => {
-        if (isMobileViewport) {
-          el.addEventListener("click", () => openToolPopover(el));
-        } else {
-          makeDraggable(el, { onClick: openToolPopover });
-        }
+        makeDraggable(el, { onClick: openToolPopover, desktopOnly: true });
       });
     }
 

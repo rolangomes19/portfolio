@@ -174,8 +174,37 @@ html::before {
      overflow is expected, because leaving block on `visible` while inline
      is non-visible forces UAs to compute the visible one as auto instead —
      exactly the accidental-scroll-container failure mode this is here to
-     avoid. */
-  body {
+     avoid.
+
+     This is set on #main, NOT <body> or <html> — deliberately, and it took
+     two tries to land here. `<body>` was the original choice, but per the
+     CSS Overflow spec, when the root element's overflow is `visible` (the
+     default — nothing sets one) and it has a <body> child, the UA
+     propagates BODY's overflow up to become the viewport's own used
+     overflow (with `clip` becoming `hidden` in that propagated form), and
+     body itself reverts to `visible`. iOS Safari has long-standing WebKit
+     bugs around `overflow: hidden` on the root scroller where native
+     touch-scroll gestures lock up on load and only a pinch-zoom (a
+     different gesture path) kicks the layout into recognizing it's
+     scrollable — exactly the "stuck on the first section until I pinched"
+     report this rule caused. Moving it to <html> instead (tried first)
+     avoids propagation but is worse: the CSS spec defines `clip` as having
+     "no scrolling user interface" at all, and applied straight to the
+     actual root scroller that breaks scrolling outright everywhere, not
+     just iOS — verified directly: combined with this site's global
+     `scroll-behavior: smooth` (html rule near the top of this file),
+     `window.scrollTo()` silently no-ops, which would have broken every
+     in-page anchor link (nav, footer, skip link) on mobile. #main is a
+     plain descendant box: clipping it never touches the viewport's own
+     overflow (that
+     propagation rule is body-to-viewport only), it isn't the containing
+     block for anything that needs to escape it (the lightbox/tool-popover
+     <dialog>s render in the top layer regardless of DOM position, and
+     .surface-picker plus reparented in-drag stickers live outside #main
+     entirely — see js/main.js §9), and it still crops the exact same
+     bleeding content since every section that bleeds (.about-photos,
+     .sticker-board) lives inside it. */
+  #main {
     overflow: clip;
   }
 }
@@ -360,6 +389,26 @@ pre,
   color: var(--color-text-secondary);
   display: block;
   margin-block-end: var(--space-05);
+}
+
+/* The Skills section's eyebrow ships as two elements (index.html), not one
+   swapped by JS — a live media query, not a one-time check, so the correct
+   copy shows even across a resize/DevTools device-toolbar toggle with no
+   reload, matching js/main.js §9's own live 48em check that actually gates
+   the dragging this text describes (see .draggable's own touch-action
+   media query, above `.draggable` in this file, for the matching
+   reasoning). Below 48em the stickers aren't draggable, so the copy
+   pointing visitors at that has to switch to the "desktop only" version. */
+.skills-eyebrow-mobile {
+  display: none;
+}
+@media (max-width: 47.99em) {
+  .skills-eyebrow-desktop {
+    display: none;
+  }
+  .skills-eyebrow-mobile {
+    display: block;
+  }
 }
 
 /* Arrows and other directional icons flip in RTL */
@@ -1463,9 +1512,12 @@ pre,
    overlapping pairs at 375px). js/main.js skips scatterStickers() below
    this same breakpoint, leaving every custom property at its zero
    default, so this rule only has to replace the absolute scatter with a
-   plain, non-overlapping grid. Dragging still works exactly as before —
-   picking up a sticker reparents it to <body> with an inline
-   position: absolute that overrides this rule regardless of viewport. */
+   plain, non-overlapping grid. Dragging itself is desktop-only below this
+   same breakpoint (js/main.js §9's own live desktopMQ check on
+   makeDraggable — a pointerdown-driven drag fights a touch scroll on a
+   phone), so nothing here ever needs to reposition a sticker with an
+   inline position: absolute at this width — the plain grid above is the
+   only layout a mobile visitor ever sees. */
 @media (max-width: 47.99em) {
   .sticker-board {
     display: grid;
@@ -1486,17 +1538,41 @@ pre,
    resting tilt/position via --base-rot/--dx/--dy and a `transform` on its
    own base class (.about-photo, .tool-sticker above), so that still
    renders correctly with no JS. `.draggable` itself is added by script
-   only once dragging actually gets wired up, so the cursor/hover cues
-   never promise an interaction that isn't there — the same "nothing extra
-   without JS" rule the lightbox further down already follows.
+   only once the pointer-drag machinery actually gets wired up (never with
+   no JS at all — the same "nothing extra without JS" rule the lightbox
+   further down follows), but that wiring now happens unconditionally at
+   every viewport width — see `touch-action: none`'s own comment below for
+   why. The visible affordance this class carries (cursor: grab, the
+   `@media (hover: hover)` tilt below) is harmless where dragging is
+   currently inert: cursor has no effect on a touch device with no mouse,
+   and hover states are already scoped to hover-capable input.
    z-index sits below the header (8) and surface picker (9) so a dragged
    item never covers either. */
 .draggable {
   cursor: grab;
-  touch-action: none;
   -webkit-user-drag: none;
   user-select: none;
   transition: transform var(--duration-fast) var(--ease);
+}
+/* touch-action: none lives in its own media query, not the base rule above,
+   and it's the only property that does — deliberately. Both .about-photo
+   and .tool-sticker now get `.draggable` added UNCONDITIONALLY (js/main.js
+   §9 always calls makeDraggable(el, { desktopOnly: true }) for each), on
+   purpose: makeDraggable's own pointerdown handler re-checks the current
+   viewport live, via a MediaQueryList, on every press — not a one-time
+   flag read at setup — so a single instance keeps behaving correctly
+   across a resize or DevTools device-toolbar toggle with no reload. A
+   plain, unconditional `touch-action: none` on the base rule would undo
+   exactly that: the property is static CSS, so it would keep blocking
+   native touch-scroll on a narrow viewport regardless of what the live JS
+   check decides, recreating the original "stuck on the first section, had
+   to pinch" bug for anyone who loads the page wide and later narrows it.
+   Scoping it to this same 48em breakpoint keeps it just as live as the JS
+   check it has to match. */
+@media (min-width: 48em) {
+  .draggable {
+    touch-action: none;
+  }
 }
 .draggable.is-detached {
   z-index: 6;
@@ -1608,7 +1684,7 @@ pre,
      negative margin overflows its grid track the same way a negative inset
      overflows a containing block — no clipping either way unless something
      upstream clips it, which nothing does at this width (the mobile-only
-     `body { overflow: clip }` a bit above only applies below 48em). */
+     `#main { overflow: clip }` a bit above only applies below 48em). */
   #about .prose {
     grid-template-columns: 60% 1fr;
     align-items: start;
@@ -1654,6 +1730,16 @@ pre,
 .about-photo--two {
   --base-rot: -5deg;
   margin-block-start: calc(-1 * var(--space-04)); /* slight tuck, not a full gap — reads as one stack, not two separate cards */
+}
+/* Below 48em the photos aren't draggable (js/main.js §9 skips makeDraggable
+   there — a touch drag fights the page's own scroll gesture), so there's no
+   way to pull them apart by hand any more. The tight tuck above reads as an
+   invitation to do exactly that; without it, it's just two photos
+   overlapping, so mobile gets its own plain gap instead. */
+@media (max-width: 47.99em) {
+  .about-photo--two {
+    margin-block-start: var(--space-03); /* matches .about-photos' own flex gap, so the stack reads as evenly spaced */
+  }
 }
 
 /* ------ Play hint (sticky-note--tip) ------
