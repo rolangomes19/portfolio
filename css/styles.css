@@ -311,7 +311,6 @@ pre,
    only here. This is the one place the no-closed-border rule is traded away,
    because in this mode the fill it depends on does not exist. */
 @media (forced-colors: active) {
-  .card-surface,
   .highlight-card,
   .writing-item,
   .case-stat,
@@ -832,6 +831,24 @@ pre,
 [data-theme="dark"] .hero-avatar img {
   filter: none;
 }
+/* Below 48em the name/role text stack wraps onto more lines than it does at
+   desktop widths, so the avatar's own fixed 8rem width (and the height that
+   falls out of its aspect ratio) reads as too small next to it. Stretching
+   the row and sizing the image off the stretched height, instead of a fixed
+   width, keeps the avatar matched to however tall that text stack happens to
+   wrap at any given mobile width — same mechanism as .work-card-media's
+   fixed-ratio approach elsewhere in this file, just solved on the other
+   axis. inline-size: auto lets the image's own intrinsic ratio (from its
+   width/height attributes in the markup) drive the resulting width. */
+@media (max-width: 47.99em) {
+  .hero-identity {
+    align-items: stretch;
+  }
+  .hero-avatar img {
+    inline-size: auto;
+    block-size: 100%;
+  }
+}
 /* GIF playback can't be paused by CSS, so prefers-reduced-motion swaps to a
    static first frame instead of trying to gate the animation itself. */
 .hero-avatar-static {
@@ -1028,7 +1045,6 @@ pre,
    the focus ring itself. (.highlight-card moved to the .sticky-note
    material below — a note is paper sitting on the page, not a flat UI
    card, so it deliberately does not share this fill/radius.) */
-.card-surface,
 .writing-item,
 .case-stat,
 .compare-col,
@@ -2270,6 +2286,14 @@ pre,
   margin-block-end: var(--space-01);
 }
 
+/* Case study summary block (Problem/Role/Impact/Stack): the first thing a
+   skimming reader hits, right after the facts-bar, so it runs a size up
+   from .detail-list's usual --text-small (14px) to --text-body (16px) —
+   everything else (dividers, spacing, bold lead-in) stays shared. */
+.case-summary-list li {
+  font-size: var(--text-body);
+}
+
 /* ------ Case study: code block ------
    Code is inherently LTR (identifiers, punctuation) even inside an RTL
    article, so direction is pinned regardless of page direction. */
@@ -2447,37 +2471,6 @@ pre,
   font-size: var(--text-small);
   line-height: var(--leading-dense);
   max-inline-size: var(--measure);
-}
-
-/* ------ About: specializations ------ */
-.spec-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  gap: var(--space-07);
-  counter-reset: spec;
-}
-.spec-item {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--space-05);
-}
-.spec-index {
-  counter-increment: spec;
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
-  color: var(--color-text-secondary);
-}
-.spec-index::before {
-  content: counter(spec);
-}
-.spec-item h3 {
-  font-size: var(--text-h3);
-  margin-block-end: var(--space-02);
-}
-.spec-item p {
-  color: var(--color-text-secondary);
 }
 
 /* ------ Certification list ------ */
@@ -2839,11 +2832,6 @@ pre,
   }
 }
 .contact-row .sep {
-  color: var(--color-text-secondary);
-}
-/* Behance/Instagram have no URL on file yet — shown, not linked, until a
-   real one is added (matches the footer's existing Behance placeholder). */
-.contact-row-placeholder {
   color: var(--color-text-secondary);
 }
 [dir="rtl"] .contact-row {

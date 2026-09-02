@@ -108,7 +108,7 @@
         <dl class="facts-bar">
           <div class="fact"><dt>Role</dt><dd>Design for the visual system upgrade, and front-end development for the Bootstrap rebuild, the Azure AD B2C flows, and the spinner fix. The Power Pages data-model migration was backend platform work and not mine, but it’s the reason the other four efforts had to happen.</dd></div>
           <div class="fact"><dt>Team</dt><dd>The Hub platform team, throughout. This case study covers my contribution across five connected efforts, not the full program.</dd></div>
-          <div class="fact"><dt>Timeline</dt><dd>June–July 2024: Power Pages migration and Bootstrap rebuild. September 2024: accessibility remediation. December 2024: Azure AD B2C alignment. October 2025: spinner standardization. Each piece was taken up as it became the next blocker, not as part of a planned sequence.</dd></div>
+          <div class="fact"><dt>Timeline</dt><dd>June 2024 – October 2025, four phases (see below), each taken up as it became the next blocker, not on a planned schedule.</dd></div>
           <div class="fact"><dt>Status</dt><dd>Shipped, every piece in production</dd></div>
           <div class="fact"><dt>Scope</dt><dd>~20 pages · 14+ components · 6 side panels · 4 modals · 3 forms · 11 Azure AD B2C flows</dd></div>
         </dl>
@@ -119,6 +119,14 @@
       <div class="container prose" data-reveal-children>
 
         <p class="nda-note sticky-note sticky-note--margin">Detailed UI masked per NDA. Process artifacts and metrics shared with permission.</p>
+
+        <h2 data-i18n="case.summary.heading">Summary</h2>
+        <ul class="detail-list case-summary-list">
+          <li data-i18n="case.hub.summary.problem"><strong>Problem.</strong> A Power Pages data-model migration was required to unlock Bootstrap 5, which forced a full front-end rebuild and surfaced 35 WCAG Critical/Serious violations, mismatched Azure AD B2C flows, and three uncoordinated loading spinners.</li>
+          <li data-i18n="case.hub.summary.role"><strong>Role.</strong> Design for the visual system upgrade; front-end development for the Bootstrap rebuild, the 11 Azure AD B2C flows, and the spinner consolidation.</li>
+          <li data-i18n="case.hub.summary.impact"><strong>Impact.</strong> 35 → 0 WCAG violations remediated. 14 of roughly 20 page-level CSS files consolidated into one token-based stylesheet. All five efforts shipped to production.</li>
+          <li data-i18n="case.hub.summary.stack"><strong>Stack.</strong> Bootstrap 3→5 · Power Pages · Dynamics 365 · Azure AD B2C · Deque Axe</li>
+        </ul>
 
         <h2>Why one upgrade became five projects</h2>
         <p data-i18n="case.hub.why.p1">Power Pages ran on Bootstrap 3 from 2014 until Microsoft added Bootstrap 5 support in 2023, available only on the platform’s enhanced data model. Bootstrap 5 could not run on the older standard data model. That meant the Hub platform’s Bootstrap upgrade, which touched every page and component, could not begin until the data model was migrated. The accessibility work that followed traces directly to that dependency. The Azure AD B2C flows and the spinner cleanup do not: they happened on the same platform around the same time, but neither was blocked by the data-model migration.</p>
