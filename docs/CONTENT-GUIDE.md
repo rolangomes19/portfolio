@@ -66,15 +66,18 @@ object in `js/main.js` plus `data-i18n`/`data-i18n-label`/`data-i18n-desc`/
 paired-page (`work/slug.ar.html`) architecture; that earlier plan was
 superseded once en-simple made full-body translation practical.
 
-**Scope, decided and shipped**: `index.html` and three case studies —
+**Scope, decided and shipped**: `index.html` and four case studies —
 `work/blueprint-design-system.html`, `work/hub-modernization.html`,
 `work/speery-health.html` (displayed as "Healthcare SaaS Redesign", an
-NDA-safe label) — have full `en-simple`/`ar` content for every heading and
-paragraph. No other page (`more-work.html`, `writing/*`, the other 3 case
-studies, `about.html`, `contact.html`) has body content in any mode beyond
-`en` — they still get the shared nav/footer chrome toggle, nothing more.
-Don't re-litigate this scope without a reason; extending it means writing
-STE + Arabic for the newly-added page from scratch.
+NDA-safe label), `work/ai-design-to-code.html` — have full `en-simple`/`ar`
+content for every body paragraph and summary-list item. As on the other
+in-scope pages, page-level headings (h2s other than the shared "Summary"),
+the facts-bar, `dl`/`prop-list` definitions, and case-stat text stay English
+in every mode. No other page (`more-work.html`, `writing/*`, the other 2
+case studies, `about.html`, `contact.html`) has body content in any mode
+beyond `en` — they still get the shared nav/footer chrome toggle, nothing
+more. Don't re-litigate this scope without a reason; extending it means
+writing STE + Arabic for the newly-added page from scratch.
 
 - Every `data-i18n` value is set via `innerHTML`, not `textContent` —
   several paragraphs carry inline `<strong>`/`<code>`/`<em>`/`<a>` markup

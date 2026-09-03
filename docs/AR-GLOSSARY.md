@@ -56,6 +56,7 @@ per page, Arabic alone after — per `en-ar-translation-guidelines.md`.
 | Token architecture | بنية الرموز |
 | Governance (design-system process) | الحوكمة |
 | Elevation (shadow/depth model) | الارتفاع (elevation) on first use, ارتفاع after |
+| AI-directed (vs. AI-generated) | موجَّه بالذكاء الاصطناعي |
 
 ## Numerals
 

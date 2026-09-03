@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI-Generated Frontend POC - Rolan Gomes</title>
-  <meta name="description" content="Case study: directing an LLM to generate a production-grade frontend from Blueprint Design System components, an 80% component match rate in a 7-day turnaround." />
+  <title data-i18n-title="meta.poc.title">Making Design Systems Legible to AI - Rolan Gomes</title>
+  <meta name="description" data-i18n-meta-description="meta.poc.description" content="Case study: how the Blueprint Design System's token discipline and Code Connect mapping made an AI-directed frontend build possible, an 80% component match rate in a 7-day turnaround on the WorkFeed proof of concept." />
   <link rel="icon" type="image/svg+xml" href="../assets/rolan-favicon-svg.svg" />
 
   <script>
@@ -101,23 +101,17 @@
 
     <section class="section case-hero" aria-labelledby="case-title">
       <div class="container" data-reveal-intro>
-        <span class="eyebrow">2026 · AI workflow · WorkFeed v2</span>
-        <h1 id="case-title">AI-Generated Frontend POC</h1>
-        <p class="case-summary">An LLM didn't build this frontend. I built the conditions under which it could, then directed it precisely. An 80% component match rate in a 7-day turnaround, built entirely on top of the Blueprint Design System.</p>
+        <span class="eyebrow">2026 · AI workflow · Blueprint × WorkFeed</span>
+        <h1 id="case-title">Making Design Systems Legible to AI</h1>
+        <p class="case-summary" data-i18n="case.poc.summary">A design-to-code experiment using the Blueprint Design System and WorkFeed, a task management proof of concept on the Hub platform. An LLM didn't build this frontend. I built the conditions under which it could, then directed it precisely: an 80% component match rate in a 7-day turnaround, with little to no manual fixing needed.</p>
 
         <dl class="facts-bar">
+          <div class="fact"><dt>Role</dt><dd>Design-phase mechanism, token discipline, review process</dd></div>
+          <div class="fact"><dt>Worked with</dt><dd>One frontend engineer on the design-to-code implementation, plus the wider team on earlier discovery experiments</dd></div>
           <div class="fact"><dt>Timeline</dt><dd>7-day turnaround</dd></div>
-          <div class="fact"><dt>Role</dt><dd>Direction &amp; review, sole owner</dd></div>
           <div class="fact"><dt>Result</dt><dd>80% component match rate</dd></div>
           <div class="fact"><dt>Status</dt><dd>Under evaluation for production</dd></div>
         </dl>
-
-        <div class="status-callout">
-          <span class="status-callout-label">Documentation in progress</span>
-          <ul>
-            <li>This case study’s full write-up isn’t published yet. <a href="blueprint-design-system.html">Read the Blueprint Design System case study</a> for a complete example, or <a href="../index.html#about">learn more about me</a>.</li>
-          </ul>
-        </div>
       </div>
     </section>
 
@@ -126,20 +120,76 @@
 
         <p class="nda-note">Detailed UI masked per NDA. Process artifacts and metrics shared with permission.</p>
 
-        <h2>Hypothesis</h2>
-        <p>A design system with full token coverage and Figma-to-code parity should give an LLM everything it needs to generate compliant frontend code directly. Not as a novelty, but as a repeatable path from a Figma file to shippable output. WorkFeed v2, a concept for the Hub platform, was the test case.</p>
+        <h2 data-i18n="case.summary.heading">Summary</h2>
+        <ul class="detail-list case-summary-list">
+          <li data-i18n="case.poc.summary.problem"><strong>Problem.</strong> Most teams were adopting AI by pointing it at whatever step already felt slow, treating it as a plug-in for the existing process instead of asking what AI actually needs from a team to produce something reliable.</li>
+          <li data-i18n="case.poc.summary.role"><strong>Role.</strong> I owned the design-phase mechanism (Figma Make, prompt structure, guideline authoring), the token discipline that made the handoff work, and the review process that decided what shipped.</li>
+          <li data-i18n="case.poc.summary.impact"><strong>Impact.</strong> 80% of WorkFeed's components converted correctly with little to no manual fixing. The 20% that didn't pointed to a specific, fixable cause: component granularity, not model capability.</li>
+          <li data-i18n="case.poc.summary.stack"><strong>Stack.</strong> Figma Make · Figma Code Connect · Figma MCP server · GitHub Copilot (VS Code) · Claude · Style Dictionary</li>
+        </ul>
 
-        <h2>Prerequisites</h2>
-        <p>This only works because Blueprint already existed: three-tier tokens, a documented component library, and Code Connect links tying every Figma component to its real code counterpart. Without that structure, an LLM has nothing precise to point at. It's guessing from screenshots, the exact failure mode Blueprint was built to remove in the first place.</p>
+        <h2>The premise</h2>
+        <p data-i18n="case.poc.premise.p1">AI can generate a design or a component fast. Whether it generates something usable fast depends almost entirely on what you give it to work with. A design system built for humans, consistent components, named variants, clear rules, turns out to be exactly what a model needs too. An inconsistent one doesn't get fixed by AI. It gets guessed at, faster.</p>
 
-        <h2>Direction method</h2>
-        <p>I designed the WorkFeed v2 concept in Figma using Blueprint components exclusively, then directed an LLM to generate the frontend from those linked components rather than from a visual description. I treated the design system as the instruction manual, and my own prompts as the spec, not a suggestion.</p>
+        <p data-i18n="case.poc.premise.p2">Most teams at the firm were approaching AI adoption by looking for a slow step and pointing a model at it. That's a reasonable starting instinct, but it treats AI as a plug-in for the existing process rather than asking a more basic question: what does AI actually need from us to produce something reliable? We asked the second question. Blueprint, the design system I'd been building, turned out to already have most of the answer, because the same discipline that makes a system good for a human developer, no raw values, clear component boundaries, documented intent, makes it legible to a model too. I hadn't built it with AI in mind. It became AI-ready as a byproduct of being built well.</p>
 
-        <h2>Output</h2>
-        <p>The result was an 80% component match rate against the Figma spec, delivered in a 7-day turnaround. The POC is currently under evaluation for production use at the platform.</p>
+        <h2>What we changed</h2>
+        <p data-i18n="case.poc.changed.p1">The rule that mattered most: nothing in a finished design ships with a raw color or spacing value. Every choice ties back to a token, component-level first, semantic as a fallback, nothing hardcoded. That discipline was already how I ran Blueprint. What changed is that it turned this system into something a coding assistant could actually read, instead of something it had to guess at from a picture.</p>
 
-        <h2>What it proves</h2>
-        <p>The output quality of AI-directed frontend work tracks the quality of the system underneath it, not the cleverness of the prompt. Blueprint's token coverage and Code Connect mapping, built for human designer-developer handoff, turned out to be exactly the structure an LLM needed too.</p>
+        <p data-i18n="case.poc.changed.p2">Behind that rule sits a small set of structured files: separate files for the raw values, the semantic layer that gives them meaning, and the component tokens built on top of those. A markdown file explains how the three layers connect. Each component has its own file describing when to use which variant, written the way you'd brief a new engineer joining the team. Style Dictionary generates all of this from the source definitions, so none of it is duplicate, hand-maintained work.</p>
+
+        <p data-i18n="case.poc.changed.p3">On the code side, Figma's Code Connect maps each design component to its real counterpart in the codebase. The Figma MCP server exposes that mapping, along with the token values and component structure, as information a coding assistant can read directly. We ran this through GitHub Copilot inside VS Code, with Claude writing the actual code. Worth being precise about what that bridge does: it doesn't generate anything itself. It hands the model a well-organized starting point instead of a screenshot to guess from. The generation still comes from the model.</p>
+
+        <h2>The workflow</h2>
+        <p data-i18n="case.poc.workflow.intro">Four stages, each with a different job for AI and a different job for a person.</p>
+
+        <dl class="prop-list">
+          <dt>Design</dt><dd>A finished layout, built entirely from Blueprint components, already carries everything the next stage needs, because nothing in it is a one-off value.</dd>
+          <dt>Structured handoff</dt><dd>The token files and Code Connect mappings turn that Figma file into a real starting point in code, not just a picture for an engineer to interpret.</dd>
+          <dt>Generation</dt><dd>Copilot and Claude produce working code from that structured input.</dd>
+          <dt>Review</dt><dd>Every generated component gets checked against what Blueprint actually defines before anything ships. This is the stage that decides whether the first three stages were worth the setup.</dd>
+        </dl>
+
+        <p data-i18n="case.poc.origin">This system also grew out of earlier, separate experimentation. Before design-to-code became the focus, we tested whether AI could help even earlier, in live client work, generating rough prototypes during strategy conversations instead of spending hours on wireframes between meetings. It worked for what it was: decisions moved faster, exploration got cheaper. But the output stayed rough, not something you'd hand a client as finished work, and a designer still made every real call. That early test is part of why we trusted the bigger bet on design-to-code. It's not the main story here. WorkFeed is.</p>
+
+        <h2>WorkFeed</h2>
+        <p data-i18n="case.poc.workfeed.intro">WorkFeed, a task management proof of concept inside the Hub platform, is where this pipeline actually ran, under a real deadline, in front of someone who could greenlight it beyond a prototype.</p>
+
+        <dl class="prop-list">
+          <dt>What we expected</dt><dd>That a well-structured design, built entirely from system components, would generate mostly correct code, because there'd be nothing left for the model to guess at.</dd>
+          <dt>What happened</dt><dd>Going through the output component by component against what Blueprint defines, about 80% came out right, with little to no manual fixing needed.</dd>
+          <dt>Where it broke</dt><dd>The 80% clustered almost entirely around simple, single-purpose components, buttons, list items, anything with a small, well-defined set of states. Composite components, ones built from several smaller pieces stitched together, didn't convert cleanly. A task card combining multiple nested elements needed real manual rework.</dd>
+          <dt>Why it broke</dt><dd>This wasn't random. It matched a finding our frontend engineer reached independently, from the code side: components need to be broken into their smallest logical pieces before they're mapped to code, not after. A combo box shouldn't be one file. The input and the dropdown list need to be separate, independently mapped pieces from the start. Skip that and you get exactly the mismatch we saw.</dd>
+        </dl>
+
+        <p data-i18n="case.poc.convergence">Two people, coming at the same problem from opposite ends, landing on the same root cause. That convergence is better evidence the underlying idea holds than the 80% number is by itself. It also gave Blueprint's existing component-review process a clear new question to ask of every new component: is this granular enough for a model to map cleanly, not just clear enough for a designer to use.</p>
+
+        <ul class="case-stats">
+          <li class="case-stat">
+            <span class="case-stat-number">80%</span>
+            <p class="case-stat-desc">Components converted correctly against the Blueprint spec, with little to no manual fixing. See the <a href="blueprint-design-system.html">Blueprint Design System</a> case study for the token architecture and Code Connect setup behind this.</p>
+          </li>
+        </ul>
+
+        <h2>What worked, in three sentences</h2>
+        <p data-i18n="case.poc.worked">Design exploration got faster, because AI could produce several directions in parallel instead of one at a time. Design-to-code got more predictable, because the model was working from structured tokens and mappings instead of inferring from a screenshot. And the failure pattern taught us something specific and useful: component granularity, not model capability, was the actual ceiling.</p>
+
+        <h2>On cost, honestly</h2>
+        <p data-i18n="case.poc.cost">I'm not going to give you a time-saved or cost-saved number. Not because it wasn't worth asking, but because a fixed figure in this space goes stale fast, both what these models cost and what they can do are moving quickly enough that a specific number from late 2025 won't mean much by the time anyone reads this. The more useful question, and the one we were actually trying to answer, isn't what this saved once. It's whether a team has a real way to keep judging if the investment is still worth making as the ground shifts under it. That's a harder answer to give than a percentage. It's also the honest one.</p>
+
+        <h2>Where this leaves the system</h2>
+        <p data-i18n="case.poc.leaves">Blueprint already had a working process for deciding what gets built into it: who reviews a request, how it gets scoped, what happens when the answer is no. WorkFeed adds a clear argument for extending that process, scoping every new component for how well a model can parse it, not just how well a person can use it, at design time, before it ever reaches a code-gen pipeline. I wasn't at the org long enough to see whether that became a formal part of the process, so I can't claim that it did. But the case for it is sitting right there in the 80/20 result.</p>
+
+        <h2>What I'd carry forward</h2>
+        <p data-i18n="case.poc.carry.p1">We built this against a real deadline, in front of someone who could take it straight to production. That mattered more than it sounds like it should. If the proof of concept worked, there was a real risk it would get pulled out of our hands before it was actually ready to be a shippable feature. So the goal on the design side was never to make something that looked impressive. It was to make sure that if this did take off, what we handed over could still function as a real first version, not a demo that fell apart the moment someone tried to build on it.</p>
+
+        <p data-i18n="case.poc.carry.p2">That pressure shaped the harder calls more than anything else. When two directions don't clearly differ in impact, and you don't have enough information yet to know which one's right, you're working from your best judgment, not certainty. That's true of design generally, not a flaw specific to this project. We made real decisions under that uncertainty, and we changed direction quickly more than once when something new came up. I don't see that as a weakness in the process. I see it as what the process is for.</p>
+
+        <p data-i18n="case.poc.carry.p3">The idea that actually holds this whole project together didn't arrive as a plan. It came together in pieces, watching what other design system teams were doing, a deadline that forced real scope discipline, and a reframing I picked up secondhand that happened to land at the right time. Every piece, arrived at separately, kept pointing at the same underlying fact: a design system built with real discipline doesn't just serve designers and engineers anymore. It's also what makes AI worth using at all. Design systems aren't becoming less important because AI can generate interfaces. They're becoming the thing that decides whether AI-generated interfaces are any good.</p>
+
+        <div class="case-quote sticky-note sticky-note--margin">
+          <p data-i18n="case.poc.quote">At a UX conference, I heard Kate Moran of Nielsen Norman Group describe working with AI the way you'd work with a sharp, well-read intern: someone you guide closely rather than hand a decision to, who gets better the more context you give them, and whose real edge over a human intern is speed and breadth, not judgment. She's written the idea up formally in <a href="https://www.nngroup.com/articles/ai-intern/" target="_blank" rel="noopener noreferrer">"Your AI UX Intern"</a>. It reframed the question for me from "can I trust this" to "how do I set this up to do good work," and that's the posture behind everything above: structure first, human judgment at the end, always.</p>
+        </div>
 
       </div>
     </article>
