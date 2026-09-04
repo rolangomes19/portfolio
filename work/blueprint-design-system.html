@@ -103,7 +103,7 @@
       <div class="container" data-reveal-intro>
         <span class="eyebrow">May 2025 – present · Design systems · Figma · Code Connect</span>
         <h1 id="case-title">Blueprint Design System</h1>
-        <p class="case-summary" data-i18n="case.bds.summary">The Hub platform had five squads shipping the same button five different ways, and no bridge between Figma and code besides screenshots and goodwill. I led design on the system that fixed both, working alongside a UX Lead Architect and a frontend engineer: an Atomic Design component hierarchy sitting on top of a three-tier OKLCH token architecture, and the Code Connect links that turned out to be exactly what an LLM needed too.</p>
+        <p class="case-summary" data-i18n="case.bds.summary">The Hub platform had five squads shipping the same button five different ways, and no bridge between Figma and code besides screenshots and goodwill. I led design on the system that fixed both, working alongside a UX Lead Architect and a frontend engineer: an Atomic Design component hierarchy sitting on top of a three-tier OKLCH token architecture, and the Code Connect links that turned out to be exactly what an LLM needed too, accurate enough to hit an 80% design-to-code conversion rate in a working proof of concept.</p>
 
         <dl class="facts-bar">
           <div class="fact"><dt>Role</dt><dd>Design, definitions, documentation, foundational architecture</dd></div>
@@ -136,6 +136,14 @@
       <div class="container prose" data-reveal-children>
 
         <p class="nda-note sticky-note sticky-note--margin">Detailed UI masked per NDA. Process artifacts and metrics shared with permission. <!-- PLACEHOLDER: confirm written sign-off covering the published (not just interview-walkthrough) version before this goes live, see Master Profile §11.15.1 --></p>
+
+        <h2 data-i18n="case.summary.heading">Summary</h2>
+        <ul class="detail-list case-summary-list">
+          <li data-i18n="case.bds.summary.problem"><strong>Problem.</strong> Five squads on the Hub platform were shipping the same button five different ways, with no bridge between Figma and code beyond screenshots.</li>
+          <li data-i18n="case.bds.summary.role"><strong>Role.</strong> Design lead, foundational architecture through documentation, alongside a UX Lead Architect (final sign-off) and a frontend engineer (Phase 2, Code Connect).</li>
+          <li data-i18n="case.bds.summary.impact"><strong>Impact.</strong> An 80% accurate LLM component-conversion rate in a design-to-code proof of concept. Phase 1 complete, Phase 2 in development, not yet live in production.</li>
+          <li data-i18n="case.bds.summary.stack"><strong>Stack.</strong> Figma · OKLCH tokens · Atomic Design · Code Connect · React · Tailwind v4</li>
+        </ul>
 
         <h2>Context</h2>
         <p data-i18n="case.bds.context.p1">The brand system at a top-20 US accounting and consulting firm was built for print and editorial. Nobody had thought much about product. Into that gap, engineering teams filled in their own interpretations, on whatever stack they were already on, with nothing to check their work against.</p>
@@ -176,8 +184,6 @@
           <dt>Templates</dt><dd>Page Frame (Header + Footer, in the style of D365 Power Pages), Modal/Drawer Frame (scrim + container). Page-level layout with components placed, content structure defined, no final content yet.</dd>
           <dt>Pages</dt><dd>Task management proof of concept (Hub platform, Phase 2). Templates with real content in place, the point where the system gets tested against actual use.</dd>
         </dl>
-
-        <p data-i18n="case.bds.foundationsBridge">Foundations, covered next, is the subatomic layer: the raw material every atom in the system is built from.</p>
 
         <h2>Foundations</h2>
 
@@ -326,7 +332,7 @@ export type ButtonProps =
         <h2>Molecule: Icon-only Button + Tooltip</h2>
         <p data-i18n="case.bds.molecule.p1">The clearest molecule in the system is small on purpose. An icon-only button is an Atom (Button) that, alone, fails a basic usability requirement: it has no visible text, so a screen reader user and a keyboard user who can see the screen but has no label to read both lose information a labelled button gives away for free. Pairing it with a Tooltip atom fixes that. Together, the two atoms take on a property neither one has by itself: an icon-only control that's fully identifiable no matter how someone is navigating the interface. That's the molecule test from Atomic Design: a group of atoms that, combined, does something none of them does alone.</p>
 
-        <p data-i18n="case.bds.molecule.p2">The pairing isn't optional or left to whoever's building the screen to remember. The component's TypeScript types won't compile for an icon-only button unless both <code>aria-label</code> and <code>tooltip</code> are supplied, and the component wraps itself in the Tooltip atom automatically whenever <code>iconOnly</code> is <code>true</code>. The molecule is enforced at the type level, not just documented in prose.</p>
+        <p data-i18n="case.bds.molecule.p2">That pairing isn't optional or left to memory: as covered in the Button section, the component's types won't compile without both <code>aria-label</code> and <code>tooltip</code>, and it wraps itself in the Tooltip atom automatically. The molecule is enforced at the type level, not just documented in prose.</p>
 
         <p data-i18n="case.bds.molecule.p3">Split Button and Connected Button Group are the same molecule pattern applied one level up, both compositions of the Button atom, both fully designed and documented in the Docsite as designed-but-not-built, the same status the "Documentation as a first-class artifact" section describes for the system generally. A Split Button pairs a primary action with a secondary dropdown trigger, sharing a single visual container; a Connected Button Group takes a row of Button atoms and removes the spacing and corner radius between them so the row reads as one control instead of several. Neither needed a new foundational decision. Like the icon-only button, both are Button, recombined.</p>
 
@@ -396,7 +402,7 @@ export type ButtonProps =
         <ul class="case-stats">
           <li class="case-stat">
             <span class="case-stat-number">80%</span>
-            <p class="case-stat-desc">Accurate LLM component conversion rate in the design-to-code proof of concept. The LLM generated these components using Blueprint's structure as its only reference. See the <a href="ai-design-to-code.html">AI-generated frontend POC</a>.</p>
+            <p class="case-stat-desc">Accurate LLM component conversion rate in the design-to-code proof of concept. The LLM generated these components using Blueprint's structure as its only reference. See <a href="ai-design-to-code.html">Making Design Systems Legible to AI</a>.</p>
           </li>
           <li class="case-stat">
             <span class="case-stat-number">65%</span>
@@ -414,7 +420,7 @@ export type ButtonProps =
         </ul>
 
         <h2>Reflection</h2>
-        <p data-i18n="case.bds.reflection.p1">The lesson that cost me the most wasn't technical. I built Phase 1 mostly outside my sprint commitments (real hours, real learning), but I sat on submitting it for review far longer than I should have, convinced it wasn't ready yet. I was young in my career and wanted to prove myself, and that zeal for perfection didn't make the work better. It just delayed a genuinely solid system from getting the scrutiny and momentum it needed. Perfection is the enemy of done, and I learned that the hard way instead of early. Understanding it sooner wouldn't have meant cutting corners. It would have meant moving the same good work forward faster.</p>
+        <p data-i18n="case.bds.reflection.p1">Submit for review earlier than feels ready. Phase 1 sat finished but unsubmitted longer than it needed to, and a solid system loses momentum sitting unreviewed faster than extra polish ever adds to it.</p>
 
       </div>
     </article>
