@@ -245,6 +245,9 @@
      sized up from --text-body so handwritten note copy (.sticky-note)
      stays as legible as the body text around it, not smaller-looking. */
   --text-hand: 1.3125rem;                           /* 21px */
+  /* Larger hand tier for a note meant to be read as its own object (the
+     NDA disclosure), not scanned alongside body copy like a stat label. */
+  --text-hand-lg: 1.625rem;                         /* 26px */
   /* 14px, raised from 13px. kami's ladder discipline puts the 12px floor on
      uppercase micro-labels and badges only — prose stops at 14 — and this
      token carries prose (card descriptions, theses, contact meta). */
