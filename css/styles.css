@@ -1980,6 +1980,26 @@ pre,
   color: var(--color-text-secondary);
 }
 
+/* Two or three related figures shown in a single row (e.g. before/after,
+   a comic strip, a set of certificates). minmax is kept narrow enough that
+   three items still fit one line within --measure; auto-fit collapses to
+   fewer columns on narrow viewports, no breakpoint needed. */
+.figure-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-05);
+  margin-block: var(--space-05);
+}
+.figure-pair figure {
+  margin-block: 0;
+}
+
+/* A single figure shown smaller than the reading column (e.g. a template
+   certificate that doesn't need full width to read). */
+.figure-small {
+  max-inline-size: 320px;
+}
+
 /* ------ Embedded Figma prototype ------
    Same border/radius treatment as a .prose figure img, since a live embed
    sits in the same role a screenshot figure would. */
