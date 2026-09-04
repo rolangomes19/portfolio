@@ -2270,10 +2270,21 @@ pre,
    handwriting font, defined below) so it reads as a deliberate, confident
    annotation rather than small print apologetically tucked above the first
    heading — following an NDA is a professionalism signal, and it should
-   look like one. */
+   look like one. Every case study must carry this exact markup
+   (`nda-note sticky-note sticky-note--margin`) — a plain-text NDA line
+   next to a post-it one elsewhere reads as an inconsistency, not a choice.
+   Sized up to --text-hand-lg (vs. the --text-hand every other sticky note
+   uses) and freed from the sitewide `p { max-inline-size }` cap so it runs
+   the full width of whichever column it sits in — the margin column above
+   72em, the full prose column below it — then bleeds past the paper's own
+   edge onto the mat by the same negative-margin technique the homepage
+   highlight strip and About photos use, so the note visibly sticks out
+   past the sheet rather than sitting neatly inside it. */
 .nda-note {
-  font-size: var(--text-hand);
+  font-size: var(--text-hand-lg);
   line-height: var(--leading-dense);
+  max-inline-size: none;
+  margin-inline-end: calc(-1 * var(--paper-margin-inline) - var(--space-05));
 }
 
 /* ------ Placeholder note (unwritten narrative sections) ------
@@ -2336,9 +2347,12 @@ pre,
 }
 
 /* ------ Case study: pull quote ------
-   Also promoted to .sticky-note--margin — see the NDA note above for why. */
+   Also promoted to .sticky-note--margin — see the NDA note above for why.
+   Sized to --text-hand-lg (26px), the same tier as .nda-note, so the two
+   annotation types read as one consistent post-it voice rather than the
+   quote looking like an afterthought next to the disclosure line. */
 .case-quote p {
-  font-size: var(--text-h3);
+  font-size: var(--text-hand-lg);
   font-weight: 400;
   color: inherit;
   max-inline-size: none;
