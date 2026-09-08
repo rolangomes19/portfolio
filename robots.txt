@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rolangomes19.github.io/portfolio/sitemap.xml

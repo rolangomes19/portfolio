@@ -1,0 +1,21 @@
+# Incridea working images (CLEANUP-PLAN Decision 6): only the files the
+# case study actually links to should ever be committed. Everything else in
+# this directory is working material (raw screenshots, certificate scans,
+# social carousels) that stays local. A new file dropped here is untracked
+# by default; wire it into work/incridea-2022-branding.html, then add its
+# exact name to the allowlist below before `git add`-ing it.
+assets/images/incridea/*
+!assets/images/incridea/incridea-certificate-branch-rep.webp
+!assets/images/incridea/incridea-certificate-committee.webp
+!assets/images/incridea/incridea-certificate-core.webp
+!assets/images/incridea/incridea-certificate-participation.webp
+!assets/images/incridea/incridea-comic-panel-1.webp
+!assets/images/incridea/incridea-comic-panel-2.webp
+!assets/images/incridea/incridea-comic-panel-3.webp
+!assets/images/incridea/incridea-concept-portal.webp
+!assets/images/incridea/incridea-crew-shirts.webp
+!assets/images/incridea/incridea-merch-core.webp
+!assets/images/incridea/incridea-merch-participant.webp
+!assets/images/incridea/incridea-social-reminiscence-1.webp
+!assets/images/incridea/incridea-social-reminiscence-2.webp
+!assets/images/incridea/incridea-social-reminiscence-3.webp

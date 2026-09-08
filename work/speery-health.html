@@ -6,6 +6,14 @@
   <title data-i18n-title="meta.speery.title">Healthcare SaaS Redesign - Rolan Gomes</title>
   <meta name="description" data-i18n-meta-description="meta.speery.description" content="Case study: rebuilding an AI-generated healthcare SaaS prototype into a systematic, trustworthy interface for enterprise buyers — a three-axis semantic tagging system, an information-architecture rebuild, and a Figma handoff, solo, in two weeks." />
   <link rel="icon" type="image/svg+xml" href="../assets/rolan-favicon-svg.svg" />
+  <link rel="canonical" href="https://rolangomes19.github.io/portfolio/work/speery-health.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:image" content="https://rolangomes19.github.io/portfolio/assets/images/portfolio-thumbnail.jpg" />
+  <meta property="og:title" content="Healthcare SaaS Redesign - Rolan Gomes" />
+  <meta property="og:description" content="Case study: rebuilding an AI-generated healthcare SaaS prototype into a systematic, trustworthy interface for enterprise buyers — a three-axis semantic tagging system, an information-architecture rebuild, and a Figma handoff, solo, in two weeks." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://rolangomes19.github.io/portfolio/work/speery-health.html" />
 
   <script>
     (function () {
@@ -18,6 +26,10 @@
       }
       var mc = localStorage.getItem("matColor");
       if (mc) document.documentElement.style.setProperty("--color-mat", mc);
+      // Apply a cached mat-driven accent too, so a returning visitor with a
+      // customised mat never sees a flash of the default accent before
+      // js/main.js re-derives it. See main.js section 4b for how this blob
+      // is produced; this block only ever reads it.
       var at = localStorage.getItem("accentTokens");
       if (at) {
         try {
@@ -33,13 +45,24 @@
       }
     })();
   </script>
+  <script data-goatcounter="https://rolangomes19.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 
+  <!-- Fonts: all self-hosted. Inter (body), Commissioner (headings/buttons),
+       Geist Mono (mono/meta), El Messiri (RTL headings/buttons), Harmattan
+       (RTL body/mono/eyebrow), and Caveat (sticky-note handwriting).
+       El Messiri/Harmattan are not preloaded — RTL is unlikely to be
+       needed on first paint. Caveat now is (subsetted to ~47KB, see
+       CLEANUP-PLAN 1.4): sticky notes render close to the fold on most
+       pages, and swapping font after first paint was the actual bug this
+       item fixed. -->
   <link rel="preload" href="../assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="../assets/fonts/Commissioner-Variable.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="../assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/Caveat-Variable.woff2" as="font" type="font/woff2" crossorigin />
 
   <link rel="stylesheet" href="../css/tokens.css" />
   <link rel="stylesheet" href="../css/styles.css" />
+  <script src="../js/strings.js" defer></script>
   <script src="../js/main.js" defer></script>
 </head>
 <body>
@@ -207,11 +230,12 @@
 
   <footer class="site-footer">
     <div class="container">
-      <p class="colophon" data-i18n="footer.colophon">© 2026 Rolan Gomes. Built with loads of imagination, love and Claude Code.</p>
+      <p class="colophon"><span data-i18n="footer.colophon">© 2026 Rolan Gomes. Built with loads of imagination, love and Claude Code.</span> <a href="../colophon.html" data-i18n="footer.colophonLink">Colophon</a></p>
     </div>
   </footer>
 
   <div class="surface-picker">
+    <span class="surface-picker-hint" aria-hidden="true">Recolor mat</span>
     <button type="button" class="surface-picker-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="surface-picker-panel" aria-label="Customize mat color">
       <span class="surface-picker-trigger-swatch" aria-hidden="true"></span>
     </button>
@@ -219,17 +243,17 @@
       <div class="surface-picker-group">
         <span class="surface-picker-label" id="surface-picker-mat-label">Cutting mat</span>
         <div class="surface-picker-swatches" role="radiogroup" aria-labelledby="surface-picker-mat-label">
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="true" tabindex="0" data-color="#095848" style="--swatch:#095848" aria-label="Green"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#141414" style="--swatch:#141414" aria-label="Charcoal"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0b3556" style="--swatch:#0b3556" aria-label="Navy"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#1B365D" style="--swatch:#1B365D" aria-label="Ink blue"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#30302e" style="--swatch:#30302e" aria-label="Graphite"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#3d3d3a" style="--swatch:#3d3d3a" aria-label="Slate"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#504e49" style="--swatch:#504e49" aria-label="Olive"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#6b6a64" style="--swatch:#6b6a64" aria-label="Smoke grey"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="true" tabindex="0" data-color="#095848" style="--swatch:#095848" aria-label="Green" title="Green"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#141414" style="--swatch:#141414" aria-label="Charcoal" title="Charcoal"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0b3556" style="--swatch:#0b3556" aria-label="Navy" title="Navy"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust" title="Rust"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum" title="Plum"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal" title="Teal"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#1B365D" style="--swatch:#1B365D" aria-label="Ink blue" title="Ink blue"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#30302e" style="--swatch:#30302e" aria-label="Graphite" title="Graphite"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#3d3d3a" style="--swatch:#3d3d3a" aria-label="Slate" title="Slate"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#504e49" style="--swatch:#504e49" aria-label="Olive" title="Olive"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#6b6a64" style="--swatch:#6b6a64" aria-label="Smoke grey" title="Smoke grey"></button>
         </div>
         <div class="surface-picker-custom">
           <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>

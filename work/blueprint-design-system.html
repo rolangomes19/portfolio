@@ -6,6 +6,14 @@
   <title data-i18n-title="meta.bds.title">Blueprint Design System - Rolan Gomes</title>
   <meta name="description" data-i18n-meta-description="meta.bds.description" content="Case study: building the Blueprint Design System from the ground up for the Hub platform. A three-tier OKLCH token model, a brand color corrected for AA contrast, an elevation model built on shadow rather than tint, and the Code Connect links that made an 80% LLM design-to-code conversion rate possible." />
   <link rel="icon" type="image/svg+xml" href="../assets/rolan-favicon-svg.svg" />
+  <link rel="canonical" href="https://rolangomes19.github.io/portfolio/work/blueprint-design-system.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:image" content="https://rolangomes19.github.io/portfolio/assets/images/portfolio-thumbnail.jpg" />
+  <meta property="og:title" content="Blueprint Design System - Rolan Gomes" />
+  <meta property="og:description" content="Case study: building the Blueprint Design System from the ground up for the Hub platform. A three-tier OKLCH token model, a brand color corrected for AA contrast, an elevation model built on shadow rather than tint, and the Code Connect links that made an 80% LLM design-to-code conversion rate possible." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://rolangomes19.github.io/portfolio/work/blueprint-design-system.html" />
 
   <script>
     (function () {
@@ -37,15 +45,23 @@
       }
     })();
   </script>
-
+  <script data-goatcounter="https://rolangomes19.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
   <!-- Fonts: all self-hosted. Inter (body), Commissioner (headings/buttons),
-       Geist Mono (mono/meta), Estedad (RTL — headings, buttons, and body). -->
+       Geist Mono (mono/meta), El Messiri (RTL headings/buttons), Harmattan
+       (RTL body/mono/eyebrow), and Caveat (sticky-note handwriting).
+       El Messiri/Harmattan are not preloaded — RTL is unlikely to be
+       needed on first paint. Caveat now is (subsetted to ~47KB, see
+       CLEANUP-PLAN 1.4): sticky notes render close to the fold on most
+       pages, and swapping font after first paint was the actual bug this
+       item fixed. -->
   <link rel="preload" href="../assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="../assets/fonts/Commissioner-Variable.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="../assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/Caveat-Variable.woff2" as="font" type="font/woff2" crossorigin />
 
   <link rel="stylesheet" href="../css/tokens.css" />
   <link rel="stylesheet" href="../css/styles.css" />
+  <script src="../js/strings.js" defer></script>
   <script src="../js/main.js" defer></script>
 </head>
 <body>
@@ -158,7 +174,7 @@
         <p data-i18n="case.bds.styleguide.p2">Documentation alone wouldn't have fixed that. Documentation describes drift, it doesn't stop it. What the team actually needed was something structural: one source every team could point to by intent, and a way to push updates without asking anyone to rewrite their code.</p>
 
         <figure>
-          <img src="../assets/images/brand-wipfli.svg" width="1200" height="720" alt="Existing Brand Guidelines - print and marketing focused." loading="lazy" decoding="async" />
+          <img src="../assets/images/brand-guidelines-existing.svg" width="1200" height="720" alt="Existing Brand Guidelines - print and marketing focused." loading="lazy" decoding="async" />
           <figcaption>Brand Guidelines for the firm - Typography and Colors</figcaption>
         </figure>
 
@@ -436,11 +452,12 @@ export type ButtonProps =
 
   <footer class="site-footer">
     <div class="container">
-      <p class="colophon" data-i18n="footer.colophon">© 2026 Rolan Gomes. Built with loads of imagination, love and Claude Code.</p>
+      <p class="colophon"><span data-i18n="footer.colophon">© 2026 Rolan Gomes. Built with loads of imagination, love and Claude Code.</span> <a href="../colophon.html" data-i18n="footer.colophonLink">Colophon</a></p>
     </div>
   </footer>
 
   <div class="surface-picker">
+    <span class="surface-picker-hint" aria-hidden="true">Recolor mat</span>
     <button type="button" class="surface-picker-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="surface-picker-panel" aria-label="Customize mat color">
       <span class="surface-picker-trigger-swatch" aria-hidden="true"></span>
     </button>
@@ -448,17 +465,17 @@ export type ButtonProps =
       <div class="surface-picker-group">
         <span class="surface-picker-label" id="surface-picker-mat-label">Cutting mat</span>
         <div class="surface-picker-swatches" role="radiogroup" aria-labelledby="surface-picker-mat-label">
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="true" tabindex="0" data-color="#095848" style="--swatch:#095848" aria-label="Green"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#141414" style="--swatch:#141414" aria-label="Charcoal"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0b3556" style="--swatch:#0b3556" aria-label="Navy"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#1B365D" style="--swatch:#1B365D" aria-label="Ink blue"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#30302e" style="--swatch:#30302e" aria-label="Graphite"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#3d3d3a" style="--swatch:#3d3d3a" aria-label="Slate"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#504e49" style="--swatch:#504e49" aria-label="Olive"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#6b6a64" style="--swatch:#6b6a64" aria-label="Smoke grey"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="true" tabindex="0" data-color="#095848" style="--swatch:#095848" aria-label="Green" title="Green"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#141414" style="--swatch:#141414" aria-label="Charcoal" title="Charcoal"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0b3556" style="--swatch:#0b3556" aria-label="Navy" title="Navy"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust" title="Rust"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum" title="Plum"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal" title="Teal"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#1B365D" style="--swatch:#1B365D" aria-label="Ink blue" title="Ink blue"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#30302e" style="--swatch:#30302e" aria-label="Graphite" title="Graphite"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#3d3d3a" style="--swatch:#3d3d3a" aria-label="Slate" title="Slate"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#504e49" style="--swatch:#504e49" aria-label="Olive" title="Olive"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#6b6a64" style="--swatch:#6b6a64" aria-label="Smoke grey" title="Smoke grey"></button>
         </div>
         <div class="surface-picker-custom">
           <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>

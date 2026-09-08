@@ -16,7 +16,7 @@ because that is the entire point.
 ## Tech stack (do not change without asking)
 
 - Plain **HTML + CSS + vanilla JS**. No frameworks, no build step, no npm dependencies.
-- Fonts: all self-hosted in `assets/fonts/` — Inter (body, from rsms.me/inter/), Commissioner (headings + buttons, from kosbarts/Commissioner), Geist Mono (mono/meta, from vercel/geist-font), El Messiri (RTL headings + buttons, from Google Fonts) and Harmattan (RTL body + mono/meta, from Google Fonts).
+- Fonts: all self-hosted in `assets/fonts/` — Inter (body, from rsms.me/inter/), Commissioner (headings + buttons, from kosbarts/Commissioner), Geist Mono (mono/meta, from vercel/geist-font), El Messiri (RTL headings + buttons, from Google Fonts), Harmattan (RTL body + mono/meta, from Google Fonts), and Caveat (sticky-note handwriting label text only, from Google Fonts).
 - Hosting target: any static host (GitHub Pages / Vercel / Netlify).
 - Local preview: `npx serve .` or VS Code Live Server. Never require a build.
 

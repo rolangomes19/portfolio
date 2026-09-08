@@ -308,8 +308,8 @@ this site.
   (built by script, since they're wholly new UI), the toggle button and
   panel wrapper are authored directly in each page's `<header>` — every
   page shares the identical structure (`index.html`, `work/*.html`,
-  `writing/*.html`, `more-work.html`), only the nav links' `href` prefix
-  differs by folder depth.
+  `about.html`, `contact.html`), only the nav links' `href` prefix differs
+  by folder depth.
 
 ### Surface picker
 
@@ -344,7 +344,7 @@ Applying a color change is split across two moments, deliberately:
   wrong-color flash on reload.
 - The full **`--mat-image`** rebuild — the grid/ruler/protractor generator
   for the picked color — runs in the deferred `js/main.js` instead.
-  Duplicating that generator's loops and trigonometry inside 12 pre-paint
+  Duplicating that generator's loops and trigonometry inside 8 pre-paint
   `<head>` scripts wasn't worth it for a background layer — the flat mat
   color is already correct instantly, and the detailed grid fills in
   moments later once the deferred script runs, which is imperceptible in
@@ -553,8 +553,7 @@ Carbon-style scale (tokens `--space-01` … `--space-12`):
   | Component | Threshold | Below → above |
   |---|---|---|
   | `.highlight-list` | 48em | 2 cols → 5 cols |
-  | `.work-item`, `.about-grid`, `.facts-bar`, `.footer-grid` | 40em | stacked → side-by-side |
-  | `.more-work-grid` | 34em | 1 col → 2 cols |
+  | `.work-item`, `.about-grid`, `.facts-bar` | 40em | stacked → side-by-side |
   | `.prose` margin column (`.sticky-note--margin`) | 72em | single column → main column + margin annotations |
 
   `.facts-bar` specifically: 2 columns at 40em, not 4 — a case study's 5 facts
@@ -663,7 +662,7 @@ verify the mat-driven accent derivation.
 - `name · meta · [credential link] · status chip` per row, `flex-wrap`.
 - `.cert-link`: optional, present only when a real, checkable credential URL
   exists. Styled as an in-text link (accent colour, underline, gated hover —
-  the `.prose a` / `.footer-links a` vocabulary), not a button or a badge:
+  the `.prose a` vocabulary), not a button or a badge:
   it's a reference to outside proof, not an action this page performs. Each
   cert in `index.html` carries a commented `<!-- PLACEHOLDER -->` pair ready
   to uncomment once a credential ID/URL exists — never fabricate one.

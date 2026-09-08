@@ -140,6 +140,19 @@ html {
   html {
     scroll-behavior: auto;
   }
+  /* Every transition/animation in this file is built on these three duration
+     tokens (verified — none hardcodes a duration), so collapsing them to
+     near-zero here is the single site-wide "no motion" switch: nothing to
+     hand-wrap per rule, and anything added later inherits the same off
+     switch automatically. 1ms rather than 0s because the sticky-note tip's
+     `allow-discrete` transition on `display` (below) needs a non-zero
+     duration to actually run — 0s can make the browser skip the discrete
+     step and never show the element at all. */
+  :root {
+    --duration-fast: 1ms;
+    --duration-base: 1ms;
+    --duration-reveal: 1ms;
+  }
 }
 
 html::before {
@@ -340,13 +353,10 @@ pre,
    only here. This is the one place the no-closed-border rule is traded away,
    because in this mode the fill it depends on does not exist. */
 @media (forced-colors: active) {
-  .highlight-card,
-  .writing-item,
   .case-stat,
   .compare-col,
   .status-callout,
   .tag-pill,
-  .tag,
   .cert-status {
     border: 1px solid CanvasText;
   }
@@ -934,55 +944,8 @@ pre,
   font-weight: 400;
 }
 
-/* Concept highlight: an actual highlighter stroke, not a UI tag. The
-   previous version filled the words with var(--color-tint-brand) — the
-   exact token .tag-pill's background also uses, so the mark read as
-   another piece of interactive chrome rather than ink on paper. Fixed
-   here to a dedicated --color-highlight-mark that does NOT change with
-   the mat-recolor picker: a highlighter's color doesn't change when you
-   change desks. mix-blend-mode makes it read as translucent ink laid over
-   the paper (multiply in light theme; screen in dark theme, since multiply
-   would just darken toward black on a dark paper) and clip-path swaps the
-   perfect rounded rectangle for a slightly uneven stroke shape — two
-   different polygons so "design" and "engineering" don't look identical —
-   with a small opposing rotation on each so neither reads as mechanically
-   placed. Color stays `inherit` (the surrounding heading's own ink) — the
-   highlight is the entire signal, the same way a real highlighter never
-   changes the color of the ink beneath it. Verified: --color-highlight-mark
-   with the inherited --color-text on top hits 13.08:1 (light) / 6.46:1
-   (dark), both far past the 4.5:1 floor.
-
-   Padding/margin are em, not the spacing scale: a highlight mark needs to
-   scale with the font size it sits inside (17px body copy vs a 40px h1), and
-   a fixed spacing-scale step can't do that. The negative inline margin pulls
-   the highlighted box back in by the same amount the padding pushed it out,
-   so adjacent words don't shift position — only the mark appears. Both words
-   are single, unbreakable tokens ("design", "engineering"), so there's no
-   multi-line inline-background artifacting to guard against. */
-.concept-design,
-.concept-engineering {
-  position: relative;
-  background: var(--color-highlight-mark);
-  mix-blend-mode: multiply;
-  padding-inline: 0.15em;
-  margin-inline: -0.15em;
-  color: inherit;
-}
-[data-theme="dark"] .concept-design,
-[data-theme="dark"] .concept-engineering {
-  mix-blend-mode: screen;
-}
-.concept-design {
-  clip-path: polygon(1% 14%, 98% 0%, 100% 84%, 2% 100%);
-  transform: rotate(-0.6deg);
-}
-.concept-engineering {
-  clip-path: polygon(0% 4%, 99% 12%, 98% 96%, 1% 88%);
-  transform: rotate(0.5deg);
-}
-
-/* Page-lead: intro paragraph under a section-title, reused across
-   Writing / More Work / Contact top-of-page copy. */
+/* Page-lead: intro paragraph under a section-title. Used on the About/Contact
+   redirect stubs. */
 .lead {
   margin-block-start: var(--space-06);
   color: var(--color-text-secondary);
@@ -1089,12 +1052,11 @@ pre,
    here.
 
    Hover: whisper shadow plus a 1px rise, motion-safe and pointer-gated.
-   Interactive cards (.work-card, .writing-item) opt in via .is-liftable.
-   Keyboard users get the same treatment through :focus-within, on top of
-   the focus ring itself. (.highlight-card moved to the .sticky-note
-   material below — a note is paper sitting on the page, not a flat UI
-   card, so it deliberately does not share this fill/radius.) */
-.writing-item,
+   Interactive cards (.work-card) opt in via .is-liftable. Keyboard users
+   get the same treatment through :focus-within, on top of the focus ring
+   itself. (.highlight-card moved to the .sticky-note material below — a
+   note is paper sitting on the page, not a flat UI card, so it
+   deliberately does not share this fill/radius.) */
 .case-stat,
 .compare-col,
 .status-callout {
@@ -1231,8 +1193,7 @@ pre,
 /* Without this, each tile's own intrinsic ratio (a mix of SVG art and a
    .webp photo) decided the box's height, so align-items: stretch on the
    card gave every row a different height depending on which tile it held.
-   One ratio for every tile, matching .more-item-media img's identical
-   pattern below. */
+   One fixed ratio for every tile fixes that. */
 .work-card-media img {
   display: block;
   aspect-ratio: 4 / 3;
@@ -1311,9 +1272,7 @@ pre,
 /* Concept tags: one fill for both. `.tag-pill--design` / `.tag-pill--engineering`
    are still on the markup (harmless, semantic) but no longer style
    differently — the work-card row uses the tag's own label text ("Design
-   System" vs "Code Connect") to carry the distinction, not colour. A distinct
-   class from the site's existing `.tag` (mono status chips, still used on the
-   Writing index) rather than repurposing it.
+   System" vs "Code Connect") to carry the distinction, not colour.
 
    Solid tint fill, no outline: at 12px an outlined pill puts a hairline
    around six words in a row and the eye lands on the shapes before the
@@ -1823,47 +1782,6 @@ pre,
 /* ------ Footer ------ */
 .site-footer {
   padding-block: var(--space-09);
-}
-.footer-grid {
-  display: grid;
-  gap: var(--space-07);
-}
-@container (min-width: 40em) {
-  .footer-grid {
-    grid-template-columns: 1.5fr 1fr 1fr 1fr;
-  }
-}
-.footer-heading {
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 400;
-  color: var(--color-text-secondary);
-  margin-block-end: var(--space-04);
-}
-[dir="rtl"] .footer-heading {
-  letter-spacing: 0;
-}
-.footer-links {
-  list-style: none;
-  padding: 0;
-  display: grid;
-  gap: var(--space-03);
-}
-.footer-links a {
-  display: inline-flex;
-  align-items: center;
-  min-block-size: 1.5rem;
-  color: var(--color-text);
-  text-decoration: underline;
-  text-underline-offset: 0.15em;
-  font-size: var(--text-small);
-}
-@media (hover: hover) {
-  .footer-links a:hover {
-    color: var(--color-accent);
-  }
 }
 .colophon {
   margin-block-start: var(--space-08);
@@ -2510,89 +2428,6 @@ pre,
   max-inline-size: none;
 }
 
-/* ------ More Work grid ------ */
-.more-work-grid {
-  list-style: none;
-  padding: 0;
-  display: grid;
-  gap: var(--space-08);
-}
-@container (min-width: 34em) {
-  .more-work-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-.more-item-media img {
-  aspect-ratio: 4 / 3;
-  inline-size: 100%;
-  object-fit: cover;
-  border-radius: var(--radius-md);
-  background: var(--color-surface-interactive);
-  outline: 1px solid var(--color-image-edge);
-  outline-offset: -1px;
-}
-.more-item-body {
-  margin-block-start: var(--space-04);
-}
-.more-item-title {
-  font-size: var(--text-h3);
-}
-.more-item-desc {
-  margin-block-start: var(--space-03);
-  color: var(--color-text-secondary);
-  font-size: var(--text-small);
-  line-height: var(--leading-dense);
-}
-.more-item-link {
-  display: inline-block;
-  margin-block-start: var(--space-03);
-}
-
-/* ------ Writing list ------ */
-.writing-list {
-  list-style: none;
-  padding: 0;
-  display: grid;
-  gap: var(--space-06);
-}
-/* Fill, radius, and hover come from the card contract; only geometry here. */
-.writing-item {
-  position: relative;
-  padding: var(--space-06);
-}
-.writing-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-04);
-  color: var(--color-text-secondary);
-  margin-block-end: var(--space-03);
-}
-.writing-title {
-  font-size: var(--text-h3);
-}
-.writing-title a {
-  color: var(--color-text);
-  text-decoration: none;
-}
-.writing-title a::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: var(--radius-md);
-}
-@media (hover: hover) {
-  .writing-title a:hover {
-    color: var(--color-accent);
-  }
-}
-.writing-thesis {
-  margin-block-start: var(--space-03);
-  color: var(--color-text-secondary);
-  font-size: var(--text-small);
-  line-height: var(--leading-dense);
-  max-inline-size: var(--measure);
-}
-
 /* ------ Certification list ------ */
 .cert-list {
   list-style: none;
@@ -2620,12 +2455,12 @@ pre,
 }
 /* ------ Certification: credential link ------
    Optional — present only on certs that have a real, checkable credential
-   URL. Follows the same in-text link treatment as .prose a / .footer-links a
-   (accent colour, underline, gated hover) rather than the .btn or .tag-pill
-   vocabulary: this is a reference to outside proof, not an action this page
-   performs and not a status label. min-block-size matches .footer-links a
-   for the same reason — an inline text link is still a target, and 24px is
-   the WCAG 2.2 AA floor. */
+   URL. Follows the same in-text link treatment as .prose a (accent colour,
+   underline, gated hover) rather than the .btn or .tag-pill vocabulary:
+   this is a reference to outside proof, not an action this page performs
+   and not a status label. min-block-size holds the WCAG 2.2 AA 24px floor
+   even though this is inline text, not a button — an inline link is still
+   a target. */
 .cert-link {
   display: inline-flex;
   align-items: center;
@@ -2641,18 +2476,11 @@ pre,
     color: var(--color-accent-hover);
   }
 }
-/* ------ Status chip ------
-   One component, two users: certification state (.cert-status) and the
-   Writing index's per-piece state (.tag). `.tag` was markup with no rule at
-   all — the class was referenced in this stylesheet's own comments and used
-   on three rows of writing/index.html, but never defined, so those chips
-   rendered as bare inline text inside a meta row.
-
+/* ------ Status chip (.cert-status) ------
    Takes the same shape and fill treatment as .tag-pill so every badge on the
    site is one component: solid tint, no outline, pill radius. The label
    itself is always the non-colour signal, so the tint only reinforces what
    the words already say. */
-.tag,
 .cert-status {
   font-family: var(--font-mono);
   font-size: var(--text-mono);

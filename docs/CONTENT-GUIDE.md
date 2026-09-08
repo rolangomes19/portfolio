@@ -73,11 +73,11 @@ NDA-safe label), `work/ai-design-to-code.html` — have full `en-simple`/`ar`
 content for every body paragraph and summary-list item. As on the other
 in-scope pages, page-level headings (h2s other than the shared "Summary"),
 the facts-bar, `dl`/`prop-list` definitions, and case-stat text stay English
-in every mode. No other page (`more-work.html`, `writing/*`, the other 2
-case studies, `about.html`, `contact.html`) has body content in any mode
-beyond `en` — they still get the shared nav/footer chrome toggle, nothing
-more. Don't re-litigate this scope without a reason; extending it means
-writing STE + Arabic for the newly-added page from scratch.
+in every mode. No other page (the other 2 case studies, `about.html`,
+`contact.html`) has body content in any mode beyond `en` — they still get
+the shared nav/footer chrome toggle, nothing more. Don't re-litigate this
+scope without a reason; extending it means writing STE + Arabic for the
+newly-added page from scratch.
 
 - Every `data-i18n` value is set via `innerHTML`, not `textContent` —
   several paragraphs carry inline `<strong>`/`<code>`/`<em>`/`<a>` markup

@@ -6,14 +6,42 @@
   <title data-i18n-title="meta.title">Rolan Gomes - UX Designer · Design Systems & AI-Directed Delivery</title>
   <meta name="description" data-i18n-meta-description="meta.description" content="Rolan Gomes is a UX Designer who builds design systems, then directs AI to turn them into working software. Design Systems, Code Connect, and WCAG 2.2 Accessibility. UAE-based, open to opportunities across Dubai, Abu Dhabi, and Sharjah." />
   <link rel="icon" type="image/svg+xml" href="assets/rolan-favicon-svg.svg" />
-  
+  <link rel="canonical" href="https://rolangomes19.github.io/portfolio/" />
 
   <!-- Open Graph -->
-  <meta property="og:image" content="https://rolangomes19.github.io/portfolio/assets/portfolio-thumbnail.jpg" />
+  <meta property="og:image" content="https://rolangomes19.github.io/portfolio/assets/images/portfolio-thumbnail.jpg" />
   <meta property="og:title" content="Rolan Gomes - UX Designer · Design Systems, then AI" />
   <meta property="og:description" content="I design systems, then direct AI to build them into working software. Design Systems · WCAG 2.2 Accessibility · AI-Directed Delivery. UAE-based." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://rolangomes19.github.io/portfolio/" /> 
+  <meta property="og:url" content="https://rolangomes19.github.io/portfolio/" />
+
+  <!-- Structured data: only facts already published elsewhere on this page
+       (name, role, email, social links) — nothing invented for search
+       engines that isn't visible to a person reading the page. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Rolan Gomes",
+    "url": "https://rolangomes19.github.io/portfolio/",
+    "image": "https://rolangomes19.github.io/portfolio/assets/rolan-icon.png",
+    "jobTitle": "UX Designer",
+    "email": "mailto:rolangomes19@gmail.com",
+    "sameAs": [
+      "https://www.linkedin.com/in/rolan-gomes/",
+      "https://www.behance.net/rolangomes19",
+      "https://www.instagram.com/rolangomes19/"
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Rolan Gomes",
+    "url": "https://rolangomes19.github.io/portfolio/"
+  }
+  </script>
 
   <!-- Apply saved theme BEFORE first paint to avoid a flash of wrong theme -->
   <script>
@@ -48,13 +76,21 @@
   </script>
   <script data-goatcounter="https://rolangomes19.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
   <!-- Fonts: all self-hosted. Inter (body), Commissioner (headings/buttons),
-       Geist Mono (mono/meta), Estedad (RTL — headings, buttons, and body). -->
+       Geist Mono (mono/meta), El Messiri (RTL headings/buttons), Harmattan
+       (RTL body/mono/eyebrow), and Caveat (sticky-note handwriting).
+       El Messiri/Harmattan are not preloaded — RTL is unlikely to be
+       needed on first paint. Caveat now is (subsetted to ~47KB, see
+       CLEANUP-PLAN 1.4): sticky notes render close to the fold on most
+       pages, and swapping font after first paint was the actual bug this
+       item fixed. -->
   <link rel="preload" href="assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="assets/fonts/Commissioner-Variable.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/Caveat-Variable.woff2" as="font" type="font/woff2" crossorigin />
 
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
+  <script src="js/strings.js" defer></script>
   <script src="js/main.js" defer></script>
 </head>
 <body>
@@ -62,7 +98,7 @@
 
   <header class="site-header">
     <div class="container">
-      <a class="site-logo" href="index.html"><img src="assets/rolan-icon.png" alt="rolan face"> <span data-i18n="brand.name">Rolan Gomes</span></a>
+      <a class="site-logo" href="index.html"><img src="assets/rolan-icon.png" width="80" height="80" alt="rolan face"> <span data-i18n="brand.name">Rolan Gomes</span></a>
 
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-panel" data-i18n-label="nav.toggle" aria-label="Menu">
         <span class="nav-toggle-icon" aria-hidden="true"></span>
@@ -187,7 +223,7 @@
             </div>
             <!-- PLACEHOLDER: cover image comes later — see item 6 of the redesign brief -->
             <div class="work-card-media" aria-hidden="true">
-              <img src="assets/images/bds-tile.svg" alt="Blueprint Design System cover image" loading="lazy" decoding="async" />
+              <img src="assets/images/bds-tile.webp" width="1200" height="600" alt="" loading="lazy" decoding="async" />
             </div>
           </li>
 
@@ -206,7 +242,7 @@
               </div>
             </div>
             <div class="work-card-media" aria-hidden="true">
-              <img src="assets/images/speery-image.svg" alt="Healthcare SaaS Redesign cover image" loading="lazy" decoding="async" />
+              <img src="assets/images/speery-image.webp" width="1106" height="909" alt="" loading="lazy" decoding="async" />
             </div>
           </li>
 
@@ -225,7 +261,7 @@
               </div>
             </div>
             <div class="work-card-media" aria-hidden="true">
-              <img src="assets/images/wrkfeed-poc.svg" alt="Design-to-code POC" loading="lazy" decoding="async" />
+              <img src="assets/images/wrkfeed-poc.svg" width="1200" height="600" alt="" loading="lazy" decoding="async" />
             </div>
           </li>
 
@@ -244,7 +280,7 @@
               </div>
             </div>
             <div class="work-card-media" aria-hidden="true">
-              <img src="assets/images/hub-mod-tile.svg" alt="Hub platform modernization tile" loading="lazy" decoding="async" />
+              <img src="assets/images/hub-mod-tile.svg" width="1200" height="600" alt="" loading="lazy" decoding="async" />
             </div>
           </li>
 
@@ -262,7 +298,7 @@
               </div>
             </div>
             <div class="work-card-media" aria-hidden="true">
-              <img src="assets/images/inc-tile.webp" alt="Incridea title slide" loading="lazy" decoding="async" />
+              <img src="assets/images/inc-tile.webp" width="1200" height="846" alt="" loading="lazy" decoding="async" />
             </div>
           </li>
 
@@ -366,7 +402,7 @@
             <img class="tool-sticker-img" src="assets/images/tools/Claude.svg" alt="Claude" width="185" height="186" loading="lazy" decoding="async" />
           </button>
           <button type="button" class="tool-sticker" data-i18n-desc="skills.copilot" data-description="I have used GitHub Copilot to assist with writing code and generating ideas. It's like having a helpful assistant by your side. The Design System was built with Copilot's assistance, helped me to undertsand React JS much better and to create a more accessible user interface." data-proficiency="Intermediate">
-            <img class="tool-sticker-img" src="assets/images/tools/Github%20Copilot.svg" alt="GitHub Copilot" width="206" height="185" loading="lazy" decoding="async" />
+            <img class="tool-sticker-img" src="assets/images/tools/Github%20Copilot.webp" alt="GitHub Copilot" width="206" height="185" loading="lazy" decoding="async" />
           </button>
           <button type="button" class="tool-sticker" data-i18n-desc="skills.midjourney" data-description="I have used Midjourney to generate visual content for my projects, including illustrations and concept art. It's an engineer-turned designer's dream come to life to create images with specifications and parameters and not just words. But what I love (and hate) about it is the ambiguity and unpredictability of the results. Makes you to think and explore instead of being focused on your first idea." data-proficiency="Intermediate">
             <img class="tool-sticker-img" src="assets/images/tools/Midjourney.svg" alt="Midjourney" width="184" height="168" loading="lazy" decoding="async" />
@@ -461,13 +497,17 @@
           <span class="sep" aria-hidden="true">/</span>
           <a href="tel:+971562326907" data-i18n="contact.phone">PHONE</a>
           <span class="sep" aria-hidden="true">/</span>
-          <a href="https://www.linkedin.com/in/rolan-gomes/" target="_blank" rel="noopener noreferrer" data-i18n="contact.linkedin">LINKEDIN</a>
+          <!-- No data-i18n: LinkedIn/Behance/Instagram are proper nouns, not
+               translated in any mode (same reasoning en-simple already
+               applies to nav labels) — deliberately English in every mode,
+               not a missing Arabic string. -->
+          <a href="https://www.linkedin.com/in/rolan-gomes/" target="_blank" rel="noopener noreferrer">LINKEDIN</a>
           <span class="sep" aria-hidden="true">/</span>
           <!-- PLACEHOLDER: add Behance link once branding case studies are published -->
-          <a href="https://www.behance.net/rolangomes19" target="_blank" rel="noopener noreferrer" data-i18n="contact.behance">BEHANCE</a>
+          <a href="https://www.behance.net/rolangomes19" target="_blank" rel="noopener noreferrer">BEHANCE</a>
           <span class="sep" aria-hidden="true">/</span>
           <!-- PLACEHOLDER: add Instagram link if desired -->
-          <a href="https://www.instagram.com/rolangomes19/" target="_blank" rel="noopener noreferrer" data-i18n="contact.instagram">INSTAGRAM</a>
+          <a href="https://www.instagram.com/rolangomes19/" target="_blank" rel="noopener noreferrer">INSTAGRAM</a>
           <span class="sep" aria-hidden="true">/</span>
           <a href="https://drive.google.com/file/d/1_2b1Bq9JJ9lkkahS8NKODrx7hWsXpivv/view?usp=sharing" target="_blank" rel="noopener noreferrer" data-i18n="contact.resume">RESUME</a>
         </div>
@@ -479,7 +519,7 @@
   <!-- ============ FOOTER ============ -->
   <footer class="site-footer">
     <div class="container">
-      <p class="colophon" data-i18n="footer.colophon">© 2026 Rolan Gomes. Built with loads of imagination, love and Claude Code.</p>
+      <p class="colophon"><span data-i18n="footer.colophon">© 2026 Rolan Gomes. Built with loads of imagination, love and Claude Code.</span> <a href="colophon.html" data-i18n="footer.colophonLink">Colophon</a></p>
     </div>
   </footer>
 
@@ -493,10 +533,16 @@
         <span class="surface-picker-label" id="surface-picker-mat-label">Cutting mat</span>
         <div class="surface-picker-swatches" role="radiogroup" aria-labelledby="surface-picker-mat-label">
           <button type="button" class="surface-picker-swatch" role="radio" aria-checked="true" tabindex="0" data-color="#095848" style="--swatch:#095848" aria-label="Green" title="Green"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a1f1f" style="--swatch:#7a1f1f" aria-label="Red" title="Red"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Purple" title="Purple"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#141414" style="--swatch:#141414" aria-label="Black" title="Black"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#1B365D" style="--swatch:#1B365D" aria-label="Blue" title="Blue"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#141414" style="--swatch:#141414" aria-label="Charcoal" title="Charcoal"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0b3556" style="--swatch:#0b3556" aria-label="Navy" title="Navy"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust" title="Rust"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum" title="Plum"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal" title="Teal"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#1B365D" style="--swatch:#1B365D" aria-label="Ink blue" title="Ink blue"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#30302e" style="--swatch:#30302e" aria-label="Graphite" title="Graphite"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#3d3d3a" style="--swatch:#3d3d3a" aria-label="Slate" title="Slate"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#504e49" style="--swatch:#504e49" aria-label="Olive" title="Olive"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#6b6a64" style="--swatch:#6b6a64" aria-label="Smoke grey" title="Smoke grey"></button>
         </div>
         <div class="surface-picker-custom">
           <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>

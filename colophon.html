@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Colophon - Rolan Gomes</title>
+  <meta name="description" content="How this site is built: the token model, the six fonts and why, the accessibility testing actually performed, and the measurements behind the performance claims — evidence, not just a footer line." />
+  <link rel="icon" type="image/svg+xml" href="assets/rolan-favicon-svg.svg" />
+  <link rel="canonical" href="https://rolangomes19.github.io/portfolio/colophon.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:image" content="https://rolangomes19.github.io/portfolio/assets/images/portfolio-thumbnail.jpg" />
+  <meta property="og:title" content="Colophon - Rolan Gomes" />
+  <meta property="og:description" content="How this site is built: the token model, the six fonts and why, the accessibility testing actually performed, and the measurements behind the performance claims." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://rolangomes19.github.io/portfolio/colophon.html" />
+
+  <script>
+    (function () {
+      var t = localStorage.getItem("theme");
+      if (!t && window.matchMedia("(prefers-color-scheme: dark)").matches) t = "dark";
+      if (t) document.documentElement.dataset.theme = t;
+      if (localStorage.getItem("mode") === "ar") {
+        document.documentElement.lang = "ar";
+        document.documentElement.dir = "rtl";
+      }
+      var mc = localStorage.getItem("matColor");
+      if (mc) document.documentElement.style.setProperty("--color-mat", mc);
+      // Apply a cached mat-driven accent too, so a returning visitor with a
+      // customised mat never sees a flash of the default accent before
+      // js/main.js re-derives it. See main.js section 4b for how this blob
+      // is produced; this block only ever reads it.
+      var at = localStorage.getItem("accentTokens");
+      if (at) {
+        try {
+          var set = JSON.parse(at)[document.documentElement.dataset.theme === "dark" ? "dark" : "light"];
+          if (set) {
+            var s = document.documentElement.style;
+            s.setProperty("--color-accent", set.accent);
+            s.setProperty("--color-accent-hover", set.hover);
+            s.setProperty("--color-on-accent", set.on);
+            s.setProperty("--color-tint-brand", set.tint);
+          }
+        } catch (e) {}
+      }
+    })();
+  </script>
+  <script data-goatcounter="https://rolangomes19.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  <!-- Fonts: all self-hosted. Inter (body), Commissioner (headings/buttons),
+       Geist Mono (mono/meta), El Messiri (RTL headings/buttons), Harmattan
+       (RTL body/mono/eyebrow), and Caveat (sticky-note handwriting).
+       El Messiri/Harmattan are not preloaded — RTL is unlikely to be
+       needed on first paint. Caveat now is (subsetted to ~47KB, see
+       CLEANUP-PLAN 1.4): sticky notes render close to the fold on most
+       pages, and swapping font after first paint was the actual bug this
+       item fixed. -->
+  <link rel="preload" href="assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/Commissioner-Variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/Caveat-Variable.woff2" as="font" type="font/woff2" crossorigin />
+
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="index.html"><span class="icon-directional" aria-hidden="true">←</span> <span data-i18n="brand.name">Rolan Gomes</span></a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-panel" data-i18n-label="nav.toggle" aria-label="Menu">
+        <span class="nav-toggle-icon" aria-hidden="true"></span>
+      </button>
+
+      <div class="site-nav-panel" id="site-nav-panel">
+        <nav class="site-nav" aria-label="Main">
+          <ul>
+            <li><a href="index.html#work" data-i18n="nav.work">Works</a></li>
+            <li><a href="index.html#about" data-i18n="nav.about">About</a></li>
+            <li><a href="index.html#contact" data-i18n="nav.contact">Contact</a></li>
+          </ul>
+        </nav>
+        <div class="header-controls">
+          <div class="mode-select">
+            <button type="button" class="mode-select-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="mode-select-panel">
+              <span data-mode-select-label>English</span>
+              <svg class="mode-select-chevron" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="mode-select-panel" id="mode-select-panel" hidden>
+              <button type="button" class="mode-select-option" data-mode-option="en" aria-pressed="true">English</button>
+              <button type="button" class="mode-select-option" data-mode-option="en-simple" aria-pressed="false">Simple English</button>
+              <button type="button" class="mode-select-option" data-mode-option="ar" aria-pressed="false">عربي</button>
+            </div>
+          </div>
+          <button class="toggle-btn theme-icon-toggle" type="button" data-theme-toggle aria-pressed="false" data-i18n-label="toggle.theme" aria-label="Toggle dark mode">
+            <span aria-hidden="true">◐</span>
+          </button>
+          <div class="mobile-controls">
+            <div class="segmented-bar" role="group" aria-label="Language and content mode">
+              <button type="button" class="segmented-bar-btn" data-mode-option="en" aria-pressed="true">English</button>
+              <button type="button" class="segmented-bar-btn" data-mode-option="en-simple" aria-pressed="false">Simple English</button>
+              <button type="button" class="segmented-bar-btn" data-mode-option="ar" aria-pressed="false">عربي</button>
+            </div>
+            <div class="segmented-bar" role="group" aria-label="Theme">
+              <button type="button" class="segmented-bar-btn" data-theme-option="light" aria-pressed="true">Light mode</button>
+              <button type="button" class="segmented-bar-btn" data-theme-option="dark" aria-pressed="false">Dark mode</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <section class="section case-hero" aria-labelledby="case-title">
+      <div class="container" data-reveal-intro>
+        <span class="eyebrow">COLOPHON</span>
+        <h1 id="case-title">How this site is built</h1>
+        <p class="case-summary">The footer says this site is WCAG 2.2 AA and RTL-ready, and every component runs on design tokens instead of hand-picked values. Those are claims a design-system review should be able to check, not take on faith. This page is that check: the actual token count, the actual fonts and why each one is here, the actual accessibility testing performed, and the actual before/after numbers from the performance pass — sourced from this repo's own architecture notes and cleanup log, not written up separately from them.</p>
+      </div>
+    </section>
+
+    <article class="section">
+      <div class="container prose" data-reveal-children>
+
+        <h2>Tokens, not values</h2>
+        <p>83 custom properties in <code>css/tokens.css</code> — colour, type, the Carbon-style spacing scale (<code>--space-01</code> through <code>--space-12</code>), radius, shadow, duration, and easing. Light theme lives on <code>:root</code>; dark theme is one <code>[data-theme="dark"]</code> block overriding the same property names, never a second set of rules. <code>css/styles.css</code> — every component in the site — has zero raw colour values except two, and both are deliberate: a physical printed photo (<code>.work-card-media</code>, <code>.about-photo</code>) doesn't turn dark just because the page theme did, so those two fills are pinned regardless of theme, documented in place. Zero <code>!important</code> anywhere in the file.</p>
+
+        <h2>Six fonts, each with a job</h2>
+        <p>All self-hosted, nothing served from a third-party font CDN.</p>
+        <dl class="prop-list">
+          <dt>Inter</dt><dd>Body text. Self-hosted from rsms.me/inter/.</dd>
+          <dt>Commissioner</dt><dd>Headings and buttons.</dd>
+          <dt>Geist Mono</dt><dd>Eyebrows, meta labels, code — the monospace voice that marks this site's own system to itself, like the one on this page.</dd>
+          <dt>El Messiri</dt><dd>RTL headings and buttons, substituting for Commissioner under <code>[dir="rtl"]</code>.</dd>
+          <dt>Harmattan</dt><dd>RTL body, mono, and eyebrow text, substituting for Inter and Geist Mono under <code>[dir="rtl"]</code>.</dd>
+          <dt>Caveat</dt><dd>Sticky-note handwriting only — the small annotation text on the photo captions and stat cards, never body copy.</dd>
+        </dl>
+        <p>The first three are Latin-subsetted; Caveat was instanced to a static weight and subsetted too, once it turned out to be shipping unsubsetted and unpreloaded (see the performance numbers below). Both changes are covered in this repo's own <code>docs/FONT-LOADING-PERF-PLAN.md</code> and <code>docs/CLEANUP-PLAN.md</code>.</p>
+
+        <h2>Accessibility, measured</h2>
+        <p>Verified live in a browser, not inferred from the markup:</p>
+        <ul class="detail-list">
+          <li><strong>Contrast.</strong> Zero WCAG AA failures across every text node on the homepage, in both themes, across all eleven mat-colour swatches — including the one colour with no pre-solved lookup table entry, which clears AA on its own through a live binary-search derivation (see <code>js/main.js</code> §4b).</li>
+          <li><strong>Touch targets.</strong> No interactive element under 24×24 CSS px at a 320px viewport.</li>
+          <li><strong>Reflow.</strong> No horizontal overflow at 320px, in either reading direction.</li>
+          <li><strong>Motion.</strong> Every transition and animation in <code>styles.css</code> routes through three duration tokens; <code>prefers-reduced-motion: reduce</code> collapses all three to 1ms in one rule, not a per-component opt-out.</li>
+          <li><strong>Keyboard and structure.</strong> One <code>h1</code> per page, no skipped heading levels, no duplicate IDs, a skip link as the first focusable element, and a visible focus ring on every interactive element — including inside the surface-recolour panel's own radiogroup, which supports arrow-key selection like a native <code>&lt;input type="radio"&gt;</code>.</li>
+        </ul>
+
+        <h2>Built for both directions</h2>
+        <p><code>css/styles.css</code> contains zero physical <code>left</code>/<code>right</code> properties — no <code>margin-left</code>, no <code>text-align: left</code>, no <code>border-right</code>. Every layout rule uses logical properties (<code>margin-inline-start</code>, <code>inset-inline-end</code>, <code>text-align: start</code>) so flipping <code>dir="rtl"</code> mirrors the entire layout without a single direction-specific override. Directional icons carry an <code>.icon-directional</code> class that flips them under <code>[dir="rtl"]</code> — the arrow on this very page's site-logo link is one of them. Numbers, phone numbers, and email addresses stay left-to-right inside right-to-left text via <code>&lt;bdi&gt;</code> wrapping, so a UAE phone number doesn't get its digit order reversed by the bidi algorithm.</p>
+
+        <h2>What got measured and fixed</h2>
+        <p>This site went through its own cleanup pass — the same kind of audit its case studies describe doing for other products. Before/after numbers, not estimates:</p>
+        <ul class="case-stats">
+          <li class="case-stat">
+            <span class="case-stat-number">89%</span>
+            <p class="case-stat-desc">Cut from the site's heaviest images (7.07MB → 0.79MB across 7 files) — three were base64-encoded PNGs wearing an SVG file extension, re-encoded as WebP at the resolution they're actually displayed at; four were genuine vector diagrams that just needed path-precision cleanup, not rasterising.</p>
+          </li>
+          <li class="case-stat">
+            <span class="case-stat-number">85%</span>
+            <p class="case-stat-desc">Cut from the favicon (124KB → 18KB) by reducing an auto-traced illustration's coordinate precision to what a 16–32px icon can actually show — verified pixel-identical to the original at both render sizes before shipping.</p>
+          </li>
+          <li class="case-stat">
+            <span class="case-stat-number">61%</span>
+            <p class="case-stat-desc">Cut from <code>tokens.css</code> (82KB → 31.7KB raw) by moving two inline SVG data URIs — the light and dark cutting-mat illustrations — to external, separately-cacheable files once neither turned out to depend on a CSS custom property.</p>
+          </li>
+          <li class="case-stat">
+            <span class="case-stat-number">72%</span>
+            <p class="case-stat-desc">Cut from four of this site's pages' JavaScript payload (285KB → 78.6KB raw) by splitting page-specific translation content out of the shared script, so a page with no case-study body stops downloading one anyway.</p>
+          </li>
+        </ul>
+
+        <h2>No build step</h2>
+        <p>Plain HTML, CSS, and vanilla JavaScript. No framework, no npm dependency, no bundler in the path between editing a file and it being the deployed site — what's in this repository is what a browser reads. The handful of command-line tools used to prepare assets above (<code>svgo</code> for path precision, <code>fonttools</code>/<code>pyftsubset</code> for font subsetting, <code>sharp</code> for the image re-encodes) ran once each, by hand, to produce a smaller committed file — none of them run again on a visitor's request, and none of them are a dependency of the site itself.</p>
+
+      </div>
+    </article>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p class="colophon"><span data-i18n="footer.colophon">© 2026 Rolan Gomes. Built with loads of imagination, love and Claude Code.</span> <a href="colophon.html" data-i18n="footer.colophonLink">Colophon</a></p>
+    </div>
+  </footer>
+
+  <div class="surface-picker">
+    <span class="surface-picker-hint" aria-hidden="true">Recolor mat</span>
+    <button type="button" class="surface-picker-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="surface-picker-panel" aria-label="Customize mat color">
+      <span class="surface-picker-trigger-swatch" aria-hidden="true"></span>
+    </button>
+    <div class="surface-picker-panel" id="surface-picker-panel" hidden>
+      <div class="surface-picker-group">
+        <span class="surface-picker-label" id="surface-picker-mat-label">Cutting mat</span>
+        <div class="surface-picker-swatches" role="radiogroup" aria-labelledby="surface-picker-mat-label">
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="true" tabindex="0" data-color="#095848" style="--swatch:#095848" aria-label="Green" title="Green"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#141414" style="--swatch:#141414" aria-label="Charcoal" title="Charcoal"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0b3556" style="--swatch:#0b3556" aria-label="Navy" title="Navy"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust" title="Rust"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum" title="Plum"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal" title="Teal"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#1B365D" style="--swatch:#1B365D" aria-label="Ink blue" title="Ink blue"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#30302e" style="--swatch:#30302e" aria-label="Graphite" title="Graphite"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#3d3d3a" style="--swatch:#3d3d3a" aria-label="Slate" title="Slate"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#504e49" style="--swatch:#504e49" aria-label="Olive" title="Olive"></button>
+          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#6b6a64" style="--swatch:#6b6a64" aria-label="Smoke grey" title="Smoke grey"></button>
+        </div>
+        <div class="surface-picker-custom">
+          <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>
+          <input type="color" id="surface-picker-custom-input" value="#095848" />
+          <button type="button" class="surface-picker-reset" data-surface-reset>Reset to default</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

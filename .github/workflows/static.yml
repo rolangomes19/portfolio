@@ -26,10 +26,26 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      # Stage a filtered copy rather than deploying the checkout root as-is.
+      # `upload-pages-artifact` has no built-in exclude, and the previous
+      # `path: '.'` shipped the whole repo publicly — including `.git`
+      # (Pages does not block dotfiles, so that history would have been
+      # directly browsable), CI config, and internal planning docs
+      # (CLAUDE.md, docs/, .impeccable/, .claude-crawl/). None of these
+      # are needed to serve the site. Still zero build step for local
+      # dev — this filtering exists only in CI, on a throwaway checkout.
+      - name: Stage deployable files
+        run: |
+          mkdir _site
+          rsync -a \
+            --exclude='.git' --exclude='.github' \
+            --exclude='.claude' --exclude='.claude-crawl' --exclude='.impeccable' \
+            --exclude='CLAUDE.md' --exclude='docs' --exclude='_site' \
+            ./ _site/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: '_site'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

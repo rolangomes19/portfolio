@@ -180,8 +180,10 @@ axe-core is still zero violations post-fix (re-verified, both resting and
 with the lightbox open).
 
 `blueprint-design-system` remains the furthest below target — but no longer
-because of fonts. Its network waterfall now tops out with a 142KB
-`brand-wipfli.svg`, bigger than any single font file post-fix. **This is a
+because of fonts. Its network waterfall now tops out with a 142KB brand
+guidelines image (`brand-guidelines-existing.svg`, renamed from
+`brand-wipfli.svg` in a later anonymisation pass — see CLEANUP-PLAN item
+3.3), bigger than any single font file post-fix. **This is a
 separate, unrelated finding, not part of this plan**: while auditing I also
 found `index.html` loads a 1.7MB `rolan-says-hello.gif` as its largest
 resource by a wide margin (LCP 11.8s on that page) — worth its own look
