@@ -17,59 +17,40 @@
 
   <script>
     (function () {
-      var t = localStorage.getItem("theme");
-      if (!t && window.matchMedia("(prefers-color-scheme: dark)").matches) t = "dark";
-      if (t) document.documentElement.dataset.theme = t;
       if (localStorage.getItem("mode") === "ar") {
         document.documentElement.lang = "ar";
         document.documentElement.dir = "rtl";
-      }
-      var mc = localStorage.getItem("matColor");
-      if (mc) document.documentElement.style.setProperty("--color-mat", mc);
-      // Apply a cached mat-driven accent too, so a returning visitor with a
-      // customised mat never sees a flash of the default accent before
-      // js/main.js re-derives it. See main.js section 4b for how this blob
-      // is produced; this block only ever reads it.
-      var at = localStorage.getItem("accentTokens");
-      if (at) {
-        try {
-          var set = JSON.parse(at)[document.documentElement.dataset.theme === "dark" ? "dark" : "light"];
-          if (set) {
-            var s = document.documentElement.style;
-            s.setProperty("--color-accent", set.accent);
-            s.setProperty("--color-accent-hover", set.hover);
-            s.setProperty("--color-on-accent", set.on);
-            s.setProperty("--color-tint-brand", set.tint);
-          }
-        } catch (e) {}
       }
     })();
   </script>
   <script data-goatcounter="https://rolangomes19.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
   <!-- Fonts: all self-hosted. Inter (body), Commissioner (headings/buttons),
-       Geist Mono (mono/meta), El Messiri (RTL headings/buttons), Harmattan
-       (RTL body/mono/eyebrow), and Caveat (sticky-note handwriting).
-       El Messiri/Harmattan are not preloaded — RTL is unlikely to be
-       needed on first paint. Caveat now is (subsetted to ~47KB, see
+       IBM Plex Mono (mono/meta), Reem Kufi (RTL headings/buttons), IBM Plex Sans Arabic
+       (RTL body/mono/eyebrow), and Architects Daughter (sticky-note handwriting).
+       Reem Kufi/IBM Plex Sans Arabic are not preloaded — RTL is unlikely to be
+       needed on first paint. Architects Daughter now is (subsetted, see
        CLEANUP-PLAN 1.4): sticky notes render close to the fold on most
        pages, and swapping font after first paint was the actual bug this
        item fixed. -->
   <link rel="preload" href="../assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="../assets/fonts/Commissioner-Variable.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="../assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="../assets/fonts/Caveat-Variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/ArchitectsDaughter-Regular.woff2" as="font" type="font/woff2" crossorigin />
 
   <link rel="stylesheet" href="../css/tokens.css" />
   <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/desk.css" />
   <script src="../js/strings.js" defer></script>
   <script src="../js/main.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main" data-i18n="skip">Skip to main content</a>
+  <div class="mat-weave" aria-hidden="true"></div>
+  <div class="mat-grain" aria-hidden="true"></div>
 
   <header class="site-header">
     <div class="container">
-      <a class="site-logo" href="../index.html"><span class="icon-directional" aria-hidden="true">←</span> <span data-i18n="brand.name">Rolan Gomes</span></a>
+      <a class="site-logo" href="../index.html"><img src="../assets/rolan-icon.png" width="80" height="80" alt="rolan face"> <span data-i18n="brand.name">Rolan Gomes</span></a>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-panel" data-i18n-label="nav.toggle" aria-label="Menu">
         <span class="nav-toggle-icon" aria-hidden="true"></span>
       </button>
@@ -78,7 +59,7 @@
         <nav class="site-nav" aria-label="Main">
           <ul>
             <li><a href="../index.html#work" data-i18n="nav.work">Works</a></li>
-            <li><a href="../index.html#about" data-i18n="nav.about">About</a></li>
+            <li><a href="../index.html#about" data-i18n="nav.about">About me</a></li>
             <li><a href="../index.html#contact" data-i18n="nav.contact">Contact</a></li>
           </ul>
         </nav>
@@ -94,18 +75,11 @@
               <button type="button" class="mode-select-option" data-mode-option="ar" aria-pressed="false">عربي</button>
             </div>
           </div>
-          <button class="toggle-btn theme-icon-toggle" type="button" data-theme-toggle aria-pressed="false" data-i18n-label="toggle.theme" aria-label="Toggle dark mode">
-            <span aria-hidden="true">◐</span>
-          </button>
           <div class="mobile-controls">
             <div class="segmented-bar" role="group" aria-label="Language and content mode">
               <button type="button" class="segmented-bar-btn" data-mode-option="en" aria-pressed="true">English</button>
               <button type="button" class="segmented-bar-btn" data-mode-option="en-simple" aria-pressed="false">Simple English</button>
               <button type="button" class="segmented-bar-btn" data-mode-option="ar" aria-pressed="false">عربي</button>
-            </div>
-            <div class="segmented-bar" role="group" aria-label="Theme">
-              <button type="button" class="segmented-bar-btn" data-theme-option="light" aria-pressed="true">Light mode</button>
-              <button type="button" class="segmented-bar-btn" data-theme-option="dark" aria-pressed="false">Dark mode</button>
             </div>
           </div>
         </div>
@@ -115,7 +89,7 @@
 
   <main id="main">
 
-    <section class="section case-hero" aria-labelledby="case-title">
+    <section class="section case-hero sheet p-graph" aria-labelledby="case-title">
       <div class="container" data-reveal-intro>
         <span class="eyebrow">June 2024 – October 2025 · Platform modernization · Power Pages · Bootstrap · Azure AD B2C</span>
         <h1 id="case-title">Hub Platform Modernization</h1>
@@ -129,9 +103,10 @@
           <div class="fact"><dt>Scope</dt><dd>~20 pages · 14+ components · 6 side panels · 4 modals · 3 forms · 11 Azure AD B2C flows</dd></div>
         </dl>
       </div>
+      <a class="scroll-cue" href="#case-body" aria-label="Scroll to case study"><span aria-hidden="true">↓</span></a>
     </section>
 
-    <article class="section">
+    <article id="case-body" class="section sheet p-graph">
       <div class="container prose" data-reveal-children>
 
         <p class="nda-note sticky-note sticky-note--margin">Detailed UI masked per NDA. Process artifacts and metrics shared with permission.</p>
@@ -179,10 +154,10 @@
       </div>
     </article>
 
-    <nav class="section" aria-label="Case study navigation">
+    <nav class="section case-nav-band" aria-label="Case study navigation">
       <div class="container case-nav" data-reveal>
-        <a class="btn btn-secondary" href="ai-design-to-code.html"><span class="icon-directional" aria-hidden="true">←</span> Prev: Making Design Systems Legible to AI</a>
-        <a class="btn btn-secondary" href="ai-process-framework.html">Next: AI process framework <span class="icon-directional" aria-hidden="true">→</span></a>
+        <a class="btn btn-secondary" href="ai-design-to-code.html"><span class="btn-icon"><svg class="icon-directional" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span><span class="btn-label">Prev: Making Design Systems Legible to AI</span></a>
+        <a class="btn btn-secondary" href="incridea-2022-branding.html"><span class="btn-label">Next: Incridea 2022 — Branding and Creative Direction</span><span class="btn-icon"><svg class="icon-directional" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></a>
       </div>
     </nav>
 
@@ -194,34 +169,5 @@
     </div>
   </footer>
 
-  <div class="surface-picker">
-    <span class="surface-picker-hint" aria-hidden="true">Recolor mat</span>
-    <button type="button" class="surface-picker-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="surface-picker-panel" aria-label="Customize mat color">
-      <span class="surface-picker-trigger-swatch" aria-hidden="true"></span>
-    </button>
-    <div class="surface-picker-panel" id="surface-picker-panel" hidden>
-      <div class="surface-picker-group">
-        <span class="surface-picker-label" id="surface-picker-mat-label">Cutting mat</span>
-        <div class="surface-picker-swatches" role="radiogroup" aria-labelledby="surface-picker-mat-label">
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="true" tabindex="0" data-color="#095848" style="--swatch:#095848" aria-label="Green" title="Green"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#141414" style="--swatch:#141414" aria-label="Charcoal" title="Charcoal"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0b3556" style="--swatch:#0b3556" aria-label="Navy" title="Navy"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust" title="Rust"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum" title="Plum"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal" title="Teal"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#1B365D" style="--swatch:#1B365D" aria-label="Ink blue" title="Ink blue"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#30302e" style="--swatch:#30302e" aria-label="Graphite" title="Graphite"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#3d3d3a" style="--swatch:#3d3d3a" aria-label="Slate" title="Slate"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#504e49" style="--swatch:#504e49" aria-label="Olive" title="Olive"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#6b6a64" style="--swatch:#6b6a64" aria-label="Smoke grey" title="Smoke grey"></button>
-        </div>
-        <div class="surface-picker-custom">
-          <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>
-          <input type="color" id="surface-picker-custom-input" value="#095848" />
-          <button type="button" class="surface-picker-reset" data-surface-reset>Reset to default</button>
-        </div>
-      </div>
-    </div>
-  </div>
 </body>
 </html>

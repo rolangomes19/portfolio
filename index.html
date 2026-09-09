@@ -43,12 +43,8 @@
   }
   </script>
 
-  <!-- Apply saved theme BEFORE first paint to avoid a flash of wrong theme -->
   <script>
     (function () {
-      var t = localStorage.getItem("theme");
-      if (!t && window.matchMedia("(prefers-color-scheme: dark)").matches) t = "dark";
-      if (t) document.documentElement.dataset.theme = t;
       if (localStorage.getItem("mode") === "ar") {
         document.documentElement.lang = "ar";
         document.documentElement.dir = "rtl";
@@ -62,7 +58,7 @@
       var at = localStorage.getItem("accentTokens");
       if (at) {
         try {
-          var set = JSON.parse(at)[document.documentElement.dataset.theme === "dark" ? "dark" : "light"];
+          var set = JSON.parse(at);
           if (set) {
             var s = document.documentElement.style;
             s.setProperty("--color-accent", set.accent);
@@ -76,25 +72,28 @@
   </script>
   <script data-goatcounter="https://rolangomes19.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
   <!-- Fonts: all self-hosted. Inter (body), Commissioner (headings/buttons),
-       Geist Mono (mono/meta), El Messiri (RTL headings/buttons), Harmattan
-       (RTL body/mono/eyebrow), and Caveat (sticky-note handwriting).
-       El Messiri/Harmattan are not preloaded — RTL is unlikely to be
-       needed on first paint. Caveat now is (subsetted to ~47KB, see
+       IBM Plex Mono (mono/meta), Reem Kufi (RTL headings/buttons), IBM Plex Sans Arabic
+       (RTL body/mono/eyebrow), and Architects Daughter (sticky-note handwriting).
+       Reem Kufi/IBM Plex Sans Arabic are not preloaded — RTL is unlikely to be
+       needed on first paint. Architects Daughter now is (subsetted, see
        CLEANUP-PLAN 1.4): sticky notes render close to the fold on most
        pages, and swapping font after first paint was the actual bug this
        item fixed. -->
   <link rel="preload" href="assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="assets/fonts/Commissioner-Variable.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="assets/fonts/Caveat-Variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/ArchitectsDaughter-Regular.woff2" as="font" type="font/woff2" crossorigin />
 
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/desk.css" />
   <script src="js/strings.js" defer></script>
   <script src="js/main.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main" data-i18n="skip">Skip to main content</a>
+  <div class="mat-weave" aria-hidden="true"></div>
+  <div class="mat-grain" aria-hidden="true"></div>
 
   <header class="site-header">
     <div class="container">
@@ -108,7 +107,7 @@
         <nav class="site-nav" aria-label="Main">
           <ul>
             <li><a href="#work" data-i18n="nav.work">Works</a></li>
-            <li><a href="#about" data-i18n="nav.about">About</a></li>
+            <li><a href="#about" data-i18n="nav.about">About me</a></li>
             <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
           </ul>
         </nav>
@@ -125,18 +124,11 @@
               <button type="button" class="mode-select-option" data-mode-option="ar" aria-pressed="false">عربي</button>
             </div>
           </div>
-          <button class="toggle-btn theme-icon-toggle" type="button" data-theme-toggle aria-pressed="false" data-i18n-label="toggle.theme" aria-label="Toggle dark mode">
-            <span aria-hidden="true">◐</span>
-          </button>
           <div class="mobile-controls">
             <div class="segmented-bar" role="group" aria-label="Language and content mode">
               <button type="button" class="segmented-bar-btn" data-mode-option="en" aria-pressed="true">English</button>
               <button type="button" class="segmented-bar-btn" data-mode-option="en-simple" aria-pressed="false">Simple English</button>
               <button type="button" class="segmented-bar-btn" data-mode-option="ar" aria-pressed="false">عربي</button>
-            </div>
-            <div class="segmented-bar" role="group" aria-label="Theme">
-              <button type="button" class="segmented-bar-btn" data-theme-option="light" aria-pressed="true">Light mode</button>
-              <button type="button" class="segmented-bar-btn" data-theme-option="dark" aria-pressed="false">Dark mode</button>
             </div>
           </div>
         </div>
@@ -146,8 +138,8 @@
 
   <main id="main">
 
-    <!-- ============ HERO ============ -->
-    <section class="section hero" aria-labelledby="hero-title">
+    <!-- ============ HERO + HIGHLIGHTS (one card) ============ -->
+    <section class="section hero sheet p-graph" aria-labelledby="hero-title">
       <div class="container" data-reveal-intro>
         <div class="hero-identity">
           <div class="hero-avatar">
@@ -163,142 +155,117 @@
         <h1 id="hero-title" data-i18n="hero.title">I design systems, then direct AI to build them into working software.</h1>
         <p class="sub" data-i18n="hero.sub">A UX Designer with an engineer's ability to build. I built a Design System end to end, from token architecture to Code Connect, at a top-20 US accounting and consulting firm, then directed an LLM to convert it into a working frontend at an 80% component match rate in 7 days. Now looking for new opportunities across the UAE.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#work" data-i18n="actions.work">View my work</a>
+          <a class="btn btn-primary" href="#work"><span class="btn-label" data-i18n="actions.work">View my work</span></a>
           <!-- PLACEHOLDER: drop the CV at assets/rolan-gomes-cv.pdf -->
-          <a class="btn btn-secondary" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/file/d/1_2b1Bq9JJ9lkkahS8NKODrx7hWsXpivv/view?usp=sharing" data-i18n="actions.cv">Download my Resume</a>
+          <a class="btn btn-secondary" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/file/d/1_2b1Bq9JJ9lkkahS8NKODrx7hWsXpivv/view?usp=sharing"><span class="btn-label" data-i18n="actions.cv">Download my Resume</span></a>
         </div>
       </div>
-    </section>
 
-    <!-- ============ HIGHLIGHTS ============ -->
-    <section class="section highlights" aria-labelledby="highlights-title">
       <div class="container">
         <h2 id="highlights-title" class="visually-hidden">Highlights</h2>
         <ul class="highlight-list" data-reveal-children>
-          <li class="sticky-note sticky-note--stat is-liftable">
+          <li class="highlight-card sheet p-trace">
             <span class="highlight-number" data-i18n="highlight.bds.number">6-product rollout planned</span>
             <a class="highlight-label" href="work/blueprint-design-system.html" data-i18n="highlight.bds.label">Blueprint Design System adoption</a>
           </li>
-          <li class="sticky-note sticky-note--stat is-liftable">
+          <li class="highlight-card sheet p-trace">
             <span class="highlight-number" data-i18n="highlight.poc.number">80% match · 7 days</span>
             <a class="highlight-label" href="work/ai-design-to-code.html" data-i18n="highlight.poc.label">AI-directed frontend POC</a>
           </li>
-          <li class="sticky-note sticky-note--stat is-liftable">
+          <li class="highlight-card sheet p-trace">
             <span class="highlight-number" data-i18n="highlight.wcag.number">35 → 0</span>
             <a class="highlight-label" href="work/hub-modernization.html" data-i18n="highlight.wcag.label">WCAG 2.2 violations remediated</a>
           </li>
-          <li class="sticky-note sticky-note--stat is-liftable">
+          <li class="highlight-card sheet p-trace">
             <span class="highlight-number" data-i18n="highlight.css.number">14 → 1</span>
             <a class="highlight-label" href="work/hub-modernization.html" data-i18n="highlight.css.label">CSS files consolidated</a>
           </li>
-          <li class="sticky-note sticky-note--stat is-liftable">
-            <span class="highlight-number" data-i18n="highlight.incridea.number">$35k</span>
+          <li class="highlight-card sheet p-trace">
+            <span class="highlight-number" data-i18n="highlight.incridea.number">129k AED</span>
             <a class="highlight-label" href="work/incridea-2022-branding.html" data-i18n="highlight.incridea.label">Sponsorship driven, Incridea 2022</a>
           </li>
         </ul>
       </div>
+      <a class="scroll-cue" href="#work" aria-label="Scroll to featured work"><span aria-hidden="true">↓</span></a>
     </section>
 
     <!-- ============ WORK ============ -->
     <section id="work" class="section" aria-labelledby="work-title">
-      <div class="container">
+      <div class="work-board sheet p-graph">
         <span class="eyebrow" data-reveal>WORKS</span>
         <h2 id="work-title" class="section-title" data-reveal data-i18n="work.title">My Featured Works</h2>
 
         <ul class="work-list" data-reveal-children>
 
           <!-- Card 1 — Blueprint Design System -->
-          <li class="work-card is-liftable">
+          <li class="work-card sheet p-blueprint">
+            <span class="bp-grid" aria-hidden="true"></span>
             <div class="work-card-content">
               <div>
                 <h3 class="work-card-title"><a href="work/blueprint-design-system.html">Blueprint Design System</a></h3>
                 <p class="work-card-desc" data-i18n="work.bds.desc">Built a Design System for a top-20 US accounting and consulting firm. Led the Design and owned the decision making.</p>
               </div>
-              <div class="work-card-tags">
-                <span class="tag-pill tag-pill--design">Design System</span>
-                <span class="tag-pill tag-pill--design">Figma</span>
-                <span class="tag-pill tag-pill--engineering">Code Connect</span>
-                <span class="tag-pill tag-pill--engineering">Token architecture</span>
-              </div>
+              <p class="work-card-tags">Design System <span class="sep" aria-hidden="true">/</span> Figma <span class="sep" aria-hidden="true">/</span> Code Connect <span class="sep" aria-hidden="true">/</span> Token architecture</p>
             </div>
             <!-- PLACEHOLDER: cover image comes later — see item 6 of the redesign brief -->
             <div class="work-card-media" aria-hidden="true">
-              <img src="assets/images/bds-tile.webp" width="1200" height="600" alt="" loading="lazy" decoding="async" />
+              <img data-src="assets/images/bds-tile.webp" width="1200" height="600" alt="" decoding="async" />
             </div>
           </li>
 
           <!-- Card 2 — Healthcare SaaS Redesign (NDA client, formerly labeled "Speery Health") -->
-          <li class="work-card is-liftable">
+          <li class="work-card sheet p-trace">
             <div class="work-card-content">
               <div>
                 <h3 class="work-card-title"><a href="work/speery-health.html" data-i18n="case.speery.title">Healthcare SaaS Redesign</a></h3>
                 <p class="work-card-desc" data-i18n="work.speery.desc">Rebuilt an AI-generated healthcare SaaS prototype into a systematic, trustworthy interface for enterprise buyers, solo, design to handoff, in two weeks.</p>
               </div>
-              <div class="work-card-tags">
-                <span class="tag-pill tag-pill--design">Figma</span>
-                <span class="tag-pill tag-pill--design">Design System</span>
-                <span class="tag-pill tag-pill--design">Healthcare SaaS</span>
-                <span class="tag-pill tag-pill--engineering">AI-to-production</span>
-              </div>
+              <p class="work-card-tags">Figma <span class="sep" aria-hidden="true">/</span> Design System <span class="sep" aria-hidden="true">/</span> Healthcare SaaS <span class="sep" aria-hidden="true">/</span> AI-to-production <span class="sep" aria-hidden="true">/</span> Client <span class="redact" style="--ch: 7" role="img" aria-label="Client name withheld under NDA"></span></p>
             </div>
             <div class="work-card-media" aria-hidden="true">
-              <img src="assets/images/speery-image.webp" width="1106" height="909" alt="" loading="lazy" decoding="async" />
+              <img data-src="assets/images/speery-image.webp" width="1106" height="909" alt="" decoding="async" />
             </div>
           </li>
 
           <!-- Card 3 — AI-generated frontend POC -->
-          <li class="work-card is-liftable">
+          <li class="work-card sheet p-sticky">
             <div class="work-card-content">
               <div>
                 <h3 class="work-card-title"><a href="work/ai-design-to-code.html">Making Design Systems Legible to AI</a></h3>
                 <p class="work-card-desc" data-i18n="work.poc.desc">Using the Design System components, we directed and built WorkFeed, a functioning frontend POC of a task management feature. Achieved an 80% component match rate while converting Design to code.</p>
               </div>
-              <div class="work-card-tags">
-                <span class="tag-pill tag-pill--design">Design to code</span>
-                <span class="tag-pill tag-pill--design">Figma</span>
-                <span class="tag-pill tag-pill--engineering">Code Connect</span>
-                <span class="tag-pill tag-pill--engineering">shadcn</span>
-              </div>
+              <p class="work-card-tags">Design to code <span class="sep" aria-hidden="true">/</span> Figma <span class="sep" aria-hidden="true">/</span> Code Connect <span class="sep" aria-hidden="true">/</span> shadcn</p>
             </div>
             <div class="work-card-media" aria-hidden="true">
-              <img src="assets/images/wrkfeed-poc.svg" width="1200" height="600" alt="" loading="lazy" decoding="async" />
+              <img data-src="assets/images/wrkfeed-poc.svg" width="1200" height="600" alt="" decoding="async" />
             </div>
           </li>
 
           <!-- Card 4 — Hub platform modernization -->
-          <li class="work-card is-liftable">
+          <li class="work-card sheet p-sticky">
             <div class="work-card-content">
               <div>
                 <h3 class="work-card-title"><a href="work/hub-modernization.html">Hub Platform Modernization</a></h3>
                 <p class="work-card-desc" data-i18n="work.hub.desc">Led the front-end work across five connected efforts on one platform upgrade. Bootstrap 3→5 rebuild, WCAG 2.4.3 remediation, Azure AD B2C styling, and loading-state standardization. All shipped to production.</p>
               </div>
-              <div class="work-card-tags">
-                <span class="tag-pill tag-pill--engineering">Bootstrap migration</span>
-                <span class="tag-pill tag-pill--engineering">Accessibility</span>
-                <span class="tag-pill tag-pill--engineering">Power Pages</span>
-                <span class="tag-pill tag-pill--engineering">Azure AD B2C</span>
-              </div>
+              <p class="work-card-tags">Bootstrap migration <span class="sep" aria-hidden="true">/</span> Accessibility <span class="sep" aria-hidden="true">/</span> Power Pages <span class="sep" aria-hidden="true">/</span> Azure AD B2C</p>
             </div>
             <div class="work-card-media" aria-hidden="true">
-              <img src="assets/images/hub-mod-tile.svg" width="1200" height="600" alt="" loading="lazy" decoding="async" />
+              <img data-src="assets/images/hub-mod-tile.svg" width="1200" height="600" alt="" decoding="async" />
             </div>
           </li>
 
           <!-- Card 5 — Incridea 2022 -->
-          <li class="work-card is-liftable">
+          <li class="work-card sheet p-card">
             <div class="work-card-content">
               <div>
                 <h3 class="work-card-title"><a href="work/incridea-2022-branding.html">Incridea 2022 - Branding and Creative Direction</a></h3>
                 <p class="work-card-desc" data-i18n="work.incridea.desc">Led the Design team for Incridea 2022. I was in charge of the Branding, creative direction and the execution of the fest theme on the digital, social media and physical media.</p>
               </div>
-              <div class="work-card-tags">
-                <span class="tag-pill tag-pill--design">Figma</span>
-                <span class="tag-pill tag-pill--design">Social media</span>
-                <span class="tag-pill tag-pill--design">Creative Design</span>
-              </div>
+              <p class="work-card-tags">Figma <span class="sep" aria-hidden="true">/</span> Social media <span class="sep" aria-hidden="true">/</span> Creative Design</p>
             </div>
             <div class="work-card-media" aria-hidden="true">
-              <img src="assets/images/inc-tile.webp" width="1200" height="846" alt="" loading="lazy" decoding="async" />
+              <img data-src="assets/images/inc-tile.webp" width="1200" height="846" alt="" decoding="async" />
             </div>
           </li>
 
@@ -307,7 +274,7 @@
     </section>
 
     <!-- ============ ABOUT ============ -->
-    <section id="about" class="section" aria-labelledby="about-title">
+    <section id="about" class="section sheet p-graph" aria-labelledby="about-title">
       <div class="container" data-reveal-intro>
         <span class="eyebrow" data-i18n="about.eyebrow">ABOUT ME</span>
         <h2 id="about-title" class="section-title" data-i18n="about.title">Hey there, I'm Rolan!</h2>
@@ -335,7 +302,7 @@
     </section>
 
     <!-- ============ TOOLS & SKILLS ============ -->
-    <section id="skills" class="section" aria-labelledby="skills-title">
+    <section id="skills" class="section sheet p-graph" aria-labelledby="skills-title">
       <div class="container">
         <h2 id="skills-title" class="section-title" data-reveal data-i18n="skills.title">Here's my toolbox!</h2>
         <!-- Two copies, CSS-toggled by the same 48em breakpoint that
@@ -434,7 +401,7 @@
     </section>
 
     <!-- ============ CERTIFICATIONS ============ -->
-    <section class="section" aria-labelledby="certs-title">
+    <section id="certs" class="section sheet p-graph" aria-labelledby="certs-title">
       <div class="container">
         <span class="eyebrow" data-reveal>Certifications</span>
         <h2 id="certs-title" class="section-title" data-reveal data-i18n="certs.title">Continuous learning.</h2>
@@ -487,7 +454,7 @@
     </section>
 
     <!-- ============ CONTACT ============ -->
-    <section id="contact" class="section" aria-labelledby="contact-title">
+    <section id="contact" class="section sheet p-graph" aria-labelledby="contact-title">
       <div class="container" data-reveal-intro>
         <span class="eyebrow">CONTACT</span>
         <h2 id="contact-title" class="section-title" data-i18n="contact.title">Get in touch and we'll talk business!</h2>
@@ -518,39 +485,7 @@
 
   <!-- ============ FOOTER ============ -->
   <footer class="site-footer">
-    <div class="container">
-      <p class="colophon"><span data-i18n="footer.colophon">© 2026 Rolan Gomes. Built with loads of imagination, love and Claude Code.</span> <a href="colophon.html" data-i18n="footer.colophonLink">Colophon</a></p>
-    </div>
+    <p class="footer-note" data-i18n="footer.colophon">© 2026 Rolan Gomes. Built with loads of imagination, love and Claude Code.</p>
   </footer>
-
-  <div class="surface-picker">
-    <span class="surface-picker-hint" aria-hidden="true">Recolor mat</span>
-    <button type="button" class="surface-picker-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="surface-picker-panel" aria-label="Customize mat color">
-      <span class="surface-picker-trigger-swatch" aria-hidden="true"></span>
-    </button>
-    <div class="surface-picker-panel" id="surface-picker-panel" hidden>
-      <div class="surface-picker-group">
-        <span class="surface-picker-label" id="surface-picker-mat-label">Cutting mat</span>
-        <div class="surface-picker-swatches" role="radiogroup" aria-labelledby="surface-picker-mat-label">
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="true" tabindex="0" data-color="#095848" style="--swatch:#095848" aria-label="Green" title="Green"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#141414" style="--swatch:#141414" aria-label="Charcoal" title="Charcoal"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0b3556" style="--swatch:#0b3556" aria-label="Navy" title="Navy"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust" title="Rust"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum" title="Plum"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal" title="Teal"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#1B365D" style="--swatch:#1B365D" aria-label="Ink blue" title="Ink blue"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#30302e" style="--swatch:#30302e" aria-label="Graphite" title="Graphite"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#3d3d3a" style="--swatch:#3d3d3a" aria-label="Slate" title="Slate"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#504e49" style="--swatch:#504e49" aria-label="Olive" title="Olive"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#6b6a64" style="--swatch:#6b6a64" aria-label="Smoke grey" title="Smoke grey"></button>
-        </div>
-        <div class="surface-picker-custom">
-          <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>
-          <input type="color" id="surface-picker-custom-input" value="#095848" />
-          <button type="button" class="surface-picker-reset" data-surface-reset>Reset to default</button>
-        </div>
-      </div>
-    </div>
-  </div>
 </body>
 </html>

@@ -1,0 +1,868 @@
+<title>Paper Stack Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=Commissioner:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Architects+Daughter&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Reem+Kufi:wght@400..700&display=swap">
+<style>
+/* ============================================================
+   PAPER STACK LAB — single committed theme (a workbench has one look)
+   Light source: 300deg, upper-right. Never moves. Every shadow -X +Y.
+   ============================================================ */
+:root{
+  /* mat */
+  --mat:#1B6353;
+  --mat-deep:#0E362E;
+  --mat-line:255 255 255;
+  /* papers */
+  --p-graph:#F7F2E3;
+  --p-graph-grid:#ECE5D3;    /* fine 8px  — ink 13.51:1 */
+  --p-graph-grid-5:#E2DAC3;  /* major 40px — ink 12.16:1 */
+  --p-bond:#FAF7EF;
+  --p-kraft:#AD8A5F;
+  --p-kraft-2:#9C7A50;
+  --p-news:#E3DFD2;
+  --p-card:#FCFBF6;
+  --p-sticky:#FBF3D4;
+  --p-trace:252 250 246;
+  /* ink */
+  --ink:#1B1D1A;
+  --ink-2:#54574F;
+  --ink-3:#5E6157;
+  --blue:#2B4FB8;
+  --red:#9E3122;
+  /* blueprint */
+  --bp:#123A8F;
+  --bp-deep:#081F55;
+  /* type */
+  --f-display:"Fraunces",Georgia,serif;
+  --f-text:"Commissioner",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,monospace;
+  --f-hand:"Architects Daughter",cursive;
+  /* Arabic. LATIN FIRST in every stack — Commissioner/Fraunces ship no Arabic
+     subset, so Arabic characters fall through per-character while embedded
+     English technical terms stay in the English face. No spans required. */
+  --f-text-ar:"Commissioner","IBM Plex Sans Arabic",system-ui,sans-serif;
+  --f-display-ar:"Fraunces","Reem Kufi",Georgia,serif;
+  /* edge masks — generated once by script, 8-15KB, tile seamlessly at any width */
+  --edge-torn:url("data:image/png;base64,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");
+  --edge-deckle:url("data:image/png;base64,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");
+
+  /* ---- THE GRAIN (one asset, many opacities) ---- */
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  /* ---- THE SHADOW RAMP (contact / ambient / cast) ---- */
+  --sh-flat:
+    -1px 1px 1px rgb(6 26 21 / .34),
+    -3px 5px 8px rgb(6 26 21 / .22),
+    -8px 14px 26px rgb(6 26 21 / .14);
+  --sh-thin:
+    -1px 1px 1px rgb(6 26 21 / .26),
+    -2px 4px 6px rgb(6 26 21 / .14);
+  --sh-card:
+    -1px 1px 0 rgb(6 26 21 / .38),
+    -3px 6px 8px rgb(6 26 21 / .24),
+    -10px 20px 34px rgb(6 26 21 / .16);
+  --sh-trace:
+    -1px 1px 1px rgb(6 26 21 / .14),
+    -3px 6px 12px rgb(6 26 21 / .10);
+  --lit-edge: inset 0 1px 0 rgb(255 255 255 / .58);
+  --dark-edge: inset 0 -1px 0 rgb(0 0 0 / .07);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--mat-deep);
+  color:var(--ink);
+  font-family:var(--f-text);
+  font-size:15px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ============================================================
+   THE MAT — three-layer construction
+   1. base colour  2. organic light field  3. weave + grid  4. grain
+   ============================================================ */
+.mat{
+  position:relative;
+  isolation:isolate;
+  background:var(--mat);
+  padding:clamp(1rem,4vw,4rem) clamp(.6rem,3vw,2.5rem);
+  overflow:hidden;
+}
+/* 2 — ORGANIC LIGHT FIELD. Three irregular lobes + one dark corner,
+      then blurred to death. This is what the reference posters do.
+      Measured swing in those images: about +/-23% luminance. */
+.mat::before{
+  content:"";
+  position:absolute;
+  inset:-14%;
+  z-index:-1;
+  pointer-events:none;
+  filter:blur(72px);
+  mix-blend-mode:soft-light;
+  background:
+    radial-gradient(38% 30% at 26% 22%, rgb(255 255 255 / .92), transparent 68%),
+    radial-gradient(46% 36% at 63% 58%, rgb(255 255 255 / .80), transparent 70%),
+    radial-gradient(30% 22% at 14% 78%, rgb(255 255 255 / .44), transparent 72%),
+    radial-gradient(44% 34% at 92% 6%,  rgb(0 0 0 / .95),        transparent 66%),
+    radial-gradient(40% 30% at 4% 104%, rgb(0 0 0 / .70),        transparent 70%);
+}
+/* 3 — WEAVE (fine, 4px) + GRID (coarse, 46px) + 45deg guide */
+.mat::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-2;
+  pointer-events:none;
+  background:
+    /* 45 degree guide, corner to corner */
+    linear-gradient(45deg, transparent calc(50% - .5px), rgb(var(--mat-line) / .13) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)),
+    /* coarse grid */
+    repeating-linear-gradient(90deg, rgb(var(--mat-line) / .11) 0 1px, transparent 1px 46px),
+    repeating-linear-gradient( 0deg, rgb(var(--mat-line) / .11) 0 1px, transparent 1px 46px),
+    /* fine self-healing weave */
+    repeating-linear-gradient(90deg, rgb(var(--mat-line) / .035) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient( 0deg, rgb(0 0 0 / .05)            0 1px, transparent 1px 4px);
+}
+/* 4 — grain, heavy on the mat */
+.grain::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:6;
+  opacity:.11;
+  mix-blend-mode:overlay;
+  background:var(--grain) 0 0/160px 160px repeat;
+}
+.mat > *{position:relative;z-index:1}
+
+.wrap{max-width:1140px;margin:0 auto;display:flex;flex-direction:column;gap:clamp(1.75rem,4vw,3.5rem)}
+
+/* ============================================================
+   SHEET BASE + PAPER MODIFIERS
+   Every paper = base + one modifier. Nothing else.
+   ============================================================ */
+.sheet{
+  position:relative;
+  background-color:var(--p-bond);
+  box-shadow:var(--sh-flat),var(--lit-edge),var(--dark-edge);
+}
+.sheet::after{ /* per-paper grain, light */
+  content:"";position:absolute;inset:0;pointer-events:none;
+  opacity:.045;mix-blend-mode:multiply;
+  background:var(--grain) 0 0/160px 160px repeat;
+}
+
+/* --- GRAPH / GRID PAPER: the main sheet --- */
+.p-graph{
+  background-color:var(--p-graph);
+  background-image:
+    repeating-linear-gradient(90deg, var(--p-graph-grid-5) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient( 0deg, var(--p-graph-grid-5) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(90deg, var(--p-graph-grid)   0 1px, transparent 1px 8px),
+    repeating-linear-gradient( 0deg, var(--p-graph-grid)   0 1px, transparent 1px 8px);
+}
+
+/* --- TRACING PAPER / VELLUM: translucent, cool, WEAK shadow --- */
+.p-trace{
+  background-color:rgb(var(--p-trace) / .60);
+  -webkit-backdrop-filter:blur(1.4px) saturate(.88) brightness(1.04);
+  backdrop-filter:blur(1.4px) saturate(.88) brightness(1.04);
+  box-shadow:var(--sh-trace),inset 0 0 0 1px rgb(255 255 255 / .42);
+  color:var(--ink);
+}
+.p-trace::after{opacity:.03}
+
+/* --- KRAFT: matte. No lit edge, no specular. Fibre flecks. --- */
+.p-kraft{
+  background-color:var(--p-kraft);
+  background-image:
+    radial-gradient(circle at 18% 34%, rgb(255 245 220 / .30) 0 1px, transparent 2px),
+    radial-gradient(circle at 71% 12%, rgb(60 40 20 / .26) 0 1px, transparent 2px),
+    radial-gradient(circle at 44% 81%, rgb(255 245 220 / .24) 0 1px, transparent 2px),
+    radial-gradient(circle at 88% 63%, rgb(60 40 20 / .22) 0 1px, transparent 2px),
+    linear-gradient(168deg, var(--p-kraft) 0%, var(--p-kraft-2) 100%);
+  background-size:37px 37px,53px 53px,61px 61px,43px 43px,100% 100%;
+  box-shadow:var(--sh-flat);
+  color:#2C1F10;
+}
+.p-kraft::after{opacity:.10;mix-blend-mode:multiply}
+
+/* --- NEWSPRINT: thin, grey-green, halftone, weak shadow --- */
+.p-news{
+  background-color:var(--p-news);
+  background-image:radial-gradient(circle, rgb(40 44 38 / .16) 0 .6px, transparent .9px);
+  background-size:3px 3px;
+  box-shadow:var(--sh-thin),var(--dark-edge);
+  color:#26281F;
+}
+
+/* --- INDEX CARD: cardstock. Thicker => taller ramp + cut edge. --- */
+.p-card{
+  background-color:var(--p-card);
+  background-image:
+    linear-gradient(var(--red),var(--red)),
+    repeating-linear-gradient(0deg, transparent 0 1.55rem, #C6D6E9 1.55rem calc(1.55rem + 1px));
+  background-size:100% 1px,100% 100%;
+  background-position:0 2.6rem,0 2.6rem;
+  background-repeat:no-repeat,repeat;
+  box-shadow:var(--sh-card),var(--lit-edge),inset -1px 0 0 rgb(0 0 0 / .06);
+}
+
+/* --- STICKY NOTE: adhesive strip is lighter. Corner lifts. --- */
+.p-sticky{
+  background-color:var(--p-sticky);
+  background-image:linear-gradient(178deg, #FDF8E4 0 22%, var(--p-sticky) 46%);
+  box-shadow:
+    -1px 1px 1px rgb(6 26 21 / .22),
+    -4px 8px 12px rgb(6 26 21 / .18),
+    -12px 22px 34px rgb(6 26 21 / .10);
+  color:#3D3418;
+}
+/* the curl — one rotated pseudo-element, no asset */
+.p-sticky .curl{
+  position:absolute;right:-1px;bottom:-1px;width:26px;height:26px;
+  background:linear-gradient(315deg, #FEFBEC 0 46%, rgb(6 26 21 / .30) 52%, transparent 54%);
+  filter:drop-shadow(-2px -3px 3px rgb(6 26 21 / .28));
+}
+
+/* --- BLUEPRINT / CYANOTYPE: the dark mode. Lines glow. --- */
+.p-blueprint{
+  background-color:var(--bp);
+  color:#EAF0FF;
+  box-shadow:var(--sh-flat);
+  isolation:isolate;
+}
+.p-blueprint::before{
+  content:"";position:absolute;inset:-20%;z-index:0;pointer-events:none;
+  filter:blur(56px);mix-blend-mode:soft-light;
+  background:
+    radial-gradient(40% 30% at 30% 24%, rgb(255 255 255 / .90), transparent 68%),
+    radial-gradient(44% 34% at 66% 62%, rgb(255 255 255 / .72), transparent 70%),
+    radial-gradient(42% 32% at 94% 4%,  rgb(0 0 0 / .95),        transparent 66%);
+}
+.p-blueprint > *{position:relative;z-index:1}
+.p-blueprint .bp-grid{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:
+    repeating-linear-gradient(90deg, rgb(255 255 255 / .18) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient( 0deg, rgb(255 255 255 / .18) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(90deg, rgb(255 255 255 / .08) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient( 0deg, rgb(255 255 255 / .08) 0 1px, transparent 1px 8px);
+  filter:blur(.3px);
+}
+.p-blueprint::after{opacity:.14;mix-blend-mode:overlay}
+.glow{text-shadow:0 0 14px rgb(190 214 255 / .45),0 0 3px rgb(255 255 255 / .35)}
+
+/* ============================================================
+   HERO — Drafting Table, with the new mat lighting
+   ============================================================ */
+.hero{
+  padding:clamp(1.5rem,4.5vw,3.5rem);
+  display:flex;flex-direction:column;gap:1.5rem;
+  transform:rotate(-.28deg);
+}
+.hero-meta{display:flex;flex-wrap:wrap;gap:.35rem 1.5rem;align-items:baseline}
+.mono-label{
+  font-family:var(--f-mono);font-size:.625rem;text-transform:uppercase;
+  letter-spacing:.15em;color:var(--ink-3);
+}
+h1{
+  font-family:var(--f-display);
+  font-variation-settings:"opsz" 120,"SOFT" 0,"WONK" 1;
+  font-weight:800;
+  font-size:clamp(1.85rem,5.4vw,3.6rem);
+  line-height:.94;
+  letter-spacing:-.032em;
+  margin:0;max-width:26ch;text-wrap:balance;
+}
+.hero p{margin:0;max-width:56ch;color:var(--ink-2);font-size:clamp(.9375rem,1.6vw,1.0625rem)}
+/* the annotation — architect's hand, underline, arrow */
+.anno{
+  font-family:var(--f-hand);font-size:1.0625rem;color:var(--blue);
+  display:inline-flex;align-items:center;gap:.4rem;
+}
+.anno u{text-decoration:none;border-bottom:1.5px solid currentColor;padding-bottom:1px}
+.overlay-note{
+  position:absolute;z-index:4;
+  padding:.7rem .9rem;
+  max-width:15rem;
+  transform:rotate(1.4deg);
+}
+@media (min-width:900px){
+  .overlay-note{right:1.75rem;top:6.75rem}
+}
+@media (max-width:899px){
+  .overlay-note{position:static;transform:rotate(.8deg);margin-top:.5rem;max-width:none}
+}
+
+/* ============================================================
+   PAGE FURNITURE
+   ============================================================ */
+.plate{
+  padding:clamp(1.1rem,3vw,2.25rem);
+  display:flex;flex-direction:column;gap:1.15rem;
+}
+.eyebrow{
+  display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap;
+  font-family:var(--f-mono);font-size:.625rem;text-transform:uppercase;
+  letter-spacing:.15em;color:var(--ink-3);margin:0;
+  border-bottom:1px solid var(--ink);padding-bottom:.45rem;
+}
+.eyebrow b{color:var(--blue);font-weight:500}
+h2{
+  font-family:var(--f-display);font-variation-settings:"opsz" 48;
+  font-weight:600;font-size:clamp(1.25rem,2.8vw,1.75rem);
+  line-height:1.12;letter-spacing:-.022em;margin:0;text-wrap:balance;
+}
+h3{font-family:var(--f-display);font-weight:600;font-size:1rem;line-height:1.25;margin:0}
+.plate p{margin:0;max-width:66ch;color:var(--ink-2)}
+.plate p.tight{max-width:none}
+code{font-family:var(--f-mono);font-size:.75em;background:rgb(0 0 0 / .06);padding:.1em .32em;border-radius:2px}
+
+/* swatch library */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.35rem}
+.swatch{display:flex;flex-direction:column;gap:.6rem}
+.swatch .samp{
+  min-height:8.5rem;padding:.85rem .95rem;
+  display:flex;flex-direction:column;justify-content:space-between;gap:.5rem;
+  font-family:var(--f-mono);font-size:.6875rem;
+}
+.swatch .samp .nm{font-family:var(--f-display);font-weight:600;font-size:.9375rem;letter-spacing:-.01em}
+.swatch h4{
+  font-family:var(--f-mono);font-size:.625rem;text-transform:uppercase;letter-spacing:.14em;
+  color:var(--ink-3);margin:0;
+}
+.swatch .job{font-size:.8125rem;color:var(--ink-2);margin:0}
+.swatch .tell{
+  font-family:var(--f-mono);font-size:.625rem;line-height:1.55;color:var(--blue);
+  border-left:2px solid var(--blue);padding-left:.5rem;
+}
+.rot-a{transform:rotate(-.9deg)}
+.rot-b{transform:rotate(1.3deg)}
+.rot-c{transform:rotate(-2.1deg)}
+.rot-d{transform:rotate(.6deg)}
+
+/* stacks */
+.stacks{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1.5rem}
+.stage{
+  position:relative;aspect-ratio:4/3.4;overflow:hidden;
+  background:var(--mat);isolation:isolate;
+}
+.stage::before{
+  content:"";position:absolute;inset:-18%;z-index:0;pointer-events:none;
+  filter:blur(46px);mix-blend-mode:soft-light;
+  background:
+    radial-gradient(40% 32% at 28% 24%, rgb(255 255 255 / .88), transparent 68%),
+    radial-gradient(44% 34% at 68% 64%, rgb(255 255 255 / .66), transparent 70%),
+    radial-gradient(40% 32% at 94% 6%,  rgb(0 0 0 / .92),        transparent 66%);
+}
+.stage::after{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:
+    repeating-linear-gradient(90deg, rgb(255 255 255 / .10) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient( 0deg, rgb(255 255 255 / .10) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, rgb(255 255 255 / .03) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient( 0deg, rgb(0 0 0 / .045)      0 1px, transparent 1px 4px);
+}
+.stage > *{position:absolute}
+.stage .lbl{
+  font-family:var(--f-mono);font-size:.5625rem;letter-spacing:.1em;text-transform:uppercase;
+}
+.hand{font-family:var(--f-hand);font-size:.9375rem;line-height:1.25}
+.stack-cap{display:flex;flex-direction:column;gap:.35rem}
+.stack-cap .n{font-family:var(--f-display);font-weight:600;font-size:1rem}
+.stack-cap p{font-size:.8125rem;color:var(--ink-2);margin:0;max-width:none}
+.stack-cap .use{font-family:var(--f-mono);font-size:.625rem;color:var(--blue);letter-spacing:.04em}
+
+/* ============================================================
+   EDGES — mask, not border. GOTCHA: a mask erases box-shadow,
+   so the shadow moves to a wrapper as drop-shadow(), which then
+   correctly follows the torn silhouette instead of a rectangle.
+   ============================================================ */
+.edge-wrap{
+  filter:
+    drop-shadow(-1px 1px 1px rgb(6 26 21 / .34))
+    drop-shadow(-3px 5px 8px rgb(6 26 21 / .22))
+    drop-shadow(-8px 14px 22px rgb(6 26 21 / .14));
+}
+.edge-wrap > .sheet{box-shadow:none}
+.p-torn,.p-deckle{--edge:36px}
+.p-torn{
+  -webkit-mask-image:var(--edge-torn),linear-gradient(#000,#000);
+          mask-image:var(--edge-torn),linear-gradient(#000,#000);
+}
+.p-deckle{
+  -webkit-mask-image:var(--edge-deckle),linear-gradient(#000,#000);
+          mask-image:var(--edge-deckle),linear-gradient(#000,#000);
+}
+.p-torn,.p-deckle{
+  -webkit-mask-size:auto var(--edge),100% calc(100% - var(--edge) + 1px);
+          mask-size:auto var(--edge),100% calc(100% - var(--edge) + 1px);
+  -webkit-mask-position:top left,bottom left;
+          mask-position:top left,bottom left;
+  -webkit-mask-repeat:repeat-x,no-repeat;
+          mask-repeat:repeat-x,no-repeat;
+}
+.edge-demo{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem}
+.edge-demo .samp{min-height:9rem;padding:3rem 1rem 1rem;font-family:var(--f-mono);font-size:.6875rem}
+
+/* ============================================================
+   NDA REDACTION — the bar is a STAND-IN for absent text, never
+   a cover over real text. The string is not in the DOM.
+   ============================================================ */
+.redact{
+  display:inline-block;position:relative;
+  inline-size:calc(var(--ch,8) * .55em);
+  block-size:1.02em;
+  vertical-align:-.19em;
+  background:#15140F;
+  border-radius:1.5px;
+  transform:rotate(-.45deg);
+  box-shadow:0 0 0 .5px rgb(21 20 15 / .45),-1px 1px 2px rgb(21 20 15 / .22);
+}
+.redact::before{ /* second marker pass — real redaction is never one stroke */
+  content:"";position:absolute;left:-2%;top:8%;width:104%;height:88%;
+  background:#15140F;opacity:.75;border-radius:2px;transform:rotate(.7deg);
+  filter:blur(.4px);
+}
+.redact::after{ /* ink bleed into the fibre */
+  content:"";position:absolute;inset:-1px;border-radius:2px;
+  box-shadow:inset 0 0 2px 1px rgb(21 20 15 / .5);
+}
+.redact-note{
+  font-family:var(--f-mono);font-size:.5625rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-3);
+}
+.vellum-demo{position:relative;padding:0}
+.vellum-demo .beneath{padding:1.15rem 1.25rem;display:flex;flex-direction:column;gap:.55rem}
+.vellum-demo .beneath p{margin:0;font-size:.875rem;max-width:58ch}
+.vellum-over{
+  margin:-3.5rem 1.25rem 1.25rem auto;max-width:19rem;position:relative;z-index:3;
+  padding:.85rem 1rem;transform:rotate(-1deg);
+  display:flex;flex-direction:column;gap:.4rem;
+}
+.vellum-over p{margin:0;font-size:.8125rem}
+
+/* ============================================================
+   ARABIC SPECIMEN
+   ============================================================ */
+[dir="rtl"],:lang(ar){letter-spacing:normal;font-feature-settings:normal}
+.ar{
+  direction:rtl;text-align:start;
+  font-family:var(--f-text-ar);
+  line-height:1.95;            /* Arabic needs ~+0.25 over the Latin value */
+  font-size:1.0625rem;
+}
+.ar-display{
+  direction:rtl;text-align:start;
+  font-family:var(--f-display-ar);
+  font-weight:600;
+  font-size:clamp(1.6rem,4.4vw,2.6rem);
+  line-height:1.5;
+  letter-spacing:normal;
+  margin:0;
+}
+.ar-label{
+  direction:rtl;font-family:var(--f-text-ar);font-weight:600;
+  font-size:.8125rem;letter-spacing:normal;text-transform:none;
+  color:var(--ink-2);
+}
+.ar-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem}
+.ar-card{display:flex;flex-direction:column;gap:.7rem}
+.ar-card > .sheet{padding:1rem 1.15rem}
+
+/* contrast table */
+.tbl-wrap{overflow-x:auto}
+.ratios{border-collapse:collapse;width:100%;min-width:520px;font-size:.8125rem}
+.ratios th{
+  text-align:left;font-family:var(--f-mono);font-size:.5625rem;text-transform:uppercase;
+  letter-spacing:.13em;color:var(--ink-3);font-weight:500;padding:.5rem .6rem;
+  border-bottom:1px solid var(--ink);
+}
+.ratios td{padding:.5rem .6rem;border-bottom:1px solid rgb(0 0 0 / .12)}
+.ratios tr:last-child td{border-bottom:0}
+.ratios .num,.ratios th.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.ratios .fail-n{color:var(--red);text-decoration:line-through;text-decoration-thickness:1px}
+.pass{font-family:var(--f-mono);font-size:.5625rem;letter-spacing:.1em;border:1px solid currentColor;padding:.1rem .3rem;color:#1F5E3D}
+.was{font-family:var(--f-mono);font-size:.5625rem;letter-spacing:.06em;color:var(--red)}
+
+/* spec list */
+.spec{display:flex;flex-direction:column;gap:0;border-top:1px solid rgb(0 0 0 / .14)}
+.spec-row{
+  display:grid;grid-template-columns:9rem minmax(0,1fr);gap:1rem;
+  padding:.7rem .1rem;border-bottom:1px solid rgb(0 0 0 / .14);
+}
+.spec-row dt{font-family:var(--f-mono);font-size:.625rem;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-3);padding-top:.25em}
+.spec-row dd{margin:0;font-size:.875rem;color:var(--ink-2)}
+.spec-row dd b{color:var(--ink);font-weight:600}
+@media (max-width:620px){
+  .spec-row{grid-template-columns:1fr;gap:.15rem}
+}
+.code{overflow-x:auto;background:rgb(0 0 0 / .055);padding:.85rem 1rem;border-left:2px solid var(--ink-3)}
+.code pre{margin:0;font-family:var(--f-mono);font-size:.6875rem;line-height:1.7;color:var(--ink)}
+.warn{border-left:2px solid var(--red);padding-left:.9rem;font-size:.875rem;color:var(--ink-2)}
+.warn b{color:var(--red)}
+.mat-foot{
+  font-family:var(--f-mono);font-size:.5625rem;letter-spacing:.14em;text-transform:uppercase;
+  color:rgb(255 255 255 / .72);text-align:center;padding-top:.5rem;
+}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){
+  .swatch .samp,.p-sticky{transition:transform 220ms cubic-bezier(.2,0,.38,.9),box-shadow 220ms cubic-bezier(.2,0,.38,.9)}
+}
+</style>
+
+<div class="mat grain">
+<div class="wrap">
+
+  <!-- ============ HERO: Drafting Table with the new lighting ============ -->
+  <div class="sheet p-graph hero">
+    <div class="hero-meta">
+      <span class="mono-label">Rolan Gomes</span>
+      <span class="mono-label">UX Designer</span>
+      <span class="mono-label">Dubai · Abu Dhabi · Sharjah</span>
+    </div>
+    <div>
+      <h1>I design systems, then direct AI to build them into working software.</h1>
+    </div>
+    <p>A UX Designer with an engineer's ability to build. Token architecture to Code Connect at a top-20 US accounting firm, then an LLM-generated frontend at 80% component match in seven days.</p>
+    <span class="anno"><u>ARCHITECTURAL</u> ←&nbsp;not decorative</span>
+
+    <!-- tracing paper overlay: the idea worth stealing -->
+    <div class="sheet p-trace overlay-note">
+      <p class="mono-label" style="margin:0 0 .3rem">OVERLAY / VELLUM</p>
+      <p class="hand" style="color:var(--blue);margin:0">Annotations live on a<br>separate sheet — you can<br>see the grid through it.</p>
+    </div>
+  </div>
+
+  <!-- ============ ANSWER TO THE LIGHTING QUESTION ============ -->
+  <div class="sheet p-graph plate">
+    <p class="eyebrow"><b>01</b> The lighting in your references</p>
+    <h2>Yes it transfers — but it is not a gradient, and it does not belong on the paper</h2>
+    <p>I measured the luminance field in all three posters. It is not one radial highlight. There are <b>three overlapping soft lobes plus one hard dark corner</b>, swinging about <b>±23%</b> around the mean, blurred past the point where you can find an edge. That irregularity is the entire reason it reads as a photograph of a lit surface instead of CSS.</p>
+
+    <div class="warn"><b>Correction to what I gave you last week.</b> My R5 recipe was two clean radial gradients. Geometrically tidy, and it will look computer-generated next to these. Replace it with the field below.</div>
+
+    <div class="code"><pre>/* the mat's light field — irregular on purpose */
+.mat::before{
+  position: absolute; inset: -14%;
+  filter: blur(72px);
+  mix-blend-mode: soft-light;
+  background:
+    radial-gradient(38% 30% at 26% 22%, rgb(255 255 255/.92), transparent 68%),
+    radial-gradient(46% 36% at 63% 58%, rgb(255 255 255/.80), transparent 70%),
+    radial-gradient(30% 22% at 14% 78%, rgb(255 255 255/.44), transparent 72%),
+    radial-gradient(44% 34% at 92%  6%, rgb(0 0 0/.95),        transparent 66%),
+    radial-gradient(40% 30% at  4%104%, rgb(0 0 0/.70),        transparent 70%);
+}
+/* ponytail: gradients + blur is fine at this scale. If paint cost
+   shows on scroll, render it once to a 400px JPG and scale to cover —
+   a blurred image loses nothing when you stretch it. */</pre></div>
+
+    <dl class="spec">
+      <div class="spec-row"><dt>Lobes</dt><dd><b>Three light, two dark.</b> Never symmetrical, never centred. One dark lobe must sit hard in a corner — that is what stops it reading as a vignette.</dd></div>
+      <div class="spec-row"><dt>Blur</dt><dd><b>60–80px.</b> Below 40px you can see the gradient shapes and the illusion dies.</dd></div>
+      <div class="spec-row"><dt>Blend</dt><dd><b>soft-light</b>, not <code>screen</code> or <code>overlay</code>. soft-light keeps the mat's hue and only moves luminance, so the green stays green in both the lit and shaded areas.</dd></div>
+      <div class="spec-row"><dt>Where</dt><dd><b>Mat only.</b> This is the biggest craft note on the page. The paper must catch a flatter, duller light than the surface under it — that difference in specularity is how an eye separates two materials. Put the same bloom on both and the paper welds itself to the mat.</dd></div>
+      <div class="spec-row"><dt>Grain</dt><dd>Your references are grainy — far heavier than the 3–5% I specified. <b>Mat 10–12% over <code>overlay</code>. Paper 4% over <code>multiply</code>.</b> One noise tile, two opacities. Heavy grain on cream paper just looks dirty.</dd></div>
+      <div class="spec-row"><dt>Weave</dt><dd>Your mat mockup has <b>two grid frequencies</b> — a 46px printed grid in white, and a 4px cross-hatch underneath at 3–5%. The fine one is the self-healing surface. Without it you have graph paper, not a cutting mat.</dd></div>
+    </dl>
+  </div>
+
+  <!-- ============ THE PAPER LIBRARY ============ -->
+  <div class="sheet p-graph plate">
+    <p class="eyebrow"><b>02</b> Paper library <span style="margin-left:auto">seven stocks, one base class</span></p>
+    <h2>What actually sells the layering</h2>
+    <p>Stacking rectangles of the same cream does nothing. Realism comes from stocks that <em>behave</em> differently, and it lands in this order: translucency, then how tight the contact shadow is, then the cut of the edge, then rotation. Each stock below has a job — the moment one is decoration, cut it.</p>
+
+    <div class="swatches">
+
+      <div class="swatch">
+        <div class="sheet p-graph samp rot-a">
+          <span class="nm">Graph / grid</span>
+          <span>#F7F2E3 · 8px + 40px</span>
+        </div>
+        <h4>Stock 01</h4>
+        <p class="job">The main sheet. Everything sits on this.</p>
+        <p class="tell">Grid must retreat under running text. Box-shadow a flat pad of paper colour behind any paragraph.</p>
+      </div>
+
+      <div class="swatch">
+        <div class="sheet p-trace samp rot-b">
+          <span class="nm">Tracing / vellum</span>
+          <span>60% opaque · blur 1.4px</span>
+        </div>
+        <h4>Stock 02</h4>
+        <p class="job">Annotation overlays, callouts, the NDA layer. The strongest idea here.</p>
+        <p class="tell">Translucent paper casts a WEAK shadow. Halve the ramp. Getting this wrong is the tell that kills it.</p>
+      </div>
+
+      <div class="swatch">
+        <div class="sheet p-kraft samp rot-c">
+          <span class="nm">Kraft / manila</span>
+          <span>#AD8A5F · matte</span>
+        </div>
+        <h4>Stock 03</h4>
+        <p class="job">Folder tabs. Section dividers, case-study index.</p>
+        <p class="tell">No lit edge, no specular highlight. Kraft does not shine. Fibre flecks at four prime sizes so the pattern never repeats visibly.</p>
+      </div>
+
+      <div class="swatch">
+        <div class="sheet p-news samp rot-d">
+          <span class="nm">Newsprint</span>
+          <span>#E3DFD2 · 3px halftone</span>
+        </div>
+        <h4>Stock 04</h4>
+        <p class="job">The writing / articles section.</p>
+        <p class="tell">Thin stock, so a two-part shadow only. Halftone dots at 3px, not a grain tile.</p>
+      </div>
+
+      <div class="swatch">
+        <div class="sheet p-card samp rot-b">
+          <span class="nm">Index card</span>
+          <span>ruled 1.55rem · red 2.6rem</span>
+        </div>
+        <h4>Stock 05</h4>
+        <p class="job">Metrics. 80% match. 35 → 0 violations. 14 → 1 CSS files.</p>
+        <p class="tell">Cardstock is thicker: taller shadow ramp AND a 1px inner dark line on the right edge for the cut face.</p>
+      </div>
+
+      <div class="swatch">
+        <div class="sheet p-sticky samp rot-a">
+          <span class="nm">Sticky note</span>
+          <span>#FBF3D4 · corner lifts</span>
+          <span class="curl"></span>
+        </div>
+        <h4>Stock 06</h4>
+        <p class="job">You already have these. Keep them.</p>
+        <p class="tell">Adhesive strip is lighter than the body — a 178° gradient. One rotated pseudo-element gives the curl, no asset needed.</p>
+      </div>
+
+      <div class="swatch">
+        <div class="sheet p-blueprint samp rot-c">
+          <span class="bp-grid"></span>
+          <span class="nm glow">Cyanotype</span>
+          <span class="glow">#123A8F · lines glow</span>
+        </div>
+        <h4>Stock 07</h4>
+        <p class="job">Dark mode. See below — this is the creative idea.</p>
+        <p class="tell">Lines at 30% white with blur(.3px) and a text bloom. Grain jumps to 14%. Same geometry, inverted material.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ THE CREATIVE IDEA ============ -->
+  <div class="sheet p-blueprint plate">
+    <span class="bp-grid"></span>
+    <p class="eyebrow" style="color:rgb(234 240 255 / .92);border-color:rgb(234 240 255 / .55)"><b style="color:#BED6FF">03</b> The idea in your reference images</p>
+    <h2 class="glow" style="color:#F2F6FF">Your three posters are not a colour study. They are your dark mode.</h2>
+    <p style="color:rgb(234 240 255 / .93)">Light mode is graphite on cream paper lying on a green cutting mat. Dark mode is the same drawing as a <b style="color:#fff">cyanotype on a backlit light table</b> — white line work, glowing slightly, on saturated blue. Identical geometry, identical grid, identical type. Only the material changes.</p>
+    <p style="color:rgb(234 240 255 / .93)">That is a concept-true dark mode rather than a colour inversion, it explains itself in one sentence in an interview, and it is the reason the emissive line glow in those posters is correct there and would be wrong on your printed mat. Lines on paper absorb light. Lines on a light table emit it.</p>
+    <div class="code" style="background:rgb(255 255 255 / .07);border-color:rgb(190 214 255 / .5)"><pre style="color:#EAF0FF">:root[data-theme="dark"]{
+  --paper:     #123A8F;   /* cyanotype ground   */
+  --mat:       #081F55;   /* light table, off   */
+  --grid:      rgb(255 255 255 / .30);
+  --ink:       #EAF0FF;
+  --grain-op:  .14;       /* up from .11        */
+}
+:root[data-theme="dark"] h1{
+  text-shadow: 0 0 14px rgb(190 214 255 / .45),
+               0 0 3px  rgb(255 255 255 / .35);
+}</pre></div>
+    <p class="warn" style="border-color:#FFB3A0;color:rgb(234 240 255 / .93)"><b style="color:#FFC7B8">One check.</b> The bloom costs contrast. <code style="background:rgb(255 255 255 / .12);color:#EAF0FF">text-shadow</code> on body copy at this strength will fail AA. Glow the display type and the rules only; keep paragraphs crisp.</p>
+  </div>
+
+  <!-- ============ STACKS ============ -->
+  <div class="sheet p-graph plate">
+    <p class="eyebrow"><b>04</b> Three stacks <span style="margin-left:auto">pick one, kill two</span></p>
+    <h2>Combinations worth trying</h2>
+    <p>Same seven stocks, three different amounts of restraint. Rotations are all under 2.5° and no two match — anything sitting at exactly 0° reads as a div.</p>
+
+    <div class="stacks">
+
+      <div class="stack-cap">
+        <div class="stage">
+          <div class="sheet p-graph" style="inset:9% 8% 8% 7%;padding:.9rem"></div>
+          <div class="sheet p-trace" style="inset:26% 12% 22% 22%;transform:rotate(1.6deg);padding:.7rem">
+            <span class="hand" style="color:var(--blue);font-size:.8125rem">token → semantic → component</span>
+          </div>
+        </div>
+        <div class="stack-cap" style="gap:.3rem">
+          <span class="n">A · Working drawing</span>
+          <p>Mat, one grid sheet, one vellum overlay. That is all.</p>
+          <span class="use">Recommended. Restraint is the craft signal.</span>
+        </div>
+      </div>
+
+      <div class="stack-cap">
+        <div class="stage">
+          <div class="sheet p-kraft" style="inset:14% 6% 6% 10%;transform:rotate(-1.4deg)"></div>
+          <div class="sheet p-graph" style="inset:8% 12% 14% 14%;transform:rotate(.7deg)"></div>
+          <div class="sheet p-card" style="inset:auto 16% 16% auto;width:44%;height:26%;transform:rotate(-2.2deg)"></div>
+          <div class="sheet p-sticky" style="inset:20% 8% auto auto;width:26%;height:20%;transform:rotate(2.4deg)">
+            <span class="curl"></span>
+          </div>
+        </div>
+        <div class="stack-cap" style="gap:.3rem">
+          <span class="n">B · Desk</span>
+          <p>Kraft folder, grid sheet, index card, sticky. Four stocks.</p>
+          <span class="use">Warmer, more human. Risks looking staged.</span>
+        </div>
+      </div>
+
+      <div class="stack-cap">
+        <div class="stage" style="background:var(--bp-deep)">
+          <div class="sheet p-blueprint" style="inset:8% 8% 8% 8%">
+            <span class="bp-grid"></span>
+          </div>
+          <div class="sheet p-trace" style="inset:30% 14% 26% 24%;transform:rotate(-1.1deg);background-color:rgb(230 240 255 / .16);box-shadow:-2px 4px 10px rgb(0 0 0 / .3),inset 0 0 0 1px rgb(255 255 255 / .3)">
+            <span class="hand glow" style="color:#EAF0FF;font-size:.8125rem">same sheet, backlit</span>
+          </div>
+        </div>
+        <div class="stack-cap" style="gap:.3rem">
+          <span class="n">C · Light table</span>
+          <p>Stack A, dark mode. Vellum over cyanotype glows from beneath.</p>
+          <span class="use">Not a third option — it is A after the toggle.</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ CONTRAST GATE ============ -->
+  <div class="sheet p-graph plate">
+    <p class="eyebrow"><b>05</b> Contrast gate <span style="margin-left:auto">WCAG 2.1 AA · measured, not estimated</span></p>
+    <h2>The grid was failing AA, so realism lost the argument</h2>
+    <p>Text on graph paper is not measured against the paper. It is measured against the <b>darkest thing it crosses</b>, which is the grid line. Rev A got that wrong. Every ratio below is computed, and the fix was lightening two line colours and darkening one ink — the grid is still legible as a grid at 1.12:1 and 1.25:1 against the paper.</p>
+
+    <div class="tbl-wrap">
+      <table class="ratios">
+        <thead>
+          <tr><th>Text on a major grid line</th><th class="num">Rev A</th><th class="num">Rev C</th><th>Verdict</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Body ink <code>#1B1D1A</code></td><td class="num">8.73</td><td class="num">12.16</td><td><span class="pass">AAA</span></td></tr>
+          <tr><td>Secondary <code>#54574F</code></td><td class="num fail-n">3.78</td><td class="num">5.28</td><td><span class="pass">AA</span> <span class="was">was failing</span></td></tr>
+          <tr><td>Mono labels <code>#5E6157</code></td><td class="num fail-n">2.42</td><td class="num">4.53</td><td><span class="pass">AA</span> <span class="was">was failing badly</span></td></tr>
+          <tr><td>Blue annotation <code>#2B4FB8</code></td><td class="num">4.11</td><td class="num">5.17</td><td><span class="pass">AA</span></td></tr>
+          <tr><td>Red flag <code>#9E3122</code></td><td class="num fail-n">4.23</td><td class="num">4.71</td><td><span class="pass">AA</span></td></tr>
+          <tr><td>Cyanotype body on a white line</td><td class="num fail-n">4.00</td><td class="num">5.59</td><td><span class="pass">AA</span> <span class="was">grid halved to 18%</span></td></tr>
+          <tr><td>Mat footer caption</td><td class="num fail-n">2.38</td><td class="num">4.54</td><td><span class="pass">AA</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="spec">
+      <div class="spec-row"><dt>What changed</dt><dd>Fine grid <code>#D8CDB2 → #ECE5D3</code>. Major grid <code>#C7B994 → #E2DAC3</code>. Mono ink <code>#8A8D83 → #5E6157</code>. Blueprint grid <code>30% → 18%</code> white, fine <code>12% → 8%</code>.</dd></div>
+      <div class="spec-row"><dt>What got deleted</dt><dd>The feathered cream pad behind the hero text. With the grid this light it is unnecessary, and it was the one thing on the page that read as a patch rather than paper. <b>The accessibility fix made the CSS shorter.</b></dd></div>
+      <div class="spec-row"><dt>Still available</dt><dd>If you ever want the grid stronger for a display moment, suppress the 8px lines under running text and keep the 40px majors. Costs one class. Not needed at these values.</dd></div>
+      <div class="spec-row"><dt>Not a substitute</dt><dd>These are computed ratios. They do not replace the axe/Lighthouse run, keyboard focus check, or the RTL pass — those are still on the list.</dd></div>
+    </dl>
+  </div>
+
+  <!-- ============ EDGES ============ -->
+  <div class="sheet p-graph plate">
+    <p class="eyebrow"><b>06</b> Edges <span style="margin-left:auto">two masks · 8KB + 15KB · tile at any width</span></p>
+    <h2>A sheet on a cutting mat is blade-cut, so the main sheet should not be torn</h2>
+    <p>That is the honest answer to your question. The mat exists <em>because</em> you cut straight lines on it — a torn hero sheet contradicts the whole set. So the clean cut edge stays the default, and the torn edge is reserved for the two places it is actually true: <b>a page ripped out of a notebook</b> inside a case study, and <b>the kraft folder tab</b>. Below, all three so you can see the difference side by side.</p>
+
+    <div class="edge-demo">
+      <div class="edge-wrap"><div class="sheet p-graph samp"><span>CUT — the default. 1px lit line on the cut face. Zero assets.</span></div></div>
+      <div class="edge-wrap"><div class="sheet p-graph p-torn samp"><span>TORN — notebook page. Fibre notches, deep nicks.</span></div></div>
+      <div class="edge-wrap"><div class="sheet p-deckle samp" style="background-color:var(--p-bond)"><span>DECKLE — handmade stock. Soft undulation, no spikes.</span></div></div>
+    </div>
+
+    <dl class="spec">
+      <div class="spec-row"><dt>How it works</dt><dd>Two layered <code>mask-image</code>s: the PNG strip repeating along the top edge, plus a solid gradient covering the rest. One 2400×36px alpha strip repeats seamlessly at any sheet width — no per-breakpoint assets.</dd></div>
+      <div class="spec-row"><dt>The gotcha</dt><dd><b>A mask erases <code>box-shadow</code>.</b> Move the shadow to a wrapper as <code>filter: drop-shadow()</code> — which is better anyway, because drop-shadow follows the torn silhouette instead of a rectangle. This is the detail that would have cost you an afternoon.</dd></div>
+      <div class="spec-row"><dt>Generated, not drawn</dt><dd>Summed sine bands at integer frequencies (so it tiles) plus 46 random fibre notches, feathered 0.6px. A Python script, run once, committed. Never regenerate and never send an image through a model.</dd></div>
+    </dl>
+  </div>
+
+  <!-- ============ REDACTION ============ -->
+  <div class="sheet p-graph plate">
+    <p class="eyebrow"><b>07</b> Vellum + NDA redaction <span style="margin-left:auto">your idea, built</span></p>
+    <h2>The overlay carries the marker, and the client name is not in the page at all</h2>
+    <p class="warn"><b>Non-negotiable.</b> A black bar drawn over real text is not redaction, it is a disclosure bug — <code>Ctrl+A</code>, view-source, or a screen reader all reveal it. The sensitive string must be absent from the DOM. The bar is a stand-in for content that was never sent, with an <code>aria-label</code> so assistive tech reports the withholding rather than silence. Shipping the fake version on a portfolio that sells NDA discipline would be the worst possible bug on your site.</p>
+
+    <div class="sheet p-graph vellum-demo" style="box-shadow:none;background-color:transparent">
+      <div class="beneath">
+        <p class="mono-label">CASE STUDY 01 · TOKEN ARCHITECTURE</p>
+        <p>Three-tier model shipped for <span class="redact" style="--ch:22" aria-label="Client name withheld under NDA"></span>, a <span class="redact" style="--ch:9" aria-label="Sector withheld under NDA"></span> platform serving six products. Before: 47 hardcoded hex values across three files. After: one source of truth, two build passes.</p>
+        <p>Primary stakeholder was the <span class="redact" style="--ch:14" aria-label="Role withheld under NDA"></span>, who needed the system to survive a rebrand without component rewrites.</p>
+      </div>
+      <div class="sheet p-trace vellum-over">
+        <p class="mono-label" style="margin:0">OVERLAY · REV 02</p>
+        <p class="hand" style="color:var(--blue)">Names redacted per NDA.<br>Metrics cleared for publication.</p>
+        <p class="redact-note">4 redactions on this sheet</p>
+      </div>
+    </div>
+
+    <dl class="spec">
+      <div class="spec-row"><dt>Markup</dt><dd><code>&lt;span class="redact" style="--ch:22" aria-label="Client name withheld under NDA"&gt;&lt;/span&gt;</code> — empty element, width driven by an approximate character count so the bar reads as the right length without encoding the actual string length precisely.</dd></div>
+      <div class="spec-row"><dt>Why it looks real</dt><dd>Two overlapping marker passes at slightly different rotations, a 0.4px blur on the second, and an inset shadow for ink bleeding into the fibre. A single sharp rectangle reads as a CSS div; a real marker never covers in one stroke.</dd></div>
+      <div class="spec-row"><dt>Why vellum</dt><dd>The redaction sits on the overlay, not the drawing. That is literally how a reviewed drawing works, and it means the same case study can be published at two clearance levels by swapping one sheet.</dd></div>
+    </dl>
+  </div>
+
+  <!-- ============ ARABIC ============ -->
+  <div class="sheet p-graph plate">
+    <p class="eyebrow"><b>08</b> Arabic <span style="margin-left:auto">Reem Kufi + IBM Plex Sans Arabic · verified live on Google Fonts</span></p>
+    <h2>Kufi is the architectural script, so the concept picks the display face for you</h2>
+    <p>You asked for legibility at body size and beauty at title size. Those are two different faces, and one of them has a concept-true answer: <b>Reem Kufi</b> is a geometric Kufi, the script used in architecture, tilework and inscription for a thousand years. On a drafting table it is not a decorative choice, it is the right one. For body, <b>IBM Plex Sans Arabic</b> — a UI face with four usable weights, drawn against Plex's Latin metrics, so mixed lines do not fight.</p>
+
+    <div class="ar-row">
+      <div class="ar-card">
+        <h4>Display · Reem Kufi</h4>
+        <div class="sheet p-graph"><p class="ar-display" lang="ar">أصمّم أنظمة التصميم</p></div>
+        <p class="job" style="font-size:.8125rem;color:var(--ink-2);margin:0">Angular, geometric, sits naturally next to Fraunces at display size. Alternative if you want warmth instead of geometry: <b>Amiri</b>, a Naskh revival of the Bulaq Press type.</p>
+      </div>
+      <div class="ar-card">
+        <h4>Body · IBM Plex Sans Arabic + embedded Latin</h4>
+        <div class="sheet p-graph"><p class="ar" lang="ar">بنيت نظام <bdi>Blueprint Design System</bdi> بالكامل — من معمارية <bdi>tokens</bdi> إلى <bdi>Code Connect</bdi> — ثم وجّهت نموذجًا لغويًا لتوليد واجهة أمامية بنسبة تطابق 80% في سبعة أيام.</p></div>
+        <p class="job" style="font-size:.8125rem;color:var(--ink-2);margin:0">Every Latin term above is rendering in <b>Commissioner</b>, not in Plex Arabic's Latin. Nothing is tagged with a font class.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:.5rem">Your untranslated-terms question, answered in one line</h3>
+    <p>Put <b>the Latin face first in the Arabic stack.</b> Commissioner and Fraunces ship no Arabic subset — I checked the Google Fonts API, they carry latin, latin-ext, cyrillic, greek and vietnamese only. So the browser resolves font per character: Arabic characters find no glyph in Commissioner and fall through to Plex Arabic, while <code>tokens</code>, <code>Code Connect</code> and <code>WCAG 2.1 AA</code> hit Commissioner first and stay in the English face. This is the behaviour you asked for, and it needs no spans, no classes and no JavaScript.</p>
+
+    <div class="code"><pre>/* Latin first, on the Arabic side too. This IS the mechanism. */
+--f-text-ar:    "Commissioner", "IBM Plex Sans Arabic", system-ui, sans-serif;
+--f-display-ar: "Fraunces",     "Reem Kufi",            Georgia,   serif;
+
+[dir="rtl"], :lang(ar){
+  letter-spacing: normal;          /* tracking shatters connected script */
+  font-feature-settings: normal;
+  line-height: 1.95;               /* ~+0.25 over Latin: dots and deep descenders */
+}</pre></div>
+
+    <div class="warn" style="border-color:var(--blue)"><b style="color:var(--blue)">The bug you will hit anyway.</b> Font fallback is not bidi. An Arabic sentence containing <code>Code Connect</code> reorders wrongly at the boundaries, and adjacent punctuation jumps to the wrong end. Wrap every embedded Latin run in <code>&lt;bdi&gt;</code> — a native element whose entire purpose is this, defaulting to <code>unicode-bidi: isolate</code>. No CSS, no <code>dir</code> attribute, supported everywhere. The specimen above uses it.</p></div>
+
+    <dl class="spec">
+      <div class="spec-row"><dt>Since it is configured</dt><dd>You said the Arabic pass already exists, so treat this as three swaps, not a pass: <b>Harmattan → IBM Plex Sans Arabic</b> (Harmattan is a SIL text face for West African Arabic, not a UI face — it thins out badly at 15–17px), <b>El Messiri → Reem Kufi</b>, and Latin-first stack ordering.</dd></div>
+      <div class="spec-row"><dt>Labels in Arabic</dt><dd>Do <b>not</b> apply your uppercase <code>+0.14em</code> label treatment. Arabic has no case, and tracking breaks the joins. Signal a label with weight 600 and a size step instead — that is what <code>.ar-label</code> does above.</dd></div>
+      <div class="spec-row"><dt>Numerals</dt><dd>Keep Western digits for technical figures. <code>80%</code>, <code>35 → 0</code>, <code>WCAG 2.1 AA</code> are read as terms of art by an enterprise Arabic reader; Eastern Arabic-Indic numerals would make your metrics harder to scan, not more localised.</dd></div>
+      <div class="spec-row"><dt>Optical harmony knob</dt><dd>If Arabic looks slightly small beside the Latin, add <code>size-adjust: 105%</code> to a self-hosted Arabic <code>@font-face</code> rather than bumping <code>font-size</code> in a media query. Needs eyeballing, not a formula — I am not going to guess the value for you.</dd></div>
+    </dl>
+  </div>
+
+  <!-- ============ NEXT ============ -->
+  <div class="sheet p-graph plate">
+    <p class="eyebrow"><b>09</b> Next</p>
+    <h2>What I would build next, in one file</h2>
+    <p>Stack A on your real hero and one real case-study section, as <code>material.css</code> over your existing tokens. Everything on this page is pure CSS with zero assets and zero libraries — the whole paper library is one <code>.sheet</code> base class plus seven modifiers, which is what you would ship.</p>
+    <dl class="spec">
+      <div class="spec-row"><dt>Assets needed</dt><dd><b>None.</b> The noise tile is a 260-byte inline SVG. Skipped the raster grain, the torn-edge PNG and the crease map — add them only if a real torn edge or a real fold turns out to be worth an asset after you see this.</dd></div>
+      <div class="spec-row"><dt>Not yet done</dt><dd>Torn and deckled edges, the Arabic pass, reduced-transparency fallback for <code>backdrop-filter</code>, contrast verification on grid-under-text.</dd></div>
+      <div class="spec-row"><dt>Open question</dt><dd>Do you want the vellum overlay to carry your <b>NDA redactions</b>? A translucent sheet with black marker bars over the layer beneath is a genuinely good use of the material.</dd></div>
+    </dl>
+  </div>
+
+  <p class="mat-foot">Paper Stack Lab · Rev D · light source 300° · seven stocks · two edge masks</p>
+
+</div>
+</div>
