@@ -5,9 +5,9 @@
    ai-design-to-code, hub-modernization, speery-health). main.js merges
    window.CASE_STRINGS into its own STRINGS object at init if present --
    see main.js §2 for the merge. Absent entirely on pages that don't load
-   this file (ai-process-framework, incridea-2022-branding, 404, and the
-   about/contact redirect stubs), which only ever need the shared chrome
-   keys main.js keeps for itself. */
+   this file (incridea-2022-branding, 404, and the about/contact redirect
+   stubs), which only ever need the shared chrome keys main.js keeps for
+   itself. */
 window.CASE_STRINGS = {
   en: {
       "actions.work": "View my work",
@@ -24,7 +24,7 @@ window.CASE_STRINGS = {
       "highlight.wcag.label": "WCAG 2.2 violations remediated",
       "highlight.css.number": "14 → 1",
       "highlight.css.label": "CSS files consolidated",
-      "highlight.incridea.number": "$35k",
+      "highlight.incridea.number": "129k AED",
       "highlight.incridea.label": "Sponsorship driven, Incridea 2022",
       "work.title": "My Featured Works",
       "work.bds.desc": "Built a Design System for a top-20 US accounting and consulting firm. Led the Design and owned the decision making.",
@@ -211,7 +211,7 @@ window.CASE_STRINGS = {
       "highlight.poc.number": "80% match in 7 days",
       "highlight.wcag.number": "35 down to 0",
       "highlight.css.number": "14 files down to 1",
-      "highlight.incridea.number": "$35k",
+      "highlight.incridea.number": "129k AED",
       "work.title": "My Featured Work",
       "work.bds.desc": "I built a Design System for a top-20 US accounting and consulting firm. I led the design work. I made the key decisions.",
       "work.speery.desc": "I rebuilt an AI-generated healthcare software prototype. I made it systematic and trustworthy for enterprise buyers. I worked alone, from design to handoff. This took two weeks.",
@@ -402,7 +402,7 @@ window.CASE_STRINGS = {
       "highlight.wcag.label": "معالجة مخالفات WCAG 2.2",
       "highlight.css.number": "١٤ ← ١",
       "highlight.css.label": "دمج ملفات CSS",
-      "highlight.incridea.number": "٣٥ ألف دولار",
+      "highlight.incridea.number": "١٢٩ ألف درهم",
       "highlight.incridea.label": "رعاية مالية لفعالية Incridea ٢٠٢٢",
       "work.title": "أبرز أعمالي",
       "work.bds.desc": "بنيت نظام تصميم لشركة أمريكية كبرى في المحاسبة والاستشارات ضمن أفضل ٢٠ شركة. قدت العمل التصميمي واتخذت القرارات الأساسية.",

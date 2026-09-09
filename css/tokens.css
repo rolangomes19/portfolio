@@ -133,6 +133,12 @@
   --color-accent-hover: #0c4338;    /* deeper — 10.15:1 */
   --color-on-accent: #faf9f5;       /* ivory on accent — verified >=4.5:1 for
                                        every derived accent, light or dark */
+  /* Primary buttons (solid fill) are brand green, kept distinct from
+     --color-accent (used for links, focus, secondary/outline buttons) —
+     desk.css re-points this at the header/mat's own green so a primary
+     button matches the site's identity color, not the link color. */
+  --color-primary: var(--color-accent);
+  --color-primary-hover: var(--color-accent-hover);
   --color-focus: var(--color-accent);
   --color-paper-edge: rgb(0 0 0 / 0.05);   /* 1px ring defining the sheet */
   --color-image-edge: oklch(0 0 0 / 0.1);  /* hairline over photographic art */
@@ -194,19 +200,25 @@
      default axis values match the Figma reference ("FLAR" 0, "VOLM" 0), so
      no font-variation-settings override is needed beyond weight. */
   --font-heading: "Commissioner", var(--font-sans);
-  --font-mono: "Geist Mono", ui-monospace, "SF Mono", monospace;
-  /* El Messiri substitutes for Commissioner (headings/buttons) in RTL;
-     Harmattan substitutes for Inter (body) and Geist Mono (eyebrow/mono)
-     in RTL. Previously a single face (Estedad) covered all three roles —
-     see the RTL override below for where each token applies. */
-  --font-sans-arabic-heading: "El Messiri", "Commissioner", "InterVariable", system-ui, sans-serif;
-  --font-sans-arabic-body: "Harmattan", "InterVariable", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", monospace;
+  /* Reem Kufi substitutes for Commissioner (headings/buttons) in RTL; IBM
+     Plex Sans Arabic substitutes for Inter (body) and IBM Plex Mono
+     (eyebrow/mono) in RTL. Reem Kufi is geometric Kufi — the script of
+     architecture, tilework and inscription — concept-true on a drafting-
+     table site rather than merely decorative; Plex Sans Arabic is a UI
+     face built for small sizes, unlike Harmattan (a SIL text face for
+     West African Arabic) which thinned out badly at 15-17px. Both verified
+     live on the Google Fonts css2 API. See the RTL override below for
+     where each token applies. */
+  --font-sans-arabic-heading: "Reem Kufi", "Commissioner", "InterVariable", system-ui, sans-serif;
+  --font-sans-arabic-body: "IBM Plex Sans Arabic", "InterVariable", system-ui, sans-serif;
   /* Handwriting face for the sticky-note component's label/annotation text
-     only (never headings, body copy, or RTL — Caveat has no Arabic coverage,
-     see the RTL override below). Falls back to the heading font rather than
-     the body font if it fails to load, since a note's label sits closer to a
-     heading's job (a short, scannable phrase) than to running body copy. */
-  --font-hand: "Caveat", var(--font-heading);
+     only (never headings, body copy, or RTL — Architects Daughter has no
+     Arabic coverage, see the RTL override below). Falls back to the
+     heading font rather than the body font if it fails to load, since a
+     note's label sits closer to a heading's job (a short, scannable
+     phrase) than to running body copy. */
+  --font-hand: "Architects Daughter", var(--font-heading);
   --tracking-body: -0.02em;
   --tracking-heading: -0.025em;
   --font-feature-alt:
@@ -241,9 +253,10 @@
   --text-h3: 1.1875rem;                             /* 19px */
   --text-lead: 1.0625rem;                           /* 17px — intro paragraphs */
   --text-body: 1rem;                                /* 16px */
-  /* Caveat's x-height reads smaller than a sans face at the same size —
-     sized up from --text-body so handwritten note copy (.sticky-note)
-     stays as legible as the body text around it, not smaller-looking. */
+  /* A handwriting face's x-height reads smaller than a sans face at the
+     same size — sized up from --text-body so handwritten note copy
+     (.sticky-note) stays as legible as the body text around it, not
+     smaller-looking. */
   --text-hand: 1.3125rem;                           /* 21px */
   /* Larger hand tier for a note meant to be read as its own object (the
      NDA disclosure), not scanned alongside body copy like a stat label. */
@@ -367,122 +380,14 @@
   }
 }
 
-/* ------ Dark theme: black mat, warm charcoal paper ------ */
-[data-theme="dark"] {
-  color-scheme: dark;
-
-  /* True black, matching the baked --mat-image below. It is also what makes
-     the darker craft paper still read as a lifted sheet: #26231e on #141413
-     separates at only 1.12, on black at 1.34. */
-  --color-mat: #000000;
-  --mat-image: url("../assets/mat-dark.svg");
-
-  /* Same lit-relief recipe as the light theme (identical feTurbulence /
-     feDiffuseLighting parameters — the point is a consistent *material*,
-     not a redrawn one per theme), alpha down to 0.04 from light theme's
-     0.20. Both still composite via `normal` (styles.css hardcodes the
-     blend mode now — it no longer varies per theme, since normal is what
-     the lit-relief technique actually needs in both cases; only the alpha
-     baked into this token's own feColorMatrix changes). See the light
-     theme's --paper-texture comment above for the full derivation; the
-     short version is that this palette's amber/bronze accent (below) only
-     has 5.34:1 of headroom to begin with, and a white-lit texture erodes
-     exactly that token fastest, since both trend toward white together —
-     0.04 is the highest alpha that keeps the accent ≥4.5:1 (4.75:1,
-     measured) with body/secondary text far clear of it (≥12:1). */
-  --paper-texture: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27240%27%20height%3D%27240%27%3E%3Cfilter%20id%3D%27n%27%20x%3D%270%27%20y%3D%270%27%20width%3D%27100%25%27%20height%3D%27100%25%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.8%27%20numOctaves%3D%275%27%20seed%3D%277%27%20stitchTiles%3D%27stitch%27%20result%3D%27noise%27%2F%3E%3CfeDiffuseLighting%20in%3D%27noise%27%20lighting-color%3D%27%23ffffff%27%20surfaceScale%3D%272%27%20diffuseConstant%3D%271%27%20result%3D%27lit%27%3E%3CfeDistantLight%20azimuth%3D%2745%27%20elevation%3D%2760%27%2F%3E%3C%2FfeDiffuseLighting%3E%3CfeColorMatrix%20in%3D%27lit%27%20type%3D%27matrix%27%20values%3D%271%200%200%200%200%20%200%201%200%200%200%20%200%200%201%200%200%20%200%200%200%200%200.04%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27240%27%20height%3D%27240%27%20filter%3D%27url%28%23n%29%27%2F%3E%3C%2Fsvg%3E");
-
-  /* Craft paper, not charcoal. kami's Dark Surface (#30302e) sat too light and
-     too neutral to read as a sheet of dark stock — it looked like a UI panel.
-     This is darker and pushed browner (R38 G35 B30, a wider R-to-B spread than
-     kami's R48 G48 B46), which is what gives it the kraft-board cast.
-
-     The mat went back to true black at the same time, which is what keeps the
-     sheet legible against it: a darker paper on a #141413 mat would have
-     dropped the edge separation to 1.12, but on black it holds at 1.34 —
-     effectively unchanged from the 1.39 it had before. The lift itself has
-     always come from --color-paper-edge and the shadow, not from the fills.
-
-     --color-bg-subtle continues one step up the same warm ramp, keeping the
-     light theme's rule that a raised surface is brighter than what it sits on. */
-  --color-bg: #26231e;              /* the paper — warm, dark, kraft-toned */
-  --color-bg-subtle: #302c26;
-  --color-border: #3b372f;
-  --color-border-strong: #8e8880;   /* 4.46:1 on paper, 3.95:1 on subtle */
-  --color-text: #faf9f5;            /* kami Ivory — 14.86:1 on paper */
-  /* Foregrounds are lighter than kami's own dark-theme values, and are not a
-     mechanical inversion of the light palette: each was solved against the
-     worst single pixel this paper's grain can produce (see --paper-texture
-     below) and holds well clear of 4.5:1 even there. kami's Ink Light
-     (#2D5A8A) is unusable on any of these surfaces, at under 2:1.
-     Halving the texture alpha lifted every worst-pixel figure below. */
-  --color-text-secondary: #c3bfb6;  /* 8.53:1 on paper, 6.47:1 worst-pixel */
-  /* The default DARK mat is black (#000000) — a neutral, so it has no hue to
-     derive an accent from and falls back to this pair. Pick a coloured mat
-     in dark theme (js/main.js's lookup table, or the custom picker) and
-     these four override exactly like the light theme's do. --color-concept
-     and --color-tag-bg need no redeclaration here: both are aliases
-     (declared once, under :root) and re-resolve against whichever
-     --color-accent / --color-tint-brand is active on this element, dark
-     override included.
-
-     Amber/bronze, not the ink-blue this used to be. On the warm craft paper
-     (#26231e) a cool blue was the one place the whole dark palette broke its
-     own monochromatic-warm logic; this fallback is solved the identical way
-     every mat-derived accent in this file is (hue/sat -> binary-search
-     lightness for >=4.5:1, including the worst textured pixel — see
-     js/main.js section 4b), just fixed at an amber/bronze hue (36deg, 55%
-     sat) instead of the mat's own hue, since black itself carries none.
-     Deliberately mid-lightness (49.6%), not pale: the accent needs to read
-     as a distinct hue at a glance against --color-text's near-white ivory
-     (97% light) — matching it in brightness would make buttons and links
-     blend into ordinary body text instead of standing apart from it. */
-  --color-accent: #c48c39;          /* amber/bronze — 5.34:1 paper, 4.73:1 subtle, 4.61:1 worst */
-  --color-accent-hover: #dab57e;    /* lighter honey — 8.12:1 */
-  --color-on-accent: #141413;       /* near-black on accent — 6.28:1 */
-  --color-focus: #ffffff;           /* 15.65:1 on paper — deliberately NOT
-                                       aliased to --color-accent: a focus ring
-                                       needs to stay maximally visible
-                                       regardless of which hue the mat is
-                                       currently driving. */
-  --color-paper-edge: rgb(255 255 255 / 0.07);
-  --color-image-edge: oklch(1 0 0 / 0.1);
-
-  --color-surface-interactive: #3b372f;
-  --color-border-soft: #332f29;
-  --color-tint-brand: #362e21;       /* amber mixed into the paper — 4.56:1 vs accent */
-
-  /* On a black mat a dark shadow does nothing — the light ring does the
-     edge definition, and the diffuse layers deepen to keep the lift. */
-  --shadow-paper:
-    inset 0 0 0 1px var(--color-paper-edge),
-    0 1px 2px rgb(0 0 0 / 0.5),
-    0 12px 32px rgb(0 0 0 / 0.55),
-    0 32px 80px rgb(0 0 0 / 0.45);
-
-  --shadow-float:
-    inset 0 0 0 1px var(--color-paper-edge),
-    0 2px 6px rgb(0 0 0 / 0.4),
-    0 8px 20px rgb(0 0 0 / 0.45);
-
-  --shadow-note:
-    0 1px 1px rgb(0 0 0 / 0.35),
-    0 6px 16px rgb(0 0 0 / 0.4);
-
-  /* Dark, warm-yellow paper — not the same as --color-bg-subtle. Verified
-     8.76:1 against --color-note-text. */
-  --color-note-bg: #4a3f22;
-  --color-note-text: #f6ecc8;
-  --color-note-edge: #e5dcb6;
-}
-
 /* ------ RTL: Arabic type ------
-   Two faces split the roles that were LTR's three: El Messiri substitutes
+   Two faces split the roles that were LTR's three: Reem Kufi substitutes
    for Commissioner (headings, buttons — --font-heading is overridden too,
    since h1-h6/.btn set it explicitly and would otherwise win over body's
-   inherited font-family), Harmattan substitutes for both Inter (body) and
-   Geist Mono (.eyebrow/.mono, which set --font-mono explicitly and would
-   otherwise win the same way). Arabic must never be letter-spaced. */
+   inherited font-family), IBM Plex Sans Arabic substitutes for both Inter
+   (body) and IBM Plex Mono (.eyebrow/.mono, which set --font-mono
+   explicitly and would otherwise win the same way). Arabic must never be
+   letter-spaced. */
 [dir="rtl"] body {
   font-family: var(--font-sans-arabic-body);
   letter-spacing: 0;
@@ -502,16 +407,17 @@
 [dir="rtl"] .mono,
 [dir="rtl"] .mode-select-trigger,
 [dir="rtl"] .mode-select-option,
-[dir="rtl"] .segmented-bar-btn,
-[dir="rtl"] .toggle-btn {
+[dir="rtl"] .segmented-bar-btn {
   font-family: var(--font-sans-arabic-body);
   letter-spacing: 0;
 }
-/* Caveat has no Arabic coverage — without this, RTL content inside a
-   sticky note would silently fall through to --font-heading (Commissioner)
-   via --font-hand's own fallback chain, inconsistent with every other
-   Arabic string on the site. */
-[dir="rtl"] .sticky-note {
+/* Architects Daughter has no Arabic coverage — without this, RTL content
+   inside a sticky note or highlight card would silently fall through
+   Commissioner then Inter (neither has Arabic either) all the way to
+   the browser's own default sans, inconsistent with every other Arabic
+   string on the site. */
+[dir="rtl"] .sticky-note,
+[dir="rtl"] .highlight-card {
   font-family: var(--font-sans-arabic-body);
   letter-spacing: 0;
 }

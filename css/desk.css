@@ -1,0 +1,1099 @@
+/* ==========================================================================
+   desk.css — the site's material system. Loaded on every page now
+   (index.html, every work/*.html case study, colophon.html, 404.html) —
+   this used to be index.html-exclusive; that line has been crossed, so
+   nothing here should assume "only index.html loads this" any more.
+   Self-contained: does NOT read tokens.css's color/mat/paper-texture
+   tokens (--color-*, --mat-image, --paper-texture, --color-mat) at all,
+   so nothing here can regress by mixing with the old system. It DOES
+   rely on tokens.css for non-visual plumbing every page still needs —
+   spacing scale, radius scale, motion tokens, the type scale, and the
+   RTL logical-property rules — none of which is "background or paper
+   texture."
+
+   Page-specific selectors (`.hero`, `.highlight-card`, `.work-board`,
+   `.p-blueprint`, `.redact`, `#work`…) simply don't match anything on a
+   page that has no such element — harmless elsewhere, not a sign this
+   file is still index-only. The mat-color picker (`.surface-picker`)
+   has been removed from every page's markup now, not just index.html's
+   — there is no page left where a visitor can recolor the mat.
+
+   Source: docs/paper-stack-lab.html + docs/material-css-handoff.md.
+   Composition follows the lab's own "Stack A · Working drawing" as the
+   base (mat + one grid sheet — its own recommendation: "restraint is the
+   craft signal"), with "Stack B · Desk" accents (kraft, index card,
+   sticky) on individual components where the content actually calls for
+   a different stock. No dark mode: this site now ships one committed
+   look, so the lab's cyanotype/blueprint stock (its dark-mode idea) is
+   deliberately not used here.
+
+   Palette is the lab file's own Rev C values — already contrast-fixed in
+   the lab's Contrast Gate section. Re-verified independently against the
+   lab's own claimed numbers before shipping (relative-luminance formula,
+   not eyeballed): body ink on major grid line 12.17:1 (claimed 12.16),
+   secondary ink 5.28:1 (claimed 5.28), mono ink 4.53:1 (claimed 4.53),
+   blue annotation 5.17:1 (claimed 5.17) — all matched to two decimal
+   places, so the table's numbers are trustworthy as shipped, not just
+   asserted. Fine grid (8px) is lighter than major (40px), so every ink
+   above only gets MORE contrast there — not re-checked separately.
+   ========================================================================== */
+
+/* `100vw` (the footer's full-bleed width, further down) is defined as
+   the viewport width AS IF there were no scrollbar, so on a page tall
+   enough to actually show one, 100vw overshoots the real visible width
+   by the scrollbar's own thickness — verified: caused a real ~8px
+   horizontal scroll. overflow-x: clip (not hidden — it does not
+   establish a scroll container, so it can't interfere with the header's
+   position: sticky) absorbs exactly that sliver at the root, which is
+   the standard fix for this specific, well-known mismatch, not a cover
+   for an unrelated layout bug. */
+html {
+  overflow-x: clip;
+}
+
+:root {
+  --dk-mat: #1b6353;
+  --dk-mat-deep: #0e362e;
+  --dk-mat-line: 255 255 255;
+
+  --dk-paper: #f7f2e3;
+  /* Both nudged ~20% closer to --dk-paper from the lab's own values —
+     a quieter grid, and text over it only gains contrast (verified:
+     secondary ink over the major line moves from 5.28:1 to 5.53:1). */
+  --dk-paper-grid: #eee8d6; /* fine 8px */
+  --dk-paper-grid-5: #e6dfc9; /* major 40px */
+  --dk-bond: #faf7ef;
+  --dk-kraft: #ad8a5f;
+  --dk-kraft-2: #9c7a50;
+  --dk-kraft-ink: #2c1f10; /* ~4.7:1 on kraft */
+  --dk-card: #fcfbf6;
+  --dk-sticky: #fbf3d4;
+  --dk-sticky-2: #fdf8e4;
+  --dk-trace: 252 250 246;
+
+  --dk-ink: #1b1d1a;
+  --dk-ink-2: #54574f;
+  --dk-ink-3: #5e6157;
+  --dk-blue: #2b4fb8;
+  --dk-blue-hover: #1e3b8c;
+
+  /* Cyanotype/blueprint — a paper STOCK, not a dark-mode theme. Reused
+     here only because the Blueprint Design System card is literally named
+     for it; nothing on the page can trigger it as a page-wide look. */
+  --dk-bp: #123a8f;
+  --dk-bp-deep: #081f55;
+  --dk-bp-ink: #eaf0ff; /* 9.07:1 on --dk-bp, independently verified */
+
+  --dk-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* Same noise, opacity baked into the SVG itself (rect opacity, not a CSS
+     `opacity` on a positioned overlay) — used wherever the grain needs to
+     ride as a plain background-image layer instead of a pseudo-element,
+     e.g. on <body>, which is deliberately never `position: relative`. */
+  --dk-grain-subtle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.09'/%3E%3C/svg%3E");
+
+  --dk-sh-flat: -1px 1px 1px rgb(6 26 21 / 0.34), -3px 5px 8px rgb(6 26 21 / 0.22),
+    -8px 14px 26px rgb(6 26 21 / 0.14);
+  --dk-sh-thin: -1px 1px 1px rgb(6 26 21 / 0.26), -2px 4px 6px rgb(6 26 21 / 0.14);
+  --dk-sh-card: -1px 1px 0 rgb(6 26 21 / 0.38), -3px 6px 8px rgb(6 26 21 / 0.24),
+    -10px 20px 34px rgb(6 26 21 / 0.16);
+  --dk-sh-trace: -1px 1px 1px rgb(6 26 21 / 0.14), -3px 6px 12px rgb(6 26 21 / 0.1);
+  --dk-lit-edge: inset 0 1px 0 rgb(255 255 255 / 0.58);
+  --dk-dark-edge: inset 0 -1px 0 rgb(0 0 0 / 0.07);
+}
+
+/* ==========================================================================
+   TOKEN OVERRIDE — every color/shadow token styles.css's existing
+   components already consume (buttons, nav, tag pills, sticky notes, the
+   mode-select popover, focus rings...) gets re-pointed at the desk
+   palette above. This is the one place old and new systems touch, and
+   deliberately so: it lets index.html's already-correct, already
+   accessible, already-RTL-safe component CSS in styles.css (built
+   exactly to CLAUDE.md's "every color is a token" rule) render in the
+   new material without a component-by-component rewrite. Nothing here
+   references the OLD values those tokens held — every right-hand side
+   below is a --dk-* variable or a literal from the lab's own palette, so
+   the actual rendered colors owe nothing to the old system. Scoped to
+   :root in a file every page now loads (see this file's own top
+   comment), not index.html-exclusive any more. */
+:root {
+  --color-mat: var(--dk-mat);
+  --color-bg: var(--dk-paper);
+  --color-bg-subtle: var(--dk-bond);
+  --color-surface-interactive: #ece0c4; /* warm sand between paper and kraft — 5.62:1 for dk-ink-2 */
+  --color-border: var(--dk-paper-grid-5);
+  --color-border-soft: var(--dk-paper-grid);
+  --color-border-strong: var(--dk-ink-3);
+  --color-text: var(--dk-ink);
+  --color-text-secondary: var(--dk-ink-2);
+  --color-accent: var(--dk-blue);
+  --color-accent-hover: var(--dk-blue-hover);
+  /* Primary (solid) buttons are the mat's own green, not the blue link
+     accent — verified: white on --dk-mat 7.1:1, white on --dk-mat-deep
+     even higher. Secondary/outline buttons and focus rings stay blue. */
+  --color-primary: var(--dk-mat);
+  --color-primary-hover: var(--dk-mat-deep);
+  --color-on-accent: var(--dk-bond); /* 6.73:1 on accent */
+  --color-focus: var(--dk-blue);
+  --color-tint-brand: #e4e9f5; /* blue mixed into paper — 5.93:1 for accent text */
+  --color-tag-bg: var(--color-tint-brand);
+  --color-concept: var(--color-accent);
+
+  --shadow-paper: var(--dk-sh-flat), inset 0 0 0 1px var(--color-paper-edge);
+  --shadow-float: var(--dk-sh-thin), inset 0 0 0 1px var(--color-paper-edge);
+  --shadow-whisper: 0 4px 24px rgb(6 26 21 / 0.08);
+  --shadow-note: -1px 1px 1px rgb(6 26 21 / 0.22), -4px 8px 12px rgb(6 26 21 / 0.18),
+    -12px 22px 34px rgb(6 26 21 / 0.1);
+
+  --color-note-bg: var(--dk-sticky);
+  --color-note-text: var(--dk-ink);
+  --color-note-edge: #e4d9ab;
+}
+
+/* ==========================================================================
+   THE MAT — replaces html::before's SVG-image mat entirely (own gradient
+   recipe, own colors; tokens.css's --mat-image/--mat-texture/--color-mat
+   are never read here).
+   ========================================================================== */
+html::before {
+  background-color: var(--dk-mat);
+  background-image: none;
+  isolation: isolate;
+}
+html::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  filter: blur(72px);
+  mix-blend-mode: soft-light;
+  background: radial-gradient(38% 30% at 26% 22%, rgb(255 255 255 / 0.92), transparent 68%),
+    radial-gradient(46% 36% at 63% 58%, rgb(255 255 255 / 0.8), transparent 70%),
+    radial-gradient(30% 22% at 14% 78%, rgb(255 255 255 / 0.44), transparent 72%),
+    radial-gradient(44% 34% at 92% 6%, rgb(0 0 0 / 0.95), transparent 66%),
+    radial-gradient(40% 30% at 4% 104%, rgb(0 0 0 / 0.7), transparent 70%);
+}
+.mat-weave {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+      45deg,
+      transparent calc(50% - 0.5px),
+      rgb(var(--dk-mat-line) / 0.13) calc(50% - 0.5px) calc(50% + 0.5px),
+      transparent calc(50% + 0.5px)
+    ),
+    repeating-linear-gradient(90deg, rgb(var(--dk-mat-line) / 0.11) 0 1px, transparent 1px 46px),
+    repeating-linear-gradient(0deg, rgb(var(--dk-mat-line) / 0.11) 0 1px, transparent 1px 46px),
+    repeating-linear-gradient(90deg, rgb(var(--dk-mat-line) / 0.035) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(0deg, rgb(0 0 0 / 0.05) 0 1px, transparent 1px 4px);
+}
+.mat-grain {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.11;
+  mix-blend-mode: overlay;
+  background: var(--dk-grain) 0 0/160px 160px repeat;
+}
+@media (max-width: 47.99em) {
+  html::after,
+  .mat-weave,
+  .mat-grain {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   THE SHEET — body IS the main working-drawing sheet (Stack A). Graph
+   paper fill + grid, own grain layer, own contact shadow.
+   ========================================================================== */
+/* No ::after and no `position: relative` here on purpose — body is
+   documented elsewhere in this codebase as deliberately NOT a containing
+   block for absolutely-positioned descendants (the skip link, the
+   lightbox, reparented drag targets all rely on resolving against the
+   viewport instead). The grain rides as a fifth, low-opacity
+   background-image layer instead of a positioned pseudo-element, the
+   same technique the old --paper-texture layer used. */
+/* body carries no paper of its own any more — each section is its own
+   card (below), and the mat shows through in the gaps #main leaves
+   between them. Only the ink color stays here, as the default every
+   card's text inherits. */
+body {
+  background: none;
+  box-shadow: none;
+  color: var(--dk-ink);
+}
+
+/* ==========================================================================
+   PAGE COMPOSITION — separate paper cards on the mat, not one continuous
+   sheet (docs/paper-stack-lab.html's own actual page structure: several
+   .sheet.plate divs in a gapped column, the mat visible between them).
+   #main's flex gap is what shows the mat; .section.sheet supplies each
+   card's own vertical padding (.container inside still supplies the
+   horizontal inset, unchanged — so nothing that bleeds relative to
+   --paper-margin-inline, like .about-photos or the sticker board, needed
+   to change: a card's edge sits exactly where the old single sheet's
+   edge did). */
+#main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-09);
+}
+@media (max-width: 47.99em) {
+  #main {
+    gap: var(--space-07);
+  }
+}
+/* Zeroed for every section, not just the sheet ones: #work's own card
+   (.work-board) supplies its own padding directly, so #work stays a
+   plain, padding-free .section — giving it padding here too would add a
+   second, uneven gap on top of #main's own between-card gap. */
+.section {
+  padding-block: 0;
+  border-block-end: none;
+}
+.section.sheet {
+  padding-block: var(--space-08);
+}
+
+/* ------ Reusable sheet component (for cards/overlays living ON the main sheet) ------ */
+/* isolation: isolate is required, not decorative: .sheet::after blends
+   with mix-blend-mode, and without a stacking context to contain it, a
+   blend mode composites against EVERYTHING behind it in the same root
+   stacking context — including the mat's fixed light-field layers
+   behind this opaque card, not just the card's own background.
+   Verified: without isolation, the mat's dark corner lobe visibly bled
+   through onto the paper's surface. */
+.sheet {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--dk-bond);
+  box-shadow: var(--dk-sh-flat), var(--dk-lit-edge), var(--dk-dark-edge);
+}
+.sheet::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+  background: var(--dk-grain) 0 0/160px 160px repeat;
+}
+
+/* background-attachment: fixed (not the default `scroll`) is load-bearing,
+   not decorative: these are 1px hairlines, and a hairline gradient only
+   rasterizes crisp when its origin sits on a whole device pixel. With the
+   default `scroll` attachment that origin is the CARD's own top-left,
+   which lands on a fractional pixel at almost every scroll position except
+   page-load's y=0 — so the exact same rule looked crisp on a hero (always
+   first on screen, unscrolled) and visibly coarser/antialiased on every
+   card further down the page, on every page, not just case studies.
+   `fixed` ties the origin to the viewport instead, which is always
+   integer, so every card renders identically crisp regardless of scroll
+   position. Confirmed by diffing computed styles (identical down to the
+   string) between a case-hero and a scrolled article card, then proving
+   a debug swatch pinned at 0,0 with the exact same background rendered
+   crisp while the live, scrolled card did not — this was never a
+   difference in the CSS applied. */
+.p-graph {
+  background-color: var(--dk-paper);
+  background-image: repeating-linear-gradient(90deg, var(--dk-paper-grid-5) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(0deg, var(--dk-paper-grid-5) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(90deg, var(--dk-paper-grid) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(0deg, var(--dk-paper-grid) 0 1px, transparent 1px 8px);
+  background-attachment: fixed, fixed, fixed, fixed;
+}
+
+.p-trace {
+  background-color: rgb(var(--dk-trace) / 0.6);
+  -webkit-backdrop-filter: blur(1.4px) saturate(0.88) brightness(1.04);
+  backdrop-filter: blur(1.4px) saturate(0.88) brightness(1.04);
+  box-shadow: var(--dk-sh-trace), inset 0 0 0 1px rgb(255 255 255 / 0.42);
+  color: var(--dk-ink);
+}
+.p-trace::after {
+  opacity: 0.03;
+}
+@media (prefers-reduced-transparency: reduce) {
+  .p-trace {
+    background-color: var(--dk-bond);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+.p-kraft {
+  background-image: radial-gradient(circle at 18% 34%, rgb(255 245 220 / 0.3) 0 1px, transparent 2px),
+    radial-gradient(circle at 71% 12%, rgb(60 40 20 / 0.26) 0 1px, transparent 2px),
+    radial-gradient(circle at 44% 81%, rgb(255 245 220 / 0.24) 0 1px, transparent 2px),
+    radial-gradient(circle at 88% 63%, rgb(60 40 20 / 0.22) 0 1px, transparent 2px),
+    linear-gradient(168deg, var(--dk-kraft) 0%, var(--dk-kraft-2) 100%);
+  background-size: 37px 37px, 53px 53px, 61px 61px, 43px 43px, 100% 100%;
+  box-shadow: var(--dk-sh-flat);
+  color: var(--dk-kraft-ink);
+}
+.p-kraft::after {
+  opacity: 0.1;
+  mix-blend-mode: multiply;
+}
+
+/* No red margin rule — it read as a strikethrough over the card title
+   rather than an index card's printed margin line. */
+.p-card {
+  background-color: var(--dk-card);
+  background-image: repeating-linear-gradient(0deg, transparent 0 1.55rem, #c6d6e9 1.55rem calc(1.55rem + 1px));
+  background-size: 100% 100%;
+  background-position: 0 2.6rem;
+  background-repeat: repeat;
+  box-shadow: var(--dk-sh-card), var(--dk-lit-edge), inset -1px 0 0 rgb(0 0 0 / 0.06);
+}
+
+.p-sticky {
+  background-color: var(--dk-sticky);
+  background-image: linear-gradient(178deg, var(--dk-sticky-2) 0 22%, var(--dk-sticky) 46%);
+  box-shadow: -1px 1px 1px rgb(6 26 21 / 0.22), -4px 8px 12px rgb(6 26 21 / 0.18),
+    -12px 22px 34px rgb(6 26 21 / 0.1);
+  color: var(--dk-ink-2);
+}
+
+/* ------ Blueprint / cyanotype ------
+   No text-shadow glow on the title — tried it, dropped it, plainer reads
+   better against the busy grid. Grid lines are already the lab's OWN
+   contrast-fixed values (18% major / 8% fine, halved from its first
+   pass). */
+.p-blueprint {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: var(--dk-bp);
+  color: var(--dk-bp-ink);
+  box-shadow: var(--dk-sh-flat);
+}
+.p-blueprint::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(56px);
+  mix-blend-mode: soft-light;
+  background: radial-gradient(40% 30% at 30% 24%, rgb(255 255 255 / 0.9), transparent 68%),
+    radial-gradient(44% 34% at 66% 62%, rgb(255 255 255 / 0.72), transparent 70%),
+    radial-gradient(42% 32% at 94% 4%, rgb(0 0 0 / 0.95), transparent 66%);
+}
+.p-blueprint::after {
+  opacity: 0.14;
+  mix-blend-mode: overlay;
+}
+.p-blueprint .bp-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(90deg, rgb(255 255 255 / 0.18) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(0deg, rgb(255 255 255 / 0.18) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.08) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(0deg, rgb(255 255 255 / 0.08) 0 1px, transparent 1px 8px);
+  filter: blur(0.3px);
+}
+.p-blueprint > * {
+  position: relative;
+  z-index: 1;
+}
+/* .work-card-title/.work-card-desc set `color` explicitly in styles.css
+   (not `inherit`), so .p-blueprint's own `color` on the card root doesn't
+   reach them on its own — every text color that would otherwise resolve
+   to the site's dark ink needs a light-ink override here, scoped to this
+   one inverted (dark bg / light text) stock. Verified: --dk-bp-ink is
+   9.07:1 on --dk-bp; the tint-brand pairing below is checked separately. */
+.p-blueprint .work-card-title a,
+.p-blueprint .work-card-desc {
+  color: var(--dk-bp-ink);
+}
+@media (hover: hover) {
+  .p-blueprint .work-card-title a:hover {
+    color: #bed6ff; /* lighter still on hover, stays >=4.5:1 on --dk-bp */
+  }
+}
+.p-blueprint .work-card-tags,
+.p-blueprint .work-card-tags .sep {
+  color: var(--dk-bp-ink); /* 9.07:1 on --dk-bp, same pairing as the title/desc override above */
+}
+
+/* Plain mono text, "/"-separated — same vocabulary as .contact-row,
+   not a pill. Tags are metadata, not actions; nothing here is clickable. */
+.work-card-tags {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+.work-card-tags .sep {
+  color: var(--color-text-secondary);
+  opacity: 0.6;
+}
+[dir="rtl"] .work-card-tags {
+  letter-spacing: 0;
+}
+
+/* 60% text / 5% gap / 35% "taped" photo, replacing the old even 1fr 1fr
+   split — more room for the description now that the tags are a single
+   compact line instead of a wrapping row of pills. */
+@container (min-width: 40em) {
+  .work-card {
+    grid-template-columns: 60% 35%;
+    column-gap: 5%;
+  }
+}
+
+/* ------ Edges: mask, not border ------
+   mask-position uses physical "left" — it anchors a horizontal repeat-x
+   tiling seam (assets/images/gen-edges.py), not a layout direction, so it
+   doesn't need RTL mirroring. */
+.p-torn,
+.p-deckle {
+  --dk-edge: 36px;
+  -webkit-mask-size: auto var(--dk-edge), 100% calc(100% - var(--dk-edge) + 1px);
+  mask-size: auto var(--dk-edge), 100% calc(100% - var(--dk-edge) + 1px);
+  -webkit-mask-position: top left, bottom left;
+  mask-position: top left, bottom left;
+  -webkit-mask-repeat: repeat-x, no-repeat;
+  mask-repeat: repeat-x, no-repeat;
+}
+.p-torn {
+  -webkit-mask-image: url("../assets/images/edge-torn-top.png"), linear-gradient(#000, #000);
+  mask-image: url("../assets/images/edge-torn-top.png"), linear-gradient(#000, #000);
+}
+.p-deckle {
+  -webkit-mask-image: url("../assets/images/edge-deckle-top.png"), linear-gradient(#000, #000);
+  mask-image: url("../assets/images/edge-deckle-top.png"), linear-gradient(#000, #000);
+}
+.edge-wrap {
+  filter: drop-shadow(-1px 1px 1px rgb(6 26 21 / 0.28)) drop-shadow(-3px 5px 8px rgb(6 26 21 / 0.18))
+    drop-shadow(-8px 14px 22px rgb(6 26 21 / 0.12));
+}
+.edge-wrap > .sheet {
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   HIGHLIGHTS — index.html only. Replaces .sticky-note/.sticky-note--stat
+   with vellum "stuck" onto the main sheet (a small alternating tilt + the
+   .sheet contact shadow, same physical-object language .about-photo
+   already uses elsewhere on this page). Number and label share
+   Architects Daughter (this site's one hand-drawn face) in blue ink —
+   the "architectural pen" look reads better than the tabular heading
+   font it was swapped to briefly, so it's back. */
+/* Hero and Highlights share one card now, as two sibling .container
+   divs — without this they sat back-to-back with no rhythm between the
+   CTA row and the stat cards. */
+.hero .container + .container {
+  margin-block-start: var(--space-09);
+}
+.highlight-card {
+  display: grid;
+  gap: var(--space-03);
+  padding: var(--space-06);
+}
+.highlight-list .highlight-card:nth-child(5n + 1) {
+  transform: rotate(-3deg);
+}
+.highlight-list .highlight-card:nth-child(5n + 2) {
+  transform: rotate(2deg);
+}
+.highlight-list .highlight-card:nth-child(5n + 3) {
+  transform: rotate(-1.5deg);
+}
+.highlight-list .highlight-card:nth-child(5n + 4) {
+  transform: rotate(3deg);
+}
+.highlight-list .highlight-card:nth-child(5n + 5) {
+  transform: rotate(-2.5deg);
+}
+.highlight-card .highlight-number,
+.highlight-card .highlight-label {
+  font-family: var(--font-hand);
+  color: var(--dk-blue);
+}
+.highlight-card .highlight-number {
+  font-size: var(--text-hand-lg);
+  line-height: var(--leading-tight);
+}
+.highlight-card .highlight-label {
+  font-size: var(--text-hand);
+}
+@media (hover: hover) {
+  .highlight-card .highlight-label:hover {
+    color: var(--dk-blue-hover);
+  }
+}
+
+/* ==========================================================================
+   WORK — index.html only. The whole section is one kraft board, bled
+   flush to the paper's own edges (cancels --paper-margin-inline, then
+   re-adds the same amount as padding so the title and cards don't sit
+   flush themselves) — "a unique section," not another paper-inset block.
+   Each work-card is its own paper sheet on the board, in a plain gapped
+   stack (an earlier pass tried an overlapping shingled pile; it read as
+   messy rather than physical, so this is a flat list with real spacing
+   instead). Images are permanently visible, "taped" on with a fixed
+   small rotation — no hover-reveal. Below 48em the media element is
+   still `display:none` (styles.css), so it's still never fetched on
+   mobile; nothing here changes that.
+   ========================================================================== */
+/* No margin-inline cancellation here: unlike the highlight-list bleed
+   technique elsewhere on this page, .work-board isn't nested inside a
+   .container with its own padding to cancel — #work has none, so
+   .work-board's content box is already the full paper width. A negative
+   margin here just overflowed the actual page (verified: caused real
+   horizontal scroll), for zero visual gain. */
+.work-board {
+  padding: var(--space-09) var(--paper-margin-inline);
+}
+
+/* No more tape/plate: Work is graph paper like every other section card
+   now, so the title needs no special treatment to stay legible — it's
+   dark ink on light paper, same as every other section's plain
+   eyebrow/h2, inheriting normally with no override at all. */
+
+.work-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-07);
+}
+@media (max-width: 47.99em) {
+  .work-list {
+    gap: var(--space-05);
+  }
+}
+/* A slight tilt per sheet, plus the stock's own contact shadow, so each
+   card reads as a separate piece of paper sitting ON the board rather
+   than a flat row. Hover/focus deepens the shadow and lifts the sheet a
+   touch, instead of the .is-liftable whisper-shadow swap (which would
+   erase the stock's own paper shadow). */
+.work-card {
+  padding: var(--space-06) var(--space-07);
+  transition: transform var(--duration-fast) var(--ease), box-shadow var(--duration-fast) var(--ease);
+}
+.work-list > .work-card:nth-child(odd) {
+  transform: rotate(-0.6deg);
+}
+.work-list > .work-card:nth-child(even) {
+  transform: rotate(0.6deg);
+}
+/* .work-list > .work-card:hover (not just .work-card:hover) deliberately
+   matches the base rotation rule's specificity (.work-list > .work-card
+   :nth-child(odd/even)) — a plain .work-card:hover is one selector less
+   specific and would silently lose the rotation battle regardless of
+   source order, the same bug the mobile stack-flattening rule hit
+   earlier in this file. */
+@media (prefers-reduced-motion: no-preference) {
+  .work-list > .work-card:hover,
+  .work-list > .work-card:focus-within {
+    transform: translateY(-3px) rotate(0deg);
+    box-shadow: -2px 3px 3px rgb(6 26 21 / 0.3), -6px 10px 16px rgb(6 26 21 / 0.26),
+      -16px 28px 46px rgb(6 26 21 / 0.2);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .work-list > .work-card:hover,
+  .work-list > .work-card:focus-within {
+    box-shadow: -2px 3px 3px rgb(6 26 21 / 0.3), -6px 10px 16px rgb(6 26 21 / 0.26),
+      -16px 28px 46px rgb(6 26 21 / 0.2);
+  }
+}
+
+/* Breathing room between the title and description — the two used to
+   rely on .work-card-content's own gap, which spaced them the same as
+   everything else in that flex column. */
+.work-card-title {
+  margin-block-end: var(--space-03);
+}
+
+.work-card:nth-child(odd) .work-card-media {
+  --base-rot: 2deg;
+}
+.work-card:nth-child(even) .work-card-media {
+  --base-rot: -2deg;
+}
+/* Bigger, and a true white photo border (not the cream --color-bg-subtle
+   every other lifted surface on this page uses) — a printed photo's
+   border is white regardless of what paper stock it's taped to. */
+.work-card-media {
+  inline-size: 96%;
+  background: #fff;
+}
+
+/* ------ NDA redaction ------ */
+.redact {
+  display: inline-block;
+  position: relative;
+  inline-size: calc(var(--ch, 8) * 0.55em);
+  block-size: 1.02em;
+  vertical-align: -0.19em;
+  background: var(--dk-ink);
+  border-radius: 1.5px;
+  transform: rotate(-0.45deg);
+  box-shadow: 0 0 0 0.5px rgb(27 29 26 / 0.45), -1px 1px 2px rgb(27 29 26 / 0.22);
+}
+.redact::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: -2%;
+  top: 8%;
+  inline-size: 104%;
+  block-size: 88%;
+  background: var(--dk-ink);
+  opacity: 0.75;
+  border-radius: 2px;
+  transform: rotate(0.7deg);
+  filter: blur(0.4px);
+}
+.redact::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 2px;
+  box-shadow: inset 0 0 2px 1px rgb(27 29 26 / 0.5);
+}
+
+/* ------ Footer: on the mat, past the last card ------
+   docs/paper-stack-lab.html's own .mat-foot lives directly on the mat,
+   not on paper — this does too, now that body no longer paints a
+   continuous sheet behind everything. inline-size + the negative margin
+   is the standard "break out of a centered parent" bleed; body's own
+   inline-size (--paper-inline) would otherwise cap this footer at the
+   same narrower column every card uses. --vw-px (js/main.js) is the
+   true scrollbar-excluded viewport width — see its own comment for why
+   plain 100vw sits a few px off-center. The rule above it is the "line
+   to show the end" — the mat's own grid-line opacity, so it reads as
+   part of the mat rather than a UI divider. */
+.site-footer {
+  position: relative;
+  inline-size: var(--vw-px, 100vw);
+  margin-inline-start: calc(50% - (var(--vw-px, 100vw) / 2));
+  padding-block: var(--space-07);
+}
+/* One short, unbroken, centered rule — not a full-bleed border (which
+   read as a second section edge rather than a mark under the last
+   card). */
+.site-footer::before {
+  content: "";
+  display: block;
+  inline-size: 6rem;
+  block-size: 1px;
+  margin: 0 auto var(--space-06);
+  background: rgb(255 255 255 / 0.25);
+}
+/* .footer-note (index.html, no Colophon link) and .colophon (every other
+   page, keeps the link — see docs/DESK-SYSTEM-DECISIONS.md §7) are one
+   shared recipe: same rule, so a future footer restyle only ever touches
+   this block, not two class names that could drift apart again. */
+.footer-note,
+.colophon {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgb(255 255 255 / 0.72); /* verified 5.39:1 on --dk-mat */
+  border-block-start: none;
+  /* text-align alone only centers the text INSIDE the box — the box
+     itself still defaults to flush-left, because the site-wide `p {
+     max-inline-size: var(--measure) }` rule caps it below the footer's
+     full width with no auto margins of its own. margin-inline: auto
+     centers the (narrower) box too, which is what actually centered the
+     text on the page. */
+  margin-block: 0;
+  margin-inline: auto;
+  padding-inline: var(--space-05);
+}
+[dir="rtl"] .footer-note,
+[dir="rtl"] .colophon {
+  letter-spacing: 0;
+}
+
+/* ------ Header: detached glass, not part of any card ------
+   Floats over the mat independent of whatever card is scrolled beneath
+   it — no kraft fill, no attachment to a specific sheet. Heavily
+   blurred and only lightly tinted, but the tint's OWN opacity (0.92) is
+   deliberately high: a frosted-glass header has to stay legible against
+   ANY content that scrolls under it, and there's no foreground shade
+   that clears 4.5:1 against every possible backdrop at low opacity — the
+   fix is making the header's own color dominant enough that the
+   backdrop barely shows through it color-wise, while blur still gives
+   the glass effect. Verified against the lightest stock on the page
+   (--dk-card, #FCFBF6, worst case for white text): composite luminance
+   0.167, white text 4.83:1. Text/icons switch to white here — the mat
+   tint is dark, so the site's usual dark ink (which needs a LIGHT
+   surface) would fail outright. */
+.site-header {
+  background: rgb(27 99 83 / 0.92);
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  border-block-end: 1px solid rgb(255 255 255 / 0.15);
+}
+.site-header,
+.site-header .site-logo,
+.site-header .mode-select-trigger,
+.site-header .site-nav a {
+  color: #fff;
+}
+/* No blue hover here: --color-accent is a mid-tone blue, and against
+   this dark tint it would drop under 2:1 — underline alone carries the
+   hover/pressed feedback instead of a color swap that would fail. */
+.site-header .site-nav a:hover {
+  color: #fff;
+}
+.site-header .nav-toggle-icon,
+.site-header .nav-toggle-icon::before,
+.site-header .nav-toggle-icon::after {
+  background: #fff;
+}
+.site-header .mode-select-trigger,
+.site-header .nav-toggle {
+  background: transparent;
+  border-color: transparent;
+}
+@media (hover: hover) {
+  .site-header .mode-select-trigger:hover,
+  .site-header .nav-toggle:hover {
+    background: rgb(255 255 255 / 0.18);
+  }
+}
+/* Stays lit while open, not just on hover — the trigger is the visual
+   anchor for its own now-dark dropdown, so it shouldn't go flat the
+   instant the pointer leaves it while the panel is still open. */
+.site-header .mode-select-trigger[aria-expanded="true"] {
+  background: rgb(255 255 255 / 0.18);
+}
+/* .site-header :focus-visible white outline — see the header comment
+   above: --color-focus (blue) computes to ~1:1 on this dark tint,
+   same failure already fixed for .colophon a and .case-nav .btn-secondary.
+   Unconditional now: .site-nav a used to need this gated to >=64em, back
+   when the mobile nav-panel was a light dropdown below that width — now
+   that the panel is dark at every width (see below), the gate is gone.
+   Verified: white on the header's own 0.92-alpha tint is the same
+   pairing already computed in the header comment above (4.83:1 worst
+   case), comfortably over the 3:1 UI-component floor. */
+.site-header .site-logo:focus-visible,
+.site-header .nav-toggle:focus-visible,
+.site-header .mode-select-trigger:focus-visible,
+.site-header .site-nav a:focus-visible {
+  outline-color: #fff;
+}
+
+/* ------ Dropdown/mobile panels: dark, matching the header, not the
+   light paper they used to be ------
+   .mode-select-panel (desktop language dropdown) and .site-nav-panel's
+   own dropdown form (mobile, <64em) both now read as an extension of
+   the header bar itself rather than a lighter popover. White text
+   throughout; the "currently selected" language gets its own pill in
+   each context, per two different (deliberately different, not
+   inconsistent) references: the desktop dropdown's selected option is a
+   darker filled pill (--dk-mat-deep) with white text — a visible step
+   down from the panel's own --dk-mat; the mobile segmented control's
+   selected option inverts to a light --dk-card pill with --dk-mat text,
+   the same "light chip on the mat" language the scroll-cue and case-nav
+   hover state already use elsewhere. */
+.mode-select-panel {
+  background: var(--dk-mat);
+  border-color: rgb(255 255 255 / 0.15);
+}
+.mode-select-option {
+  color: #fff;
+}
+@media (hover: hover) {
+  .mode-select-option:hover {
+    background: rgb(255 255 255 / 0.12);
+  }
+}
+.mode-select-option[aria-pressed="true"] {
+  background: var(--dk-mat-deep);
+  color: #fff;
+}
+@media (hover: hover) {
+  .mode-select-option[aria-pressed="true"]:hover {
+    background: var(--dk-mat-deep);
+  }
+}
+.mode-select-option:focus-visible {
+  outline-color: #fff;
+}
+.site-header.nav-js-ready .site-nav-panel {
+  background: var(--dk-mat);
+  border-color: rgb(255 255 255 / 0.15);
+}
+.segmented-bar {
+  background: transparent;
+  border-color: rgb(255 255 255 / 0.25);
+}
+.segmented-bar-btn {
+  border-inline-start-color: rgb(255 255 255 / 0.25);
+  color: #fff;
+}
+@media (hover: hover) {
+  .segmented-bar-btn:hover {
+    background: rgb(255 255 255 / 0.12);
+  }
+}
+.segmented-bar-btn[aria-pressed="true"] {
+  background: var(--dk-card);
+  color: var(--dk-mat);
+}
+@media (hover: hover) {
+  .segmented-bar-btn[aria-pressed="true"]:hover {
+    background: var(--dk-card);
+  }
+}
+.segmented-bar-btn:focus-visible {
+  outline-color: #fff;
+}
+.segmented-bar-btn[aria-pressed="true"]:focus-visible {
+  outline-color: var(--dk-mat);
+}
+
+/* ==========================================================================
+   CASE STUDIES — shared across every work/*.html page (and colophon.html,
+   which uses the identical case-hero/article/case-stat markup). Each page
+   is two cards: .case-hero and the long-form .article, both .sheet.p-graph.
+   The nav (prev/next case study) is deliberately NOT a card — it sits
+   directly on the mat, so its buttons need mat-safe colors (see below).
+   ========================================================================== */
+
+/* NDA note + pull-quote → tracing paper, sitting ON the article's own
+   graph-paper card (never a card's own base — vellum needs an opaque
+   surface under it to read as translucent paper rather than a green-
+   tinted patch of mat). Positioning (rotation, the negative-margin bleed
+   past the card's own edge onto the mat, sizing) is untouched — only the
+   material (fill/shadow/ink) changes here. */
+.sticky-note--margin {
+  background-color: rgb(var(--dk-trace) / 0.6);
+  -webkit-backdrop-filter: blur(1.4px) saturate(0.88) brightness(1.04);
+  backdrop-filter: blur(1.4px) saturate(0.88) brightness(1.04);
+  border: none;
+  box-shadow: var(--dk-sh-trace), inset 0 0 0 1px rgb(255 255 255 / 0.42);
+  color: var(--dk-ink);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .sticky-note--margin {
+    background-color: var(--dk-bond);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* case-stat / status-callout / compare-col → ruled index card. Same
+   opaque-card reasoning as above, just the other stock: these carry a
+   number or a status list, not an annotation, so the ruled-card material
+   fits better than vellum. border-radius: 0 replaces the old UI-card
+   rounding — paper is cut, not rounded, everywhere else in this system. */
+.case-stat,
+.compare-col,
+.status-callout {
+  background-color: var(--dk-card);
+  background-image: repeating-linear-gradient(0deg, transparent 0 1.55rem, #c6d6e9 1.55rem calc(1.55rem + 1px));
+  background-size: 100% 100%;
+  background-position: 0 2.6rem;
+  background-repeat: repeat;
+  border-radius: 0;
+  box-shadow: var(--dk-sh-card), var(--dk-lit-edge), inset -1px 0 0 rgb(0 0 0 / 0.06);
+}
+
+/* Case-study figures → a photo stuck on the page: white padding-border
+   standing in for a print border, the .sheet contact shadow, and a
+   small alternating tilt so it doesn't look mechanically placed.
+   figcaption is untouched — plain paper text under the photo is already
+   "the description in the paper," it never needed its own treatment. */
+.prose figure {
+  margin-block: var(--space-07);
+}
+.prose figure:nth-of-type(odd) {
+  transform: rotate(-1deg);
+}
+.prose figure:nth-of-type(even) {
+  transform: rotate(1deg);
+}
+.prose figure img {
+  background: #fff;
+  padding: var(--space-03) var(--space-03) var(--space-06);
+  border: none;
+  outline: none;
+  box-shadow: var(--dk-sh-flat);
+  display: block;
+}
+
+/* The nav (prev/next case study) sits directly on the mat, not on a
+   card, and now breaks all the way to the actual viewport edge — same
+   --vw-px technique as .site-footer (see its comment), since .case-nav's
+   own .container class only ever spanned body's own capped paper width,
+   not the true page edge. */
+.case-nav-band {
+  position: relative;
+  inline-size: var(--vw-px, 100vw);
+  margin-inline-start: calc(50% - (var(--vw-px, 100vw) / 2));
+}
+.case-nav {
+  padding-inline: 0;
+  padding-block: var(--space-08) var(--space-09);
+}
+/* Icon + label always visible (no reveal-on-hover any more) — default
+   and hover/focus/active are the two states of ONE button, not an
+   icon-only control that grows a label. Default: a faint white-10%
+   fill, white icon/text — verified white still clears ~7.1:1 on the
+   mat regardless of the 10% white wash underneath it (that wash only
+   lightens the mat fractionally). Hover/focus-visible/active: fill
+   solidifies to --dk-card (the site's cream paper), and icon/text
+   switch to --dk-mat so they stay legible against the now-light fill —
+   white-on-cream would fail. The focus ring follows the same swap: white
+   at rest (matching the site-wide mat-safe pattern already used for
+   .colophon a), --dk-mat once the fill is active, since a white ring on
+   a cream fill would itself go invisible. */
+.case-nav .btn-secondary {
+  background: rgb(255 255 255 / 0.1);
+  color: #fff;
+  outline-color: #fff;
+}
+@media (hover: hover) {
+  .case-nav .btn-secondary:hover {
+    background: var(--dk-card);
+    color: var(--dk-mat);
+  }
+}
+.case-nav .btn-secondary:focus-visible,
+.case-nav .btn-secondary:active {
+  background: var(--dk-card);
+  color: var(--dk-mat);
+  outline-color: var(--dk-mat);
+}
+
+/* .colophon's own top border/padding (from styles.css's base rule) are
+   dropped: .site-footer::before already draws the short centered
+   mat-safe rule above it, so a second border was redundant — the color/
+   typography reset itself lives in the shared .footer-note, .colophon
+   rule above. Only the link, which .footer-note never has, needs its
+   own color here. */
+.colophon {
+  padding-block-start: 0;
+}
+.colophon a {
+  color: #fff;
+  text-decoration-color: rgb(255 255 255 / 0.5);
+}
+@media (hover: hover) {
+  .colophon a:hover {
+    color: rgb(255 255 255 / 0.72);
+  }
+}
+.colophon a:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Hero's own secondary button — green outline/text (matching the primary
+   green, not the site-wide blue accent), scoped to .hero-actions so the
+   base .btn-secondary (case-nav's own override aside, otherwise unused
+   elsewhere right now) stays the plain blue default for any future use.
+   A translucent-white fill at rest, going fully opaque on
+   hover/focus-visible/active — border and text color don't move, only
+   the fill does. Contrast only improves as the fill lightens (composite
+   of 30% white over --dk-paper is already lighter than the paper alone,
+   which itself clears 6.35:1 for --dk-mat text), so no new verification
+   needed beyond the pairing already checked for hero's primary button. */
+.hero-actions .btn-secondary {
+  border-color: var(--dk-mat);
+  color: var(--dk-mat);
+  background: rgb(255 255 255 / 0.3);
+}
+@media (hover: hover) {
+  .hero-actions .btn-secondary:hover {
+    background: #fff;
+  }
+}
+.hero-actions .btn-secondary:focus-visible,
+.hero-actions .btn-secondary:active {
+  background: #fff;
+}
+
+/* ==========================================================================
+   SCROLL CUE — a small "there's more below" affordance, fixed to the
+   viewport (not the card) so it stays visible as a real prompt while the
+   visitor is still near the top, then js/main.js §8.5 adds .is-hidden
+   once they've scrolled past one viewport height ("the fold") — the same
+   threshold the header uses for its own show/hide. A real, focusable <a>
+   (not a decorative div), so it's a genuine second way to reach the next
+   section, not just a hint. Rounded-square, matching .btn's own
+   border-radius, not a circle. */
+.scroll-cue {
+  position: fixed;
+  inset-inline-start: 50%;
+  inset-block-end: var(--space-06);
+  transform: translateX(-50%);
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border-radius: var(--radius-md);
+  corner-shape: superellipse(3);
+  border: 1.5px solid var(--dk-paper-grid-5);
+  background: var(--dk-card);
+  color: var(--dk-ink-2);
+  font-size: 1.1rem;
+  line-height: 1;
+  text-decoration: none;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--duration-base) var(--ease),
+    visibility var(--duration-base) var(--ease);
+}
+.scroll-cue.is-hidden {
+  /* visibility (not just opacity) so a faded-out cue also drops out of
+     the keyboard tab order — an invisible but still-focusable link is a
+     trap for anyone tabbing through. Paired in the transition list above
+     so it flips at the end of the opacity fade, not instantly. */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .scroll-cue:hover {
+    border-color: var(--dk-blue);
+    color: var(--dk-blue);
+  }
+}
+.scroll-cue:focus-visible {
+  outline: 2px solid var(--dk-blue);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue {
+    transition: none;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-cue span {
+    display: inline-block;
+    animation: scroll-cue-bob 1.8s var(--ease) infinite;
+  }
+}
+@keyframes scroll-cue-bob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+@media (max-width: 47.99em) {
+  .scroll-cue {
+    display: none;
+  }
+}

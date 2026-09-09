@@ -11,64 +11,35 @@
 
   const root = document.documentElement;
 
+  /* --vw-px: the true usable viewport width, in px, excluding the
+     scrollbar's own track. `100vw` in CSS always includes that track on
+     desktop browsers with a layout-space scrollbar, so a full-bleed
+     element built from `width:100vw; margin-inline-start:calc(50% -
+     50vw)` sits half the scrollbar's width off-center — a few px of the
+     element hidden past the left edge, the same gap left unfilled on the
+     right. Windows/Linux Chrome/Firefox reserve ~15-17px for this;
+     macOS's overlay scrollbar reserves 0 — a fixed compensation value
+     would just move the error to the platforms that don't need it, so
+     this is measured, not guessed. Falls back to plain `100vw` (the old,
+     slightly-off-center behavior) if JS never runs. */
+  function setViewportWidthVar() {
+    root.style.setProperty("--vw-px", `${root.clientWidth}px`);
+  }
+  setViewportWidthVar();
+  window.addEventListener("resize", setViewportWidthVar);
+
   /* Reassigned by section 6 (only when the page has zoomable images) so
      section 2's language toggle can keep the lightbox's per-image labels
      in sync without section 2 needing to know section 6 exists. */
   let refreshLightboxLabels = () => {};
 
   /* Populated by section 4 the first time the mat colour is anything other
-     than each theme's own plain default (i.e. a swatch was picked, a custom
-     colour was typed, or a saved one was restored on load) — {light, dark}
-     accent sets for whatever the mat currently is. Read by setTheme() below
-     so a theme toggle re-applies the CORRECT half of an already-customised
-     mat's accent pair instantly, with no recomputation. Left null in the
-     plain-default case: --color-accent's own per-theme values in tokens.css
-     already track each theme's own default mat with no JS involved, so
-     there is nothing for a toggle to do. */
-  let currentMatAccentSets = null;
-
-  /* ------------------------------------------------------------------
-     1. Theme toggle
-     Order of truth: saved choice > OS preference > light.
-     (An inline script in <head> applies the saved theme before paint
-     to avoid a flash — this section only wires the button.)
-  ------------------------------------------------------------------ */
-  const themeBtn = document.querySelector("[data-theme-toggle]");
-  // Mobile's full-width "Light mode / Dark mode" segmented bar (see
-  // .mobile-controls in styles.css) — a two-option stand-in for the
-  // circular icon toggle, which hides at that width instead of doubling
-  // up. Both drive the same setTheme() and stay in sync automatically.
-  const themeOptionBtns = Array.prototype.slice.call(
-    document.querySelectorAll("[data-theme-option]")
-  );
-
-  const setTheme = (theme) => {
-    root.dataset.theme = theme;
-    localStorage.setItem("theme", theme);
-    if (themeBtn) {
-      themeBtn.setAttribute("aria-pressed", String(theme === "dark"));
-    }
-    themeOptionBtns.forEach((btn) => {
-      btn.setAttribute("aria-pressed", String(btn.dataset.themeOption === theme));
-    });
-    // The mat itself doesn't change with the theme, so if it's currently
-    // driving a non-default accent, that accent needs to be re-solved for
-    // the theme just switched TO — a hue that clears 4.5:1 on light parchment
-    // is not the same lightness that clears 4.5:1 on dark paper.
-    if (currentMatAccentSets) applyAccentSets(currentMatAccentSets);
-  };
-
-  if (themeBtn) {
-    themeBtn.setAttribute("aria-pressed", String(root.dataset.theme === "dark"));
-    themeBtn.addEventListener("click", () => {
-      setTheme(root.dataset.theme === "dark" ? "light" : "dark");
-    });
-  }
-  themeOptionBtns.forEach((btn) => {
-    const current = root.dataset.theme === "dark" ? "dark" : "light";
-    btn.setAttribute("aria-pressed", String(btn.dataset.themeOption === current));
-    btn.addEventListener("click", () => setTheme(btn.dataset.themeOption));
-  });
+     than the plain default (i.e. a swatch was picked, a custom colour was
+     typed, or a saved one was restored on load) — the accent set for
+     whatever the mat currently is. Left null in the plain-default case:
+     --color-accent's own default value in tokens.css already tracks the
+     default mat with no JS involved. */
+  let currentMatAccentSet = null;
 
   /* ------------------------------------------------------------------
      2. Content mode toggle: en (original) / en-simple (Simplified
@@ -88,19 +59,17 @@
      ~190 keys behind the five content-bearing pages above live in
      js/strings.js instead, which those five pages alone load (via a
      <script> tag before this one) and merge in below — see CLEANUP-PLAN
-     2.5. A page that skips that tag (ai-process-framework,
-     incridea-2022-branding, 404) still gets a fully working chrome
-     toggle; it just has no "case.", "hero.", "about." etc. keys to
-     translate, which matches its markup exactly, since none of those
-     pages use data-i18n for body content either. */
+     2.5. A page that skips that tag (incridea-2022-branding, 404) still
+     gets a fully working chrome toggle; it just has no "case.", "hero.",
+     "about." etc. keys to translate, which matches its markup exactly,
+     since none of those pages use data-i18n for body content either. */
   const STRINGS = {
     en: {
       "brand.name": "Rolan Gomes",
       "nav.work": "Works",
-      "nav.about": "About",
+      "nav.about": "About me",
       "nav.contact": "Contact",
       "nav.toggle": "Menu",
-      "toggle.theme": "Toggle dark mode",
       "lightbox.expand": "View full-screen",
       "lightbox.close": "Close",
       "footer.colophon": "© 2026 Rolan Gomes. Built with loads of imagination, love and Claude Code.",
@@ -114,7 +83,6 @@
       "nav.about": "نبذة عني",
       "nav.contact": "تواصل",
       "nav.toggle": "القائمة",
-      "toggle.theme": "تبديل الوضع الداكن",
       "lightbox.expand": "عرض بملء الشاشة",
       "lightbox.close": "إغلاق",
       "footer.colophon": "© ٢٠٢٦ رولان غوميس. صُنع بكثير من الخيال والحب، وبمساعدة Claude Code.",
@@ -125,8 +93,8 @@
   // Merge js/strings.js's page-specific body copy (hero/about/skills/certs/
   // contact on index.html, case.* on the four fully-translated case
   // studies) into the chrome-only object above, when that file is loaded.
-  // Pages that don't need it (ai-process-framework, incridea-2022-branding,
-  // 404, about/contact) simply don't include the <script> tag, and
+  // Pages that don't need it (incridea-2022-branding, 404, about/contact)
+  // simply don't include the <script> tag, and
   // STRINGS stays chrome-only — every data-i18n key those pages actually
   // use lives here already. See CLEANUP-PLAN 2.5.
   if (window.CASE_STRINGS) {
@@ -336,6 +304,42 @@
   });
 
   /* ------------------------------------------------------------------
+     3b. Work-card images — desktop only, never fetched on mobile.
+     .work-card-media (css/desk.css) is display: none below the same 40em
+     container width css/styles.css switches it to display: block at —
+     the images are "taped on" a paper card that only exists at that
+     width, so there is nothing to show at narrower ones. `loading="lazy"`
+     on a display:none <img> does NOT reliably skip the network request
+     (verified in-browser: it still fetched) — the only way to actually
+     not download these on mobile is to never give the <img> a `src` at
+     all until script confirms the container is wide enough. The images
+     carry `data-src` in the markup instead of `src` for exactly this.
+
+     A ResizeObserver on <body> (not window.matchMedia on the viewport)
+     because the container query it mirrors measures body's own
+     inline-size — which is --paper-inline, not 100vw, above the tablet
+     breakpoint — so a viewport-width check would disagree with the CSS
+     breakpoint at some widths. */
+  const workMediaImgs = document.querySelectorAll(".work-card-media img[data-src]");
+  if (workMediaImgs.length && "ResizeObserver" in window) {
+    const WORK_MEDIA_MIN_PX = 640; // 40em at the site's 16px root
+    let workMediaLoaded = false;
+    const loadWorkMedia = () => {
+      if (workMediaLoaded) return;
+      workMediaLoaded = true;
+      workMediaImgs.forEach((img) => {
+        img.src = img.dataset.src;
+        img.loading = "lazy";
+      });
+      bodyWidthObserver.disconnect();
+    };
+    const bodyWidthObserver = new ResizeObserver((entries) => {
+      if (entries[0].contentRect.width >= WORK_MEDIA_MIN_PX) loadWorkMedia();
+    });
+    bodyWidthObserver.observe(document.body);
+  }
+
+  /* ------------------------------------------------------------------
      4. Surface picker — recolor the cutting mat.
      The default mat (per theme) is pure CSS — see tokens.css, including
      the fixed --mat-texture grain this script never touches — so it
@@ -465,7 +469,7 @@
      green accent, blue gets blue." Every token this derives (--color-accent,
      --color-accent-hover, --color-on-accent, --color-tint-brand) is a plain
      CSS custom property, and --color-concept / --color-tag-bg / --color-focus
-     (light theme) are declared in tokens.css as `var(--color-accent)` /
+     are declared in tokens.css as `var(--color-accent)` /
      `var(--color-tint-brand)` aliases — so overriding these four here is
      enough to re-theme the underlines, work-card tag pills, cert/writing
      status chips, the ghost-button hover fill, and inline code, all at once,
@@ -488,52 +492,24 @@
   ------------------------------------------------------------------ */
   const PARCHMENT = "#f5f4ed";
   const WARM_SAND = "#e8e6dc";
-  const DARK_PAPER = "#26231e";
-  const DARK_SUBTLE = "#302c26";
-  const LIGHT_TEX_ALPHA = 0.20; // must track --paper-texture's light alpha
-  const DARK_TEX_ALPHA = 0.04; //  "        "        "      dark alpha
-  const DEFAULT_LIGHT = { accent: "#1B365D", hover: "#12253F", on: "#faf9f5", tint: "#EEF2F7" };
-  // Amber/bronze, not ink-blue — see the matching comment in tokens.css for
-  // why: a cool blue was the one thing breaking this palette's warm
-  // monochromatic logic on a genuinely hueless (black/grey) mat. Solved with
-  // the exact same binary-search method every mat-derived accent uses below,
-  // just fixed at an amber hue (36deg) instead of a mat's own, since a
-  // neutral mat has no hue to derive one from.
-  const DEFAULT_DARK = { accent: "#c48c39", hover: "#dab57e", on: "#141413", tint: "#362e21" };
+  const LIGHT_TEX_ALPHA = 0.20; // must track --paper-texture's alpha
+  const DEFAULT_SET = { accent: "#1B365D", hover: "#12253F", on: "#faf9f5", tint: "#EEF2F7" };
 
-  // Pre-solved, contrast-verified light+dark accent pairs for every built-in
-  // swatch (see docs/DESIGN-GUIDELINES.md "Mat-driven accent" for the numbers
+  // Pre-solved, contrast-verified accent pairs for every built-in swatch
+  // (see docs/DESIGN-GUIDELINES.md "Mat-driven accent" for the numbers
   // behind each one). Keyed by lowercase hex so lookup is a simple match.
   const MAT_ACCENT_TABLE = {
-    "#095848": { // Green (default light mat)
-      light: { accent: "#116151", hover: "#0c4338", on: "#faf9f5", tint: "#e0e7df" },
-      dark: { accent: "#1eaa8d", hover: "#25d2af", on: "#141413", tint: "#25332b" },
-    },
-    "#141414": { light: DEFAULT_LIGHT, dark: DEFAULT_DARK }, // Charcoal — neutral
-    "#0b3556": { // Navy
-      light: { accent: "#19598c", hover: "#113e60", on: "#faf9f5", tint: "#e1e6e4" },
-      dark: { accent: "#489ddf", hover: "#8bc1eb", on: "#141413", tint: "#2a3033" },
-    },
-    "#7a3418": { // Rust
-      light: { accent: "#8f3d1c", hover: "#632a14", on: "#faf9f5", tint: "#ece4da" },
-      dark: { accent: "#de7d56", hover: "#eaad94", on: "#141413", tint: "#3a2d24" },
-    },
-    "#4a2545": { // Plum
-      light: { accent: "#85397a", hover: "#5c2755", on: "#faf9f5", tint: "#ebe3e3" },
-      dark: { accent: "#c87ebe", hover: "#dcacd5", on: "#141413", tint: "#382d30" },
-    },
-    "#0d4f4a": { // Teal
-      light: { accent: "#11605a", hover: "#0c423e", on: "#faf9f5", tint: "#e0e7e0" },
-      dark: { accent: "#1ea89e", hover: "#25d0c3", on: "#141413", tint: "#25322c" },
-    },
-    "#1b365d": { // Ink blue
-      light: { accent: "#2b5694", hover: "#1e3b66", on: "#faf9f5", tint: "#e3e6e5" },
-      dark: { accent: "#6f99d5", hover: "#a1bde4", on: "#141413", tint: "#2e3032" },
-    },
-    "#30302e": { light: DEFAULT_LIGHT, dark: DEFAULT_DARK }, // Graphite — neutral
-    "#3d3d3a": { light: DEFAULT_LIGHT, dark: DEFAULT_DARK }, // Slate — neutral
-    "#504e49": { light: DEFAULT_LIGHT, dark: DEFAULT_DARK }, // Olive — neutral
-    "#6b6a64": { light: DEFAULT_LIGHT, dark: DEFAULT_DARK }, // Smoke grey — neutral
+    "#095848": { accent: "#116151", hover: "#0c4338", on: "#faf9f5", tint: "#e0e7df" }, // Green (default mat)
+    "#141414": DEFAULT_SET, // Charcoal — neutral
+    "#0b3556": { accent: "#19598c", hover: "#113e60", on: "#faf9f5", tint: "#e1e6e4" }, // Navy
+    "#7a3418": { accent: "#8f3d1c", hover: "#632a14", on: "#faf9f5", tint: "#ece4da" }, // Rust
+    "#4a2545": { accent: "#85397a", hover: "#5c2755", on: "#faf9f5", tint: "#ebe3e3" }, // Plum
+    "#0d4f4a": { accent: "#11605a", hover: "#0c423e", on: "#faf9f5", tint: "#e0e7e0" }, // Teal
+    "#1b365d": { accent: "#2b5694", hover: "#1e3b66", on: "#faf9f5", tint: "#e3e6e5" }, // Ink blue
+    "#30302e": DEFAULT_SET, // Graphite — neutral
+    "#3d3d3a": DEFAULT_SET, // Slate — neutral
+    "#504e49": DEFAULT_SET, // Olive — neutral
+    "#6b6a64": DEFAULT_SET, // Smoke grey — neutral
   };
 
   function clamp(v, lo, hi) {
@@ -626,16 +602,13 @@
   }
 
   // CSS `background-blend-mode: normal` compositing --paper-texture's own
-  // per-pixel alpha over bg — same mechanism in both themes now (see the
-  // tokens.css comment on --paper-texture for why normal replaced the old
-  // multiply/screen split). A lit-relief texture has a bright peak AND a
-  // dark valley in the same image, unlike the old flat grain, so there are
-  // two worst cases instead of one — this returns both, and callers add
-  // both to the background set findLDown/findLUp must clear. LIT_MIN/MAX
-  // are --paper-texture's actual measured output range (sampled from a
-  // live canvas render of the real filter at these settings, not
-  // estimated) and are shared by both themes since it's the identical
-  // feTurbulence/feDiffuseLighting recipe in each — only the alpha differs.
+  // per-pixel alpha over bg (see the tokens.css comment on --paper-texture).
+  // A lit-relief texture has a bright peak AND a dark valley in the same
+  // image, so there are two worst cases instead of one — this returns
+  // both, and callers add both to the background set findLDown must clear.
+  // LIT_MIN/MAX are --paper-texture's actual measured output range
+  // (sampled from a live canvas render of the real filter at these
+  // settings, not estimated).
   const LIT_MIN = 155;
   const LIT_MAX = 255;
   function litWorstPair(bgHex, alpha) {
@@ -655,19 +628,6 @@
     for (let i = 0; i < 40; i++) {
       const mid = (lo + hi) / 2;
       if (ok(mid)) { best = mid; lo = mid; } else { hi = mid; }
-    }
-    return best;
-  }
-
-  // Smallest L (walking down from 1) that still clears `target` — the
-  // darkest colour still light enough to read on a dark surface.
-  function findLUp(h, s, bgs, target) {
-    const ok = (l) => bgs.every((bg) => contrastRatio(hslToHex(h, s, l), bg) >= target);
-    if (!ok(1)) return null;
-    let lo = 0, hi = 1, best = 1;
-    for (let i = 0; i < 40; i++) {
-      const mid = (lo + hi) / 2;
-      if (ok(mid)) { best = mid; hi = mid; } else { lo = mid; }
     }
     return best;
   }
@@ -692,25 +652,14 @@
     return paperHex;
   }
 
-  function deriveAccentSet(hex, theme) {
+  function deriveAccentSet(hex) {
     const [h, s] = hexToHsl(hex);
-    if (s < 0.15) return theme === "dark" ? DEFAULT_DARK : DEFAULT_LIGHT;
+    if (s < 0.15) return DEFAULT_SET;
     const sWork = clamp(s, 0.4, 0.7);
-
-    if (theme === "dark") {
-      const bgs = [DARK_PAPER, DARK_SUBTLE, ...litWorstPair(DARK_PAPER, DARK_TEX_ALPHA)];
-      const lAccent = findLUp(h, sWork, bgs, 4.6);
-      if (lAccent === null) return DEFAULT_DARK;
-      const accent = hslToHex(h, sWork, lAccent);
-      let lHover = findLUp(h, sWork, bgs, 7.0);
-      if (lHover === null || lHover < lAccent) lHover = Math.min(1, lAccent + 0.1);
-      const hover = hslToHex(h, sWork, lHover);
-      return { accent, hover, on: chooseOn(accent), tint: deriveTint(accent, DARK_PAPER, 0.16) };
-    }
 
     const bgs = [PARCHMENT, WARM_SAND, ...litWorstPair(PARCHMENT, LIGHT_TEX_ALPHA)];
     const lAccent = findLDown(h, sWork, bgs, 4.6);
-    if (lAccent === null) return DEFAULT_LIGHT;
+    if (lAccent === null) return DEFAULT_SET;
     const accent = hslToHex(h, sWork, lAccent);
     let lHover = findLDown(h, sWork, bgs, 7.0);
     if (lHover === null || lHover > lAccent) lHover = Math.max(0, lAccent - 0.1);
@@ -718,18 +667,11 @@
     return { accent, hover, on: chooseOn(accent), tint: deriveTint(accent, PARCHMENT, 0.09) };
   }
 
-  function computeAccentSets(matHex) {
-    const known = MAT_ACCENT_TABLE[matHex.toLowerCase()];
-    if (known) return known;
-    return { light: deriveAccentSet(matHex, "light"), dark: deriveAccentSet(matHex, "dark") };
+  function computeAccentSet(matHex) {
+    return MAT_ACCENT_TABLE[matHex.toLowerCase()] || deriveAccentSet(matHex);
   }
 
-  // Declared with `function` (hoisted) so setTheme(), defined earlier in the
-  // file, can reference it safely — by the time either can actually run
-  // (a click), every top-level declaration in this IIFE has already executed.
-  function applyAccentSets(sets) {
-    const theme = root.dataset.theme === "dark" ? "dark" : "light";
-    const set = sets[theme];
+  function applyAccentSet(set) {
     root.style.setProperty("--color-accent", set.accent);
     root.style.setProperty("--color-accent-hover", set.hover);
     root.style.setProperty("--color-on-accent", set.on);
@@ -740,13 +682,13 @@
     root.style.setProperty("--color-mat", hex);
     root.style.setProperty("--mat-image", matImageValue(hex));
 
-    const sets = computeAccentSets(hex);
-    currentMatAccentSets = sets;
-    applyAccentSets(sets);
+    const set = computeAccentSet(hex);
+    currentMatAccentSet = set;
+    applyAccentSet(set);
 
     if (persist) {
       localStorage.setItem("matColor", hex);
-      localStorage.setItem("accentTokens", JSON.stringify(sets));
+      localStorage.setItem("accentTokens", JSON.stringify(set));
     }
   }
 
@@ -757,7 +699,7 @@
     root.style.removeProperty("--color-accent-hover");
     root.style.removeProperty("--color-on-accent");
     root.style.removeProperty("--color-tint-brand");
-    currentMatAccentSets = null;
+    currentMatAccentSet = null;
     localStorage.removeItem("matColor");
     localStorage.removeItem("accentTokens");
   }
@@ -1040,6 +982,36 @@
         if (!ticking) {
           requestAnimationFrame(updateHeader);
           ticking = true;
+        }
+      },
+      { passive: true }
+    );
+  }
+
+  /* ------------------------------------------------------------------
+     8.5. Scroll cue — hides once the visitor has scrolled past the
+     first viewport height ("the fold"), the same threshold §8 above
+     uses for the header. A hero/case-hero taller than one viewport
+     would make an IntersectionObserver on the section itself fire too
+     early (a tall section's own intersection ratio drops well before
+     the visitor has actually scrolled a fold's worth), so this tracks
+     scroll position directly instead.
+  ------------------------------------------------------------------ */
+  const scrollCues = document.querySelectorAll(".scroll-cue");
+  if (scrollCues.length) {
+    let cueTicking = false;
+    function updateScrollCues() {
+      const pastFold = window.scrollY > window.innerHeight;
+      scrollCues.forEach((cue) => cue.classList.toggle("is-hidden", pastFold));
+      cueTicking = false;
+    }
+    updateScrollCues();
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!cueTicking) {
+          requestAnimationFrame(updateScrollCues);
+          cueTicking = true;
         }
       },
       { passive: true }
@@ -1480,9 +1452,14 @@
       const hint = document.createElement("div");
       hint.className = "sticky-note sticky-note--tip";
 
+      // Same 48em desktop-only drag gate the sticker board itself checks
+      // (main.js §9) — a visitor on mobile can't drag anything here, so
+      // the tip shouldn't tell them they can. Matches the tone of the
+      // mobile copy already under "Here's my toolbox!" (skills.eyebrow.mobile).
       const text = document.createElement("p");
-      text.textContent =
-        "Photos and tool stickers can be dragged anywhere on the page, even past the paper, onto the mat. The mat's own color is yours to change too, from the swatch in the bottom corner.";
+      text.textContent = window.matchMedia("(min-width: 48em)").matches
+        ? "Photos and tool stickers can be dragged anywhere on the page, even past the paper, onto the mat."
+        : "Tool stickers aren't draggable on mobile — tap one to learn more!";
 
       const closeBtn = document.createElement("button");
       closeBtn.type = "button";
@@ -1669,12 +1646,12 @@
 
     // Anchor links inside the panel scroll the page to a section — leaving
     // the panel open over the destination would just be in the way. The
-    // same applies to .mobile-controls' mode/theme segmented bars: picking
-    // an option is a complete action, so it closes the panel too, same as
-    // a nav link. Harmless at desktop widths, where this panel isn't a
+    // same applies to .mobile-controls' mode segmented bar: picking an
+    // option is a complete action, so it closes the panel too, same as a
+    // nav link. Harmless at desktop widths, where this panel isn't a
     // collapsible overlay in the first place (closeNav() there just sets
     // an attribute CSS already ignores via the min-width: 64em rule).
-    navPanel.querySelectorAll("a, .mobile-controls [data-mode-option], .mobile-controls [data-theme-option]").forEach((el) => {
+    navPanel.querySelectorAll("a, .mobile-controls [data-mode-option]").forEach((el) => {
       el.addEventListener("click", () => closeNav());
     });
 

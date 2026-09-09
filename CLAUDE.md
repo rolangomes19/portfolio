@@ -16,7 +16,7 @@ because that is the entire point.
 ## Tech stack (do not change without asking)
 
 - Plain **HTML + CSS + vanilla JS**. No frameworks, no build step, no npm dependencies.
-- Fonts: all self-hosted in `assets/fonts/` — Inter (body, from rsms.me/inter/), Commissioner (headings + buttons, from kosbarts/Commissioner), Geist Mono (mono/meta, from vercel/geist-font), El Messiri (RTL headings + buttons, from Google Fonts), Harmattan (RTL body + mono/meta, from Google Fonts), and Caveat (sticky-note handwriting label text only, from Google Fonts).
+- Fonts: all self-hosted in `assets/fonts/` — Inter (body, from rsms.me/inter/), Commissioner (headings + buttons, from kosbarts/Commissioner), IBM Plex Mono (mono/meta, from Google Fonts), Reem Kufi (RTL headings + buttons, from Google Fonts), IBM Plex Sans Arabic (RTL body + mono/meta, from Google Fonts), and Architects Daughter (sticky-note/highlight-card handwriting label text only, from Google Fonts).
 - Hosting target: any static host (GitHub Pages / Vercel / Netlify).
 - Local preview: `npx serve .` or VS Code Live Server. Never require a build.
 
@@ -31,9 +31,10 @@ portfolio/
 │   └── blueprint-design-system.html   ← case study; ALSO the template for new ones
 ├── css/
 │   ├── tokens.css             ← ALL design tokens. The only place colors/sizes live.
-│   └── styles.css             ← base + components. Consumes tokens only.
+│   ├── styles.css             ← base + components. Consumes tokens only.
+│   └── desk.css               ← shared mat/paper material system, linked by every page
 ├── js/
-│   └── main.js                ← theme toggle, direction toggle, reveal, misc
+│   └── main.js                ← direction/language toggle, mat picker, reveal, misc
 ├── docs/
 │   ├── DESIGN-GUIDELINES.md   ← typography, grid, spacing, motion, component specs
 │   ├── ACCESSIBILITY-RTL-CHECKLIST.md ← test before every release
@@ -51,7 +52,7 @@ portfolio/
 - Every interactive element: visible `:focus-visible` outline
   (`2px solid var(--color-focus)`, `outline-offset: 2px`). Never `outline: none`
   without a replacement.
-- Color contrast: text ≥ 4.5:1, large text and UI components ≥ 3:1 — **in both themes**.
+- Color contrast: text ≥ 4.5:1, large text and UI components ≥ 3:1.
   Verify with the token pairs listed in `docs/DESIGN-GUIDELINES.md`; if you add a
   color, check it with a contrast tool before committing.
 - Touch targets ≥ 24×24 CSS px (WCAG 2.2 Target Size), preferably 44×44.
@@ -75,9 +76,9 @@ portfolio/
 - The `<html>` element carries `lang` and `dir`. The direction toggle in `main.js`
   switches `en/ltr ↔ ar/rtl`. UI strings come from the `data-i18n` mechanism in
   `main.js` — add new UI strings there in both languages.
-- Arabic text renders in `--font-sans-arabic-heading` (El Messiri, headings/buttons)
-  or `--font-sans-arabic-body` (Harmattan, body/mono/eyebrow), handled by `[dir="rtl"]`
-  rules in `tokens.css` / `styles.css`. Never letter-space Arabic text
+- Arabic text renders in `--font-sans-arabic-heading` (Reem Kufi, headings/buttons)
+  or `--font-sans-arabic-body` (IBM Plex Sans Arabic, body/mono/eyebrow), handled by
+  `[dir="rtl"]` rules in `tokens.css` / `styles.css`. Never letter-space Arabic text
   (`[dir="rtl"] { letter-spacing: 0 }` is already global — don't override).
 - Numbers, phone numbers, and email addresses stay LTR inside RTL text: wrap them
   in `<bdi>` or `dir="ltr"` spans.
@@ -90,9 +91,13 @@ portfolio/
   from `tokens.css`.
 - Spacing uses the Carbon-style scale (`--space-01` … `--space-12`). Do not invent
   in-between values; if a design needs one, add it to the scale deliberately.
-- Themes: light is default on `:root`; dark overrides live under
-  `[data-theme="dark"]`. Both must pass contrast (rule 1). `color-scheme` is set so
-  form controls/scrollbars follow the theme.
+- One committed theme, on `:root` — no second theme block. `color-scheme` is
+  set so form controls/scrollbars match. Every page also loads a shared
+  desk/paper material system (`css/desk.css`) that does not read from
+  `tokens.css`'s color tokens at all — see that file's own header comment.
+  It's a single stylesheet linked by every HTML file, not copied per page;
+  a background, card stock, or footer-text change belongs there once, never
+  duplicated into a page's own markup.
 - When adding a component, add tokens first, then the component CSS.
 
 ### 4. Performance budget

@@ -16,14 +16,14 @@
    self-hosted variable fonts should not be showing.
    See docs/FONT-LOADING-PERF-PLAN.md for the full before/after.
 
-   InterVariable.woff2, Commissioner-Variable.woff2, and
-   GeistMono-Variable.woff2 below are all Latin-subsetted (fontTools
+   InterVariable.woff2, Commissioner-Variable.woff2, and the IBM Plex Mono
+   files below are all Latin-subsetted (fontTools
    pyftsubset — Basic Latin, Latin-1 Supplement, Latin Extended-A,
    General Punctuation, Currency Symbols, Arrows, Geometric Shapes) —
    a one-time, manual regeneration of the asset, not a build step. Full
    Unicode originals covered dozens of scripts (Cyrillic, Greek,
    Vietnamese...) this Latin-only site never renders through them —
-   Arabic is El Messiri's and Harmattan's job entirely, never these three.
+   Arabic is Reem Kufi's and IBM Plex Sans Arabic's job entirely, never these three.
    Re-run the subset (command in the perf plan doc) if a future edit needs
    a character outside that range; the font will otherwise silently fall
    back to the browser's system sans/mono for just that character. */
@@ -35,11 +35,14 @@
   src: url("../assets/fonts/InterVariable.woff2") format("woff2");
 }
 
-/* ------ Fonts: self-hosted Commissioner, Geist Mono ------
-   Commissioner (headings + button/link labels) and Geist Mono (all
-   monospace/meta text) downloaded from their GitHub source repos
-   (kosbarts/Commissioner, vercel/geist-font) — single variable-font files,
-   same pattern as InterVariable above. */
+/* ------ Fonts: self-hosted Commissioner, IBM Plex Mono ------
+   Commissioner (headings + button/link labels) downloaded from its GitHub
+   source repo (kosbarts/Commissioner) — a single variable-font file, same
+   pattern as InterVariable above. IBM Plex Mono (all monospace/meta text)
+   ships static weights on Google Fonts (no variable axis), so it gets two
+   @font-face rules instead of one — Regular for body-weight mono text,
+   Medium covering 500-900 for anything that needs to read as emphasised
+   (nothing does yet, but the range costs nothing extra to declare). */
 @font-face {
   font-family: "Commissioner";
   font-style: normal;
@@ -47,48 +50,85 @@
   font-display: swap;
   src: url("../assets/fonts/Commissioner-Variable.woff2") format("woff2");
 }
-/* El Messiri (RTL headings/buttons, substituting for Commissioner) and
-   Harmattan (RTL body/eyebrow/mono, substituting for Inter and Geist Mono)
-   — both from Google Fonts, downloaded and self-hosted per this site's
-   convention. Harmattan only ships a single Regular weight upstream;
-   there is no bold cut to fall back to for Arabic strong/heading-weight
-   text. */
+/* Reem Kufi (RTL headings/buttons, substituting for Commissioner) and IBM
+   Plex Sans Arabic (RTL body/eyebrow/mono, substituting for Inter and IBM
+   Plex Mono) — both from Google Fonts, Arabic-subset only (unicode-range
+   trimmed to the "arabic" block Google itself serves), downloaded and
+   self-hosted per this site's convention. Reem Kufi ships as a single
+   variable file (400-700); Plex Sans Arabic ships static weights, so one
+   @font-face per weight actually used on the site. */
 @font-face {
-  font-family: "El Messiri";
+  font-family: "Reem Kufi";
   font-style: normal;
   font-weight: 400 700;
   font-display: swap;
-  src: url("../assets/fonts/ElMessiri-Variable.woff2") format("woff2");
+  src: url("../assets/fonts/ReemKufi-Variable.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
 }
 @font-face {
-  font-family: "Harmattan";
+  font-family: "IBM Plex Sans Arabic";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("../assets/fonts/IBMPlexSansArabic-Light.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("../assets/fonts/Harmattan-Regular.woff2") format("woff2");
+  src: url("../assets/fonts/IBMPlexSansArabic-Regular.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
 }
 @font-face {
-  font-family: "Geist Mono";
+  font-family: "IBM Plex Sans Arabic";
   font-style: normal;
-  font-weight: 100 900;
+  font-weight: 500;
   font-display: swap;
-  src: url("../assets/fonts/GeistMono-Variable.woff2") format("woff2");
+  src: url("../assets/fonts/IBMPlexSansArabic-Medium.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../assets/fonts/IBMPlexSansArabic-SemiBold.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/IBMPlexMono-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500 900;
+  font-display: swap;
+  src: url("../assets/fonts/IBMPlexMono-Medium.woff2") format("woff2");
 }
 
-/* ------ Fonts: self-hosted Caveat (handwriting) ------
+/* ------ Fonts: self-hosted Architects Daughter (handwriting) ------
    Downloaded from Google Fonts' own CDN (the "latin" subset — Basic Latin,
    Latin-1 Supplement, and matching punctuation, the same scope the other
    Latin-subsetted fonts above cover), not linked live, so it follows the
-   same self-hosting rule as every other typeface here. Used only for the
-   sticky-note component's handwritten label text (.sticky-note), never for
-   headings or body copy, and never under [dir="rtl"] — see the RTL
-   override further down. */
+   same self-hosting rule as every other typeface here. A monoline
+   architect's-hand face, not a flowing cursive (Caveat, used here until
+   this swap) — fits the drafting-table material system this site now
+   runs on. Used only for handwritten annotation text (.sticky-note,
+   .highlight-card), never for headings or body copy, and never under
+   [dir="rtl"] — see the RTL override further down. Ships only a Regular
+   weight upstream — there is no bold cut. */
 @font-face {
-  font-family: "Caveat";
+  font-family: "Architects Daughter";
   font-style: normal;
-  font-weight: 400 700;
+  font-weight: 400;
   font-display: swap;
-  src: url("../assets/fonts/Caveat-Variable.woff2") format("woff2");
+  src: url("../assets/fonts/ArchitectsDaughter-Regular.woff2") format("woff2");
 }
 
 /* ------ Reset & base ------ */
@@ -526,57 +566,9 @@ pre,
   }
 }
 
-/* 12px, not 8px. These two toggles used to be transparent outlines, where a
-   tight gap read fine; now they carry a warm-sand fill, and two filled pills
-   8px apart start to read as one segmented control rather than two
-   independent buttons. */
 .header-controls {
   display: flex;
   gap: var(--space-04);
-}
-
-/* Toggle buttons: 44px hit area, real buttons, state via aria-pressed.
-   Pill-shaped like the page's other actions (see .btn) so the header chrome
-   and the hero CTAs read as one button vocabulary. The pressed state inverts
-   to the accent rather than to plain ink — this is the site's one chromatic
-   colour, and "on" is exactly what it is for. */
-.toggle-btn {
-  min-inline-size: 2.75rem;
-  min-block-size: 2.75rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-02);
-  background: var(--color-surface-interactive);
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-pill);
-  color: var(--color-text);
-  font-family: var(--font-sans);
-  font-size: var(--text-body);
-  cursor: pointer;
-  /* padding-inline, not padding-left/right — physical properties do not
-     mirror under [dir="rtl"]. */
-  padding-inline: var(--space-04);
-  transition: background var(--duration-fast) var(--ease),
-    color var(--duration-fast) var(--ease),
-    border-color var(--duration-fast) var(--ease);
-}
-@media (hover: hover) {
-  .toggle-btn:hover {
-    background: var(--color-tint-brand);
-    border-color: var(--color-accent);
-  }
-}
-.toggle-btn[aria-pressed="true"] {
-  background: var(--color-accent);
-  color: var(--color-on-accent);
-  border-color: var(--color-accent);
-}
-@media (hover: hover) {
-  .toggle-btn[aria-pressed="true"]:hover {
-    background: var(--color-accent-hover);
-    border-color: var(--color-accent-hover);
-  }
 }
 
 /* ------ Mode select (desktop) ------
@@ -598,19 +590,18 @@ pre,
   }
 }
 .mode-select-trigger {
-  min-inline-size: 2.75rem;
-  min-block-size: 2.75rem;
   display: inline-flex;
   align-items: center;
   gap: var(--space-02);
   background: var(--color-surface-interactive);
   border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(3);
   color: var(--color-text);
   font-family: var(--font-sans);
   font-size: var(--text-body);
   cursor: pointer;
-  padding-inline: var(--space-04);
+  padding: var(--space-04) var(--space-05);
   transition: background var(--duration-fast) var(--ease),
     border-color var(--duration-fast) var(--ease);
 }
@@ -639,7 +630,8 @@ pre,
   padding: var(--space-02);
   background: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(3);
   box-shadow: var(--shadow-float);
 }
 /* [hidden]'s UA-stylesheet `display: none` and this file's own `.mode-select-panel`
@@ -656,7 +648,8 @@ pre,
   padding: var(--space-03) var(--space-04);
   background: transparent;
   border: none;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(3);
   color: var(--color-text);
   font-family: var(--font-sans);
   font-size: var(--text-body);
@@ -680,42 +673,44 @@ pre,
   }
 }
 
-/* ------ Segmented bar (mobile — mode + theme) ------
-   Same pill vocabulary as .toggle-btn, stretched full-width with full
-   text labels (not the desktop trigger's abbreviated form), used only
-   inside .mobile-controls below 64em. Two of these stack there: one for
-   content mode (en/en-simple/ar), one for theme (light/dark) — the
-   desktop equivalents (.mode-select, the circular .toggle-btn) hide at
-   that width instead of doubling up. */
+/* ------ Segmented bar (mobile — language/content mode) ------
+   Same pill vocabulary as .btn, stretched full-width with full text
+   labels (not the desktop trigger's abbreviated form), used only inside
+   .mobile-controls below 64em — the desktop equivalent (.mode-select)
+   hides at that width instead of doubling up. */
 .segmented-bar {
   display: flex;
   align-items: stretch;
   inline-size: 100%;
   background: var(--color-surface-interactive);
   border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(3);
 }
 .segmented-bar-btn {
   flex: 1;
-  min-block-size: 2.75rem;
-  padding-inline: var(--space-03);
+  min-block-size: 3.5rem;
+  padding-inline: var(--space-05);
   background: transparent;
   border: none;
   border-inline-start: 1px solid var(--color-border-strong);
   color: var(--color-text);
-  font-size: var(--text-body);
+  font-size: var(--text-lead);
+  font-weight: 600;
   cursor: pointer;
   transition: background var(--duration-fast) var(--ease),
     color var(--duration-fast) var(--ease);
 }
 .segmented-bar-btn:first-child {
   border-inline-start: none;
-  border-start-start-radius: var(--radius-pill);
-  border-end-start-radius: var(--radius-pill);
+  border-start-start-radius: var(--radius-sm);
+  border-end-start-radius: var(--radius-sm);
+  corner-shape: superellipse(3);
 }
 .segmented-bar-btn:last-child {
-  border-start-end-radius: var(--radius-pill);
-  border-end-end-radius: var(--radius-pill);
+  border-start-end-radius: var(--radius-sm);
+  border-end-end-radius: var(--radius-sm);
+  corner-shape: superellipse(3);
 }
 @media (hover: hover) {
   .segmented-bar-btn:hover {
@@ -741,9 +736,8 @@ pre,
     gap: var(--space-04);
     inline-size: 100%;
   }
-  /* The desktop-only controls this replaces at narrow widths. */
-  .mode-select,
-  .theme-icon-toggle {
+  /* The desktop-only control this replaces at narrow widths. */
+  .mode-select {
     display: none;
   }
 }
@@ -761,13 +755,13 @@ pre,
    no state to reconcile if JS never runs. */
 .nav-toggle {
   display: none;
-  min-inline-size: 2.75rem;
-  min-block-size: 2.75rem;
   align-items: center;
   justify-content: center;
+  padding: var(--space-04);
   background: var(--color-surface-interactive);
   border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(3);
   cursor: pointer;
 }
 .nav-toggle-icon,
@@ -822,11 +816,13 @@ pre,
     display: inline-flex;
   }
   .site-header.nav-js-ready .site-nav-panel {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     position: absolute;
     inset-inline: 0;
     inset-block-start: 100%;
-    padding: var(--space-05) var(--paper-margin-inline) var(--space-07);
+    padding: var(--space-08) var(--paper-margin-inline) var(--space-09);
     background: var(--color-bg);
     border-block-end: 1px solid var(--color-border);
     box-shadow: var(--shadow-float);
@@ -836,15 +832,27 @@ pre,
   }
   .site-header.nav-js-ready .site-nav ul {
     flex-direction: column;
-    gap: var(--space-02);
+    align-items: center;
+    gap: var(--space-07);
+    text-align: center;
   }
   .site-header.nav-js-ready .site-nav a {
-    font-size: var(--text-lead);
+    font-size: var(--text-h2);
   }
   .site-header.nav-js-ready .header-controls {
-    margin-block-start: var(--space-06);
-    padding-block-start: var(--space-05);
-    border-block-start: 1px solid var(--color-border-soft);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    inline-size: 100%;
+    margin-block-start: var(--space-08);
+  }
+  /* Breaks out of .site-nav-panel's own (fairly generous) side padding so
+     the segmented control reads as full-width, with only a minimum
+     padding of its own — not the same inset the nav links above it use. */
+  .site-header.nav-js-ready .mobile-controls {
+    inline-size: 100%;
+    margin-inline: calc(-1 * var(--paper-margin-inline));
+    padding-inline: var(--space-04);
   }
 }
 @media (min-width: 64em) {
@@ -876,36 +884,22 @@ pre,
   gap: var(--space-05);
   margin-block-end: var(--space-07);
 }
-/* The GIF is a solid white silhouette on transparent, made for a dark
-   surface. A plain invert() turns the solid white fill into solid black —
-   readable, but it reads as a harsh photo-negative rather than an
-   intentional light-mode graphic, since the art is filled shapes, not thin
-   linework. Softening the inverted result (contrast down, brightness up)
-   turns that solid black into a mid-gray silhouette instead. Dark theme
-   needs no correction since white-on-transparent is already right there. */
 .hero-avatar img {
   inline-size: 8rem;
   block-size: auto;
 }
-[data-theme="dark"] .hero-avatar img {
-  filter: none;
-}
-/* Below 48em the name/role text stack wraps onto more lines than it does at
-   desktop widths, so the avatar's own fixed 8rem width (and the height that
-   falls out of its aspect ratio) reads as too small next to it. Stretching
-   the row and sizing the image off the stretched height, instead of a fixed
-   width, keeps the avatar matched to however tall that text stack happens to
-   wrap at any given mobile width — same mechanism as .work-card-media's
-   fixed-ratio approach elsewhere in this file, just solved on the other
-   axis. inline-size: auto lets the image's own intrinsic ratio (from its
-   width/height attributes in the markup) drive the resulting width. */
+/* Below 48em, the avatar stacks above the name/role text instead of
+   sitting beside it. The old approach kept them side by side and drove
+   the avatar's width off the row's stretched height (to match however
+   tall the wrapping text got) — technically non-distorting (inline-size:
+   auto preserves the intrinsic ratio), but it read as stretching because
+   the avatar ballooned to whatever height the text stack happened to
+   wrap to. Stacking removes that coupling entirely: the avatar keeps its
+   own fixed width and true aspect ratio regardless of how the text wraps. */
 @media (max-width: 47.99em) {
   .hero-identity {
-    align-items: stretch;
-  }
-  .hero-avatar img {
-    inline-size: auto;
-    block-size: 100%;
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 /* GIF playback can't be paused by CSS, so prefers-reduced-motion swaps to a
@@ -967,14 +961,18 @@ pre,
 
    The 1.5px ghost border is matched by a 1.5px transparent border on the
    filled variant, so the two sit at identical heights in the same row. */
+/* Anatomy: .btn itself carries no padding of its own — every button is
+   built from a .btn-label (text, padding: 12px block / 16px inline) and,
+   where the button has one, a .btn-icon (a 24px icon, 12px padding on
+   all sides, so icon+padding = a 48px square). Both children stretch to
+   the row's own height, so an icon-only button and a labelled button
+   line up exactly. */
 .btn {
   display: inline-flex;
-  align-items: center;
-  gap: var(--space-03);
-  padding: var(--space-04) var(--space-06);
-  min-block-size: 2.75rem;
+  align-items: stretch;
   border: 1.5px solid transparent;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(3);
   font-family: var(--font-heading);
   font-size: var(--text-body);
   font-weight: 500;
@@ -983,12 +981,38 @@ pre,
     color var(--duration-fast) var(--ease),
     border-color var(--duration-fast) var(--ease);
 }
-.btn-primary {
-  background: var(--color-accent);
-  color: var(--color-on-accent);
-  border-color: var(--color-accent);
+.btn-label {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-04) var(--space-05);
+  white-space: nowrap;
 }
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: var(--space-04);
+}
+.btn-icon svg {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+}
+/* Primary is the brand's own green (--color-primary), not the blue link
+   accent — a solid-fill CTA reads as the site's identity color, while
+   links/focus/secondary buttons keep using --color-accent (blue). */
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-on-accent);
+  border-color: var(--color-primary);
+}
+/* Resting fill, not just an outline: --color-tint-brand is the same
+   "quietest fill" pale tint already used on hover elsewhere on paper —
+   giving it to .btn-secondary at rest too matches the always-filled
+   secondary-button look from the paper-stack-lab reference, rather than
+   only appearing once a visitor hovers. */
 .btn-secondary {
+  background: var(--color-tint-brand);
   border-color: var(--color-accent);
   color: var(--color-accent);
 }
@@ -997,11 +1021,12 @@ pre,
    pressed. */
 @media (hover: hover) {
   .btn-primary:hover {
-    background: var(--color-accent-hover);
-    border-color: var(--color-accent-hover);
+    background: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
   }
   .btn-secondary:hover {
-    background: var(--color-tint-brand);
+    border-color: var(--color-accent-hover);
+    color: var(--color-accent-hover);
   }
 }
 
@@ -1016,7 +1041,6 @@ pre,
    `transition: all`, which would also animate layout properties. */
 @media (prefers-reduced-motion: no-preference) {
   .btn,
-  .toggle-btn,
   .mode-select-trigger,
   .mode-select-option,
   .segmented-bar-btn,
@@ -1029,7 +1053,6 @@ pre,
       transform var(--duration-fast) var(--ease);
   }
   .btn:active,
-  .toggle-btn:active,
   .mode-select-trigger:active,
   .mode-select-option:active,
   .segmented-bar-btn:active,
@@ -1101,30 +1124,22 @@ pre,
 .work-list {
   list-style: none;
   padding: 0;
-  border-block-start: 1px solid var(--color-border);
 }
 
-/* Flat divided list, not individually boxed tiles: each card is a row with
-   a content column and an (empty, for now) image column. grid-template-columns
-   places content first — the inline-start track — so it mirrors to the
-   right automatically under [dir="rtl"] with no extra rule, same mechanism
-   the old .work-item relied on for its arrow-only RTL override. */
-/* A divided list row rather than a boxed card, so it keeps its divider and
-   stays transparent at rest — but it takes the card fill and the card's
-   whisper-and-rise on hover (via .is-liftable in the markup), so the site
-   still has exactly one hover physics.
+/* Each card is a row with a content column and an image column.
+   grid-template-columns places content first — the inline-start track —
+   so it mirrors to the right automatically under [dir="rtl"] with no
+   extra rule, same mechanism the old .work-item relied on for its
+   arrow-only RTL override.
 
-   Padding lives on .work-card-content, not here — the row itself is
-   padding-free so .work-card-media can reach every edge of the row (full
-   height via align-items: stretch, flush to the outer inline edge, since
-   it's the grid's last track and there's nothing left inset around it). The
-   text column still gets exactly the same inset it always did; it just
-   supplies its own now instead of inheriting it from the row. */
+   Each row is its own paper sheet now (css/desk.css supplies the stock
+   and the stacked/overlapping placement) rather than a flat divided
+   list, so there's no hover fill or divider here any more — a sheet of
+   paper doesn't recolor when the pointer crosses it. */
 .work-card {
   position: relative; /* containment for the card-link ::after */
   display: grid;
   gap: var(--space-05);
-  border-block-end: 1px solid var(--color-border);
 }
 @container (min-width: 40em) {
   .work-card {
@@ -1133,57 +1148,40 @@ pre,
     gap: var(--space-07);
   }
 }
-.work-card:focus-within {
-  background: var(--color-bg-subtle);
-}
-@media (hover: hover) {
-  .work-card:hover {
-    background: var(--color-bg-subtle);
-  }
-}
 
-/* Inline padding is space-06, not space-05: once the row adopts a fill on
-   hover, 16px reads as text pressed against the edge of a surface. */
 .work-card-content {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: var(--space-05);
-  padding: var(--space-07) var(--space-06);
 }
 
 /* Photo-frame treatment, not edge-to-edge: a white mat around a scaled-down
-   image, a paper shadow, and a per-card random tilt (--base-rot, set once by
-   js/main.js on load) — the same "physical object resting on the page"
+   image, a paper shadow, and a per-card tilt (--base-rot, set in
+   css/desk.css) — the same "physical object resting on the page"
    vocabulary as .about-photo/.sticky-note, reused here rather than
    reinvented. Centered in its grid cell (align-self/justify-self override
    the row's own align-items: stretch) so the tilt has room to rotate into
    without clipping against the row's edges.
 
-   At rest this is invisible — opacity: 0, not display: none — so the grid
-   column it occupies still exists (the row doesn't reflow to one column and
-   back when a card is hovered) and the thumbnail has somewhere to fade
-   into. Default reading is text only: description and tags, no placeholder
-   box competing for attention. The media surfaces only when a visitor is
-   actually looking at that card, via hover or — since this opacity: 0 box
-   carries no information (aria-hidden) and is purely decorative — keyboard
-   focus-within on the row's own link. On reveal it also gets the same
-   hover-rotate/hover-scale bump .tool-sticker and .about-photo use, so it
-   arrives with a little wiggle instead of a flat fade. */
+   Permanently visible, not a hover reveal — the photo is "taped on" the
+   sheet from first paint, same as a real desk. display: none below the
+   40em container width is still load-bearing, though: it's what keeps
+   this image from ever being fetched on a narrow/mobile viewport
+   (loading="lazy" + display: none never intersects, so the browser never
+   requests it) — nothing about removing the old hover-reveal changes
+   that. */
 .work-card-media {
   display: none;
   align-self: center;
   justify-self: center;
   inline-size: 85%;
-  background: #faf9f5;
+  background: var(--color-bg-subtle);
   padding: var(--space-03) var(--space-03) var(--space-06);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-paper);
-  opacity: 0;
   --base-rot: 0deg;
-  --hover-rot: 0deg;
-  --hover-scale: 1;
-  transform: rotate(calc(var(--base-rot) + var(--hover-rot))) scale(var(--hover-scale));
+  transform: rotate(var(--base-rot));
 }
 @container (min-width: 40em) {
   .work-card-media {
@@ -1202,8 +1200,8 @@ pre,
   outline: 1px solid var(--color-image-edge);
   outline-offset: -1px;
 }
-/* A card with no media at all (nothing to reveal on hover) spans the full
-   row instead of leaving its image track an empty hole. */
+/* A card with no media at all spans the full row instead of leaving its
+   image track an empty hole. */
 @container (min-width: 40em) {
   .work-card:not(:has(.work-card-media)) {
     grid-template-columns: 1fr;
@@ -1213,27 +1211,6 @@ pre,
      frame centers vertically inside this regardless of content length. */
   .work-card {
     min-block-size: 18rem;
-  }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .work-card-media {
-    transition: opacity var(--duration-base) var(--ease),
-      transform var(--duration-base) var(--ease);
-  }
-}
-/* Media reveal is independent of is-liftable: a gated card (no link, no
-   lift/shadow) still shows its thumbnail on hover, since the image itself
-   implies nothing about clickability. */
-.work-card:focus-within .work-card-media {
-  opacity: 1;
-  --hover-rot: 3deg;
-  --hover-scale: 1.06;
-}
-@media (hover: hover) {
-  .work-card:hover .work-card-media {
-    opacity: 1;
-    --hover-rot: 3deg;
-    --hover-scale: 1.06;
   }
 }
 
@@ -1929,9 +1906,12 @@ pre,
 }
 
 /* A single figure shown smaller than the reading column (e.g. a template
-   certificate that doesn't need full width to read). */
+   certificate that doesn't need full width to read) — centered, since a
+   narrower figure left flush to the column's start reads as stranded
+   rather than deliberately sized down. */
 .figure-small {
-  max-inline-size: 320px;
+  max-inline-size: 440px;
+  margin-inline: auto;
 }
 
 /* ------ Embedded Figma prototype ------
@@ -2442,6 +2422,16 @@ pre,
   gap: var(--space-04);
   padding-block: var(--space-04);
   border-block-end: 1px solid var(--color-border-soft);
+}
+/* Below this width, name/meta/status wrapping mid-row (flex-wrap) reads
+   as broken rather than responsive — stacked rows, each full width,
+   instead. */
+@media (max-width: 34.99em) {
+  .cert-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-02);
+  }
 }
 .cert-name {
   font-weight: 500;

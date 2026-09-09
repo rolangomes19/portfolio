@@ -17,58 +17,39 @@
 
   <script>
     (function () {
-      var t = localStorage.getItem("theme");
-      if (!t && window.matchMedia("(prefers-color-scheme: dark)").matches) t = "dark";
-      if (t) document.documentElement.dataset.theme = t;
       if (localStorage.getItem("mode") === "ar") {
         document.documentElement.lang = "ar";
         document.documentElement.dir = "rtl";
-      }
-      var mc = localStorage.getItem("matColor");
-      if (mc) document.documentElement.style.setProperty("--color-mat", mc);
-      // Apply a cached mat-driven accent too, so a returning visitor with a
-      // customised mat never sees a flash of the default accent before
-      // js/main.js re-derives it. See main.js section 4b for how this blob
-      // is produced; this block only ever reads it.
-      var at = localStorage.getItem("accentTokens");
-      if (at) {
-        try {
-          var set = JSON.parse(at)[document.documentElement.dataset.theme === "dark" ? "dark" : "light"];
-          if (set) {
-            var s = document.documentElement.style;
-            s.setProperty("--color-accent", set.accent);
-            s.setProperty("--color-accent-hover", set.hover);
-            s.setProperty("--color-on-accent", set.on);
-            s.setProperty("--color-tint-brand", set.tint);
-          }
-        } catch (e) {}
       }
     })();
   </script>
   <script data-goatcounter="https://rolangomes19.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
   <!-- Fonts: all self-hosted. Inter (body), Commissioner (headings/buttons),
-       Geist Mono (mono/meta), El Messiri (RTL headings/buttons), Harmattan
-       (RTL body/mono/eyebrow), and Caveat (sticky-note handwriting).
-       El Messiri/Harmattan are not preloaded — RTL is unlikely to be
-       needed on first paint. Caveat now is (subsetted to ~47KB, see
+       IBM Plex Mono (mono/meta), Reem Kufi (RTL headings/buttons), IBM Plex Sans Arabic
+       (RTL body/mono/eyebrow), and Architects Daughter (sticky-note handwriting).
+       Reem Kufi/IBM Plex Sans Arabic are not preloaded — RTL is unlikely to be
+       needed on first paint. Architects Daughter now is (subsetted, see
        CLEANUP-PLAN 1.4): sticky notes render close to the fold on most
        pages, and swapping font after first paint was the actual bug this
        item fixed. -->
   <link rel="preload" href="assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="assets/fonts/Commissioner-Variable.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="assets/fonts/Caveat-Variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/ArchitectsDaughter-Regular.woff2" as="font" type="font/woff2" crossorigin />
 
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/desk.css" />
   <script src="js/main.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main" data-i18n="skip">Skip to main content</a>
+  <div class="mat-weave" aria-hidden="true"></div>
+  <div class="mat-grain" aria-hidden="true"></div>
 
   <header class="site-header">
     <div class="container">
-      <a class="site-logo" href="index.html"><span class="icon-directional" aria-hidden="true">←</span> <span data-i18n="brand.name">Rolan Gomes</span></a>
+      <a class="site-logo" href="index.html"><img src="assets/rolan-icon.png" width="80" height="80" alt="rolan face"> <span data-i18n="brand.name">Rolan Gomes</span></a>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-panel" data-i18n-label="nav.toggle" aria-label="Menu">
         <span class="nav-toggle-icon" aria-hidden="true"></span>
       </button>
@@ -77,7 +58,7 @@
         <nav class="site-nav" aria-label="Main">
           <ul>
             <li><a href="index.html#work" data-i18n="nav.work">Works</a></li>
-            <li><a href="index.html#about" data-i18n="nav.about">About</a></li>
+            <li><a href="index.html#about" data-i18n="nav.about">About me</a></li>
             <li><a href="index.html#contact" data-i18n="nav.contact">Contact</a></li>
           </ul>
         </nav>
@@ -93,18 +74,11 @@
               <button type="button" class="mode-select-option" data-mode-option="ar" aria-pressed="false">عربي</button>
             </div>
           </div>
-          <button class="toggle-btn theme-icon-toggle" type="button" data-theme-toggle aria-pressed="false" data-i18n-label="toggle.theme" aria-label="Toggle dark mode">
-            <span aria-hidden="true">◐</span>
-          </button>
           <div class="mobile-controls">
             <div class="segmented-bar" role="group" aria-label="Language and content mode">
               <button type="button" class="segmented-bar-btn" data-mode-option="en" aria-pressed="true">English</button>
               <button type="button" class="segmented-bar-btn" data-mode-option="en-simple" aria-pressed="false">Simple English</button>
               <button type="button" class="segmented-bar-btn" data-mode-option="ar" aria-pressed="false">عربي</button>
-            </div>
-            <div class="segmented-bar" role="group" aria-label="Theme">
-              <button type="button" class="segmented-bar-btn" data-theme-option="light" aria-pressed="true">Light mode</button>
-              <button type="button" class="segmented-bar-btn" data-theme-option="dark" aria-pressed="false">Dark mode</button>
             </div>
           </div>
         </div>
@@ -114,7 +88,7 @@
 
   <main id="main">
 
-    <section class="section case-hero" aria-labelledby="case-title">
+    <section class="section case-hero sheet p-graph" aria-labelledby="case-title">
       <div class="container" data-reveal-intro>
         <span class="eyebrow">COLOPHON</span>
         <h1 id="case-title">How this site is built</h1>
@@ -122,28 +96,28 @@
       </div>
     </section>
 
-    <article class="section">
+    <article class="section sheet p-graph">
       <div class="container prose" data-reveal-children>
 
         <h2>Tokens, not values</h2>
-        <p>83 custom properties in <code>css/tokens.css</code> — colour, type, the Carbon-style spacing scale (<code>--space-01</code> through <code>--space-12</code>), radius, shadow, duration, and easing. Light theme lives on <code>:root</code>; dark theme is one <code>[data-theme="dark"]</code> block overriding the same property names, never a second set of rules. <code>css/styles.css</code> — every component in the site — has zero raw colour values except two, and both are deliberate: a physical printed photo (<code>.work-card-media</code>, <code>.about-photo</code>) doesn't turn dark just because the page theme did, so those two fills are pinned regardless of theme, documented in place. Zero <code>!important</code> anywhere in the file.</p>
+        <p>85 custom properties in <code>css/tokens.css</code> — colour, type, the Carbon-style spacing scale (<code>--space-01</code> through <code>--space-12</code>), radius, shadow, duration, and easing. One committed theme lives on <code>:root</code> — no second theme block redeclaring the same property names. <code>css/styles.css</code> — every component in the site — has zero raw colour values except two, and both are deliberate: a physical printed photo (<code>.work-card-media</code>, <code>.about-photo</code>) is pinned regardless of the mat's current colour, documented in place. Zero <code>!important</code> anywhere in the file.</p>
 
         <h2>Six fonts, each with a job</h2>
         <p>All self-hosted, nothing served from a third-party font CDN.</p>
         <dl class="prop-list">
           <dt>Inter</dt><dd>Body text. Self-hosted from rsms.me/inter/.</dd>
           <dt>Commissioner</dt><dd>Headings and buttons.</dd>
-          <dt>Geist Mono</dt><dd>Eyebrows, meta labels, code — the monospace voice that marks this site's own system to itself, like the one on this page.</dd>
-          <dt>El Messiri</dt><dd>RTL headings and buttons, substituting for Commissioner under <code>[dir="rtl"]</code>.</dd>
-          <dt>Harmattan</dt><dd>RTL body, mono, and eyebrow text, substituting for Inter and Geist Mono under <code>[dir="rtl"]</code>.</dd>
-          <dt>Caveat</dt><dd>Sticky-note handwriting only — the small annotation text on the photo captions and stat cards, never body copy.</dd>
+          <dt>IBM Plex Mono</dt><dd>Eyebrows, meta labels, code — the monospace voice that marks this site's own system to itself, like the one on this page.</dd>
+          <dt>Reem Kufi</dt><dd>RTL headings and buttons, substituting for Commissioner under <code>[dir="rtl"]</code>.</dd>
+          <dt>IBM Plex Sans Arabic</dt><dd>RTL body, mono, and eyebrow text, substituting for Inter and IBM Plex Mono under <code>[dir="rtl"]</code>.</dd>
+          <dt>Architects Daughter</dt><dd>Sticky-note handwriting only — the small annotation text on the photo captions and stat cards, never body copy.</dd>
         </dl>
-        <p>The first three are Latin-subsetted; Caveat was instanced to a static weight and subsetted too, once it turned out to be shipping unsubsetted and unpreloaded (see the performance numbers below). Both changes are covered in this repo's own <code>docs/FONT-LOADING-PERF-PLAN.md</code> and <code>docs/CLEANUP-PLAN.md</code>.</p>
+        <p>Inter, Commissioner, and IBM Plex Mono are Latin-subsetted (see the performance numbers below, and this repo's own <code>docs/FONT-LOADING-PERF-PLAN.md</code> and <code>docs/CLEANUP-PLAN.md</code> for the history behind that).</p>
 
         <h2>Accessibility, measured</h2>
         <p>Verified live in a browser, not inferred from the markup:</p>
         <ul class="detail-list">
-          <li><strong>Contrast.</strong> Zero WCAG AA failures across every text node on the homepage, in both themes, across all eleven mat-colour swatches — including the one colour with no pre-solved lookup table entry, which clears AA on its own through a live binary-search derivation (see <code>js/main.js</code> §4b).</li>
+          <li><strong>Contrast.</strong> Zero WCAG AA failures across every text node on the homepage, across all eleven mat-colour swatches — including the one colour with no pre-solved lookup table entry, which clears AA on its own through a live binary-search derivation (see <code>js/main.js</code> §4b).</li>
           <li><strong>Touch targets.</strong> No interactive element under 24×24 CSS px at a 320px viewport.</li>
           <li><strong>Reflow.</strong> No horizontal overflow at 320px, in either reading direction.</li>
           <li><strong>Motion.</strong> Every transition and animation in <code>styles.css</code> routes through three duration tokens; <code>prefers-reduced-motion: reduce</code> collapses all three to 1ms in one rule, not a per-component opt-out.</li>
@@ -151,7 +125,7 @@
         </ul>
 
         <h2>Built for both directions</h2>
-        <p><code>css/styles.css</code> contains zero physical <code>left</code>/<code>right</code> properties — no <code>margin-left</code>, no <code>text-align: left</code>, no <code>border-right</code>. Every layout rule uses logical properties (<code>margin-inline-start</code>, <code>inset-inline-end</code>, <code>text-align: start</code>) so flipping <code>dir="rtl"</code> mirrors the entire layout without a single direction-specific override. Directional icons carry an <code>.icon-directional</code> class that flips them under <code>[dir="rtl"]</code> — the arrow on this very page's site-logo link is one of them. Numbers, phone numbers, and email addresses stay left-to-right inside right-to-left text via <code>&lt;bdi&gt;</code> wrapping, so a UAE phone number doesn't get its digit order reversed by the bidi algorithm.</p>
+        <p><code>css/styles.css</code> contains zero physical <code>left</code>/<code>right</code> properties — no <code>margin-left</code>, no <code>text-align: left</code>, no <code>border-right</code>. Every layout rule uses logical properties (<code>margin-inline-start</code>, <code>inset-inline-end</code>, <code>text-align: start</code>) so flipping <code>dir="rtl"</code> mirrors the entire layout without a single direction-specific override. Directional icons carry an <code>.icon-directional</code> class that flips them under <code>[dir="rtl"]</code> — the Prev/Next arrows at the end of every case study are examples of this. Numbers, phone numbers, and email addresses stay left-to-right inside right-to-left text via <code>&lt;bdi&gt;</code> wrapping, so a UAE phone number doesn't get its digit order reversed by the bidi algorithm.</p>
 
         <h2>What got measured and fixed</h2>
         <p>This site went through its own cleanup pass — the same kind of audit its case studies describe doing for other products. Before/after numbers, not estimates:</p>
@@ -188,34 +162,5 @@
     </div>
   </footer>
 
-  <div class="surface-picker">
-    <span class="surface-picker-hint" aria-hidden="true">Recolor mat</span>
-    <button type="button" class="surface-picker-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="surface-picker-panel" aria-label="Customize mat color">
-      <span class="surface-picker-trigger-swatch" aria-hidden="true"></span>
-    </button>
-    <div class="surface-picker-panel" id="surface-picker-panel" hidden>
-      <div class="surface-picker-group">
-        <span class="surface-picker-label" id="surface-picker-mat-label">Cutting mat</span>
-        <div class="surface-picker-swatches" role="radiogroup" aria-labelledby="surface-picker-mat-label">
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="true" tabindex="0" data-color="#095848" style="--swatch:#095848" aria-label="Green" title="Green"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#141414" style="--swatch:#141414" aria-label="Charcoal" title="Charcoal"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0b3556" style="--swatch:#0b3556" aria-label="Navy" title="Navy"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#7a3418" style="--swatch:#7a3418" aria-label="Rust" title="Rust"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#4a2545" style="--swatch:#4a2545" aria-label="Plum" title="Plum"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#0d4f4a" style="--swatch:#0d4f4a" aria-label="Teal" title="Teal"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#1B365D" style="--swatch:#1B365D" aria-label="Ink blue" title="Ink blue"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#30302e" style="--swatch:#30302e" aria-label="Graphite" title="Graphite"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#3d3d3a" style="--swatch:#3d3d3a" aria-label="Slate" title="Slate"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#504e49" style="--swatch:#504e49" aria-label="Olive" title="Olive"></button>
-          <button type="button" class="surface-picker-swatch" role="radio" aria-checked="false" tabindex="-1" data-color="#6b6a64" style="--swatch:#6b6a64" aria-label="Smoke grey" title="Smoke grey"></button>
-        </div>
-        <div class="surface-picker-custom">
-          <label for="surface-picker-custom-input" class="visually-hidden">Custom mat color</label>
-          <input type="color" id="surface-picker-custom-input" value="#095848" />
-          <button type="button" class="surface-picker-reset" data-surface-reset>Reset to default</button>
-        </div>
-      </div>
-    </div>
-  </div>
 </body>
 </html>
