@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ClearGrid Borrower Profile Redesign - Rolan Gomes</title>
+  <meta name="description" content="Case study: a 48-hour design challenge from ClearGrid, a UAE and KSA debt-collections platform. Redesigning the borrower profile their human agents work from, in English and Arabic, around one diagnosis: the old page mixed three scopes of data into one flat list." />
+  <link rel="icon" type="image/svg+xml" href="../assets/rolan-favicon-svg.svg" />
+  <link rel="canonical" href="https://rolangomes19.github.io/portfolio/work/cleargrid-borrower-profile.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:image" content="https://rolangomes19.github.io/portfolio/assets/images/portfolio-thumbnail.jpg" />
+  <meta property="og:title" content="ClearGrid Borrower Profile Redesign - Rolan Gomes" />
+  <meta property="og:description" content="Case study: a 48-hour design challenge from ClearGrid, a UAE and KSA debt-collections platform. Redesigning the borrower profile their human agents work from, in English and Arabic, around one diagnosis: the old page mixed three scopes of data into one flat list." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://rolangomes19.github.io/portfolio/work/cleargrid-borrower-profile.html" />
+
+  <script>
+    (function () {
+      if (localStorage.getItem("mode") === "ar") {
+        document.documentElement.lang = "ar";
+        document.documentElement.dir = "rtl";
+      }
+    })();
+  </script>
+  <script data-goatcounter="https://rolangomes19.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  <!-- Fonts: all self-hosted. See blueprint-design-system.html for why these four are preloaded. -->
+  <link rel="preload" href="../assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/Commissioner-Variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/ArchitectsDaughter-Regular.woff2" as="font" type="font/woff2" crossorigin />
+
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/desk.css" />
+  <script src="../js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip">Skip to main content</a>
+  <div class="mat-weave" aria-hidden="true"></div>
+  <div class="mat-grain" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="site-logo" href="../index.html"><img src="../assets/rolan-icon.png" width="80" height="80" alt="rolan face"> <span data-i18n="brand.name">Rolan Gomes</span></a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-panel" data-i18n-label="nav.toggle" aria-label="Menu">
+        <span class="nav-toggle-icon" aria-hidden="true"></span>
+      </button>
+
+      <div class="site-nav-panel" id="site-nav-panel">
+        <nav class="site-nav" aria-label="Main">
+          <ul>
+            <li><a href="../index.html#work" data-i18n="nav.work">Works</a></li>
+            <li><a href="../index.html#about" data-i18n="nav.about">About me</a></li>
+            <li><a href="../index.html#contact" data-i18n="nav.contact">Contact</a></li>
+          </ul>
+        </nav>
+        <div class="header-controls">
+          <div class="mode-select">
+            <button type="button" class="mode-select-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="mode-select-panel">
+              <span data-mode-select-label>English</span>
+              <svg class="mode-select-chevron" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="mode-select-panel" id="mode-select-panel" hidden>
+              <button type="button" class="mode-select-option" data-mode-option="en" aria-pressed="true">English</button>
+              <button type="button" class="mode-select-option" data-mode-option="en-simple" aria-pressed="false">Simple English</button>
+              <button type="button" class="mode-select-option" data-mode-option="ar" aria-pressed="false">عربي</button>
+            </div>
+          </div>
+          <div class="mobile-controls">
+            <div class="segmented-bar" role="group" aria-label="Language and content mode">
+              <button type="button" class="segmented-bar-btn" data-mode-option="en" aria-pressed="true">English</button>
+              <button type="button" class="segmented-bar-btn" data-mode-option="en-simple" aria-pressed="false">Simple English</button>
+              <button type="button" class="segmented-bar-btn" data-mode-option="ar" aria-pressed="false">عربي</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <section class="section case-hero sheet p-graph" aria-labelledby="case-title">
+      <div class="container" data-reveal-intro>
+        <span class="eyebrow">Sep 2026 · Product design · Arabic + English · Design challenge</span>
+        <h1 id="case-title">ClearGrid Borrower Profile Redesign</h1>
+        <p class="case-summary">A 48-hour take-home design challenge from ClearGrid, a UAE and KSA debt-collections platform, done as part of their interview process. The task: redesign the Borrower Profile, the screen their collections agents work from, in English and Arabic.</p>
+
+        <dl class="facts-bar">
+          <div class="fact"><dt>Role</dt><dd>Solo: research, design, AI-directed build</dd></div>
+          <div class="fact"><dt>Timeline</dt><dd>47 hours to submission · extended to 22 Sep 2026</dd></div>
+          <div class="fact"><dt>Scope</dt><dd>Queue · profile · wrap-up · EN + AR</dd></div>
+          <div class="fact"><dt>Prototype</dt><dd>Interactive, desktop, 1280px and wider</dd></div>
+        </dl>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="cleargrid-prototype/" target="_blank" rel="noopener noreferrer"><span class="btn-label">Open the live prototype</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+        </div>
+      </div>
+      <a class="scroll-cue" href="#case-body" aria-label="Scroll to case study"><span aria-hidden="true">↓</span></a>
+    </section>
+
+    <article id="case-body" class="section sheet p-graph">
+      <div class="container prose" data-reveal-children>
+
+        <p class="nda-note sticky-note sticky-note--margin">No NDA. All borrower data shown is fabricated.</p>
+
+        <h2 data-i18n="case.summary.heading">Summary</h2>
+        <ul class="detail-list case-summary-list">
+          <li><strong>Problem.</strong> The agent's workspace mixed borrower, account and call data into one flat list, so totals on the same screen could disagree, and nothing said why a case had reached a human.</li>
+          <li><strong>Role.</strong> Solo. Research, information architecture, visual design and the Arabic build, with AI writing the code under my direction.</li>
+          <li><strong>Impact.</strong> Brief to submission in 47 hours: a working bilingual prototype, later extended into a queue → profile → wrap-up journey.</li>
+          <li><strong>Stack.</strong> HTML · CSS · vanilla JS · Claude Code · Figma</li>
+        </ul>
+
+        <h2>The problem</h2>
+        <p>ClearGrid isn't a typical SaaS company. They get paid on debt actually recovered, and by their own account about 95% of cases are resolved by AI voice calls alone. The other 5% escalate to a human agent, and this page is that agent's workspace.</p>
+        <p>The old page mixed three different things into one flat list: facts about the borrower, facts about one account, facts about one call. That's why the header total and the deal-table total could disagree on the same screen. One early prototype reproduced this exact bug: the header read AED 11,800, the deal table below it summed to AED 16,000.</p>
+
+        <figure>
+          <img src="../assets/images/cleargrid/cleargrid-v2-bug.webp" width="1250" height="715" alt="Early prototype of Omar Al-Hassan's profile. The outstanding balance card reads AED 11,800, while the deals table lists two deals of AED 11,800 and AED 4,200." loading="lazy" decoding="async" />
+          <figcaption>Fig 1 — An early pass, caught in the act. The header shows one account's balance as the borrower's total; the two deals below add up to AED 16,000.</figcaption>
+        </figure>
+
+        <p>The fix: split the page into three columns, one per data type, under a strip of facts that never scrolls.</p>
+
+        <h2>How I worked</h2>
+        <p>48 hours doesn't leave room for slow research, so I moved fast and stayed honest about what I didn't know. Real facts came from ClearGrid's own site: their brand colors, their stated AI/human split, their public claims about how cases get routed. Where data was genuinely missing, I wrote down the assumption and moved on instead of guessing silently.</p>
+        <p>AI wrote the code. I made the calls: which layout to keep, which one to reject, when a research finding turned into an actual pixel budget. Two early passes got thrown out because they still read like database records, not something a person could use mid-call.</p>
+        <p>One more check, not just a claim: I ran the actual WCAG contrast formula against every color in the palette instead of eyeballing it, and found six color pairs that looked fine but failed AA at body-text size. Every text color was re-tuned to at least 5:1 before the final build.</p>
+
+        <h2>The decisions that mattered</h2>
+        <ul class="detail-list">
+          <li><strong>Three columns, one per data type.</strong> Borrower, account and activity each get their own column, which fixes the exact bug that broke the old page. Every figure says what it covers.</li>
+          <li><strong>One line naming why the case reached a human.</strong> ClearGrid escalates on six borrower states; the old page never showed which one applied. The new top band leads with it.</li>
+          <li><strong>No accordions.</strong> Expand-and-reflow mid-call costs more attention than it saves. Tabs only switch between views of equal weight.</li>
+          <li><strong>One alert color, capped at three uses.</strong> Coral means "why this case is here" and nothing else. More colors competing for attention means none of them work.</li>
+          <li><strong>A real Arabic build, not a mirrored one.</strong> Checked outside examples first. Nobody mirrors a dense data screen side by side.</li>
+        </ul>
+
+        <figure>
+          <img src="../assets/images/cleargrid/cleargrid-profile-en.webp" width="1440" height="900" alt="The redesigned borrower profile for Omar Al-Hassan in English. A top band shows total outstanding AED 12,860, worst days past due 146 and promise state, then a coral line reading why this reached you: borrower disputes the Gulf Meridian Bank account. Below sit three columns: accounts and contact history, the selected account's balance and terms, and an interactions timeline." loading="lazy" decoding="async" />
+          <figcaption>Fig 2 — The locked top band, then one column per scope: the borrower, the working account, and what happened on it.</figcaption>
+        </figure>
+
+        <p>The RTL decision is the clearest case of catching my own bad instinct. My first idea was side-by-side English and Arabic, based on one ClearGrid screen that does it that way. I checked that against outside examples first: enterprise BI tools, government portals, Arabic-UX guidance. None of them do side-by-side for a dense data screen. Dropped the instinct, built mirrored RTL instead, with its own Arabic typeface and real Arabic plural rules. Only the borrower's name shows in both scripts, because the agent says it aloud.</p>
+
+        <figure>
+          <img src="../assets/images/cleargrid/cleargrid-profile-ar.webp" width="1440" height="900" alt="The same profile in Arabic. The whole layout mirrors: navigation on the right, the top band and three columns reading right to left, with amounts and account numbers kept in Western digits." loading="lazy" decoding="async" />
+          <figcaption>Fig 3 — The Arabic build. Layout, navigation and reading order mirror; figures and IDs stay left-to-right.</figcaption>
+        </figure>
+
+        <h2>What I chose not to build</h2>
+        <p>Just as deliberate as what shipped: no drag-and-drop customization (breaks the positional memory agents build up), no color coded by portfolio average (needs data I don't have), no full CRM clone or supervisor dashboard around this page (scope creep past what the brief asked).</p>
+
+        <h2>How it evolved</h2>
+        <p>Wireframe, two rejected passes, then the version that shipped. The rejected passes weren't wasted: one of them is what caught the header/table bug in the act, which is what led to the fix above.</p>
+        <p>Decisions were logged as I went, and that paid off twice: the working tree reverted to old files during the original 48 hours, and both times the work came back from those hand-written changelogs in about 25 minutes. Git went in right after the second one.</p>
+        <p>Ten days after the deadline, I went back and added a queue screen (how a case arrives) and a wrap-up screen (how it closes), because the real product isn't one page. It's a loop: a human's judgment here feeds back into the AI handling the next case. The same pass tightened the type system to four sizes.</p>
+
+        <figure>
+          <img src="../assets/images/cleargrid/cleargrid-queue.webp" width="1440" height="440" alt="The case queue listing four borrowers. Each row shows the reason the case is in the queue, such as dispute or hardship, total outstanding, worst days past due, AI and human call counts, and an open case button." loading="lazy" decoding="async" />
+          <figcaption>Fig 4 — How a case arrives: the queue, sorted by escalation severity, then by amount owed.</figcaption>
+        </figure>
+
+        <figure>
+          <img src="../assets/images/cleargrid/cleargrid-wrapup.webp" width="1440" height="560" alt="The wrap-up screen for Omar Al-Hassan. The top band and account cards stay visible while a form on the right records the call outcome, an optional note and a promise amount and date." loading="lazy" decoding="async" />
+          <figcaption>Fig 5 — How it closes: the outcome form sits beside the record it describes, and is scored on the same rubric as AI-handled calls.</figcaption>
+        </figure>
+
+        <h2>Result</h2>
+        <p>Brief to submission: 47 hours. One interactive prototype, tested against four fake borrowers, including a near-empty one, in both languages and both directions. If this continued past the interview, the first thing I'd want to know is whether the "why this reached you" line actually saves agents time on a real call.</p>
+        <p><a href="cleargrid-prototype/" target="_blank" rel="noopener noreferrer">Open the live prototype<span class="visually-hidden"> (opens in a new tab)</span></a>. It's built for desktop screens, 1280px and wider.</p>
+
+        <p>Sources: <a href="https://techcrunch.com/2025/03/19/cleargrid-armed-with-10m-uses-ai-to-fix-debt-collection-in-mena/" target="_blank" rel="noopener noreferrer">TechCrunch</a>, <a href="https://app.dealroom.co/news/note/outcomes-not-software-how-cleargrid-is-rebuilding-the-trillion-dollar-debt-market-with-dignity-and-voice-ai" target="_blank" rel="noopener noreferrer">Dealroom</a></p>
+
+      </div>
+    </article>
+
+    <nav class="section case-nav-band" aria-label="Case study navigation">
+      <div class="container case-nav" data-reveal>
+        <a class="btn btn-secondary" href="blueprint-design-system.html"><span class="btn-icon"><svg class="icon-directional" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span><span class="btn-label">Prev: Blueprint Design System</span></a>
+        <a class="btn btn-secondary" href="speery-health.html"><span class="btn-label">Next: Healthcare SaaS Redesign</span><span class="btn-icon"><svg class="icon-directional" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></a>
+      </div>
+    </nav>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p class="colophon"><span data-i18n="footer.colophon">© 2026 Rolan Gomes. Built with loads of imagination, love and Claude Code.</span> <a href="../colophon.html" data-i18n="footer.colophonLink">Colophon</a></p>
+    </div>
+  </footer>
+
+</body>
+</html>
