@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>Original Borrower Profile (recreated) - ClearGrid case study</title>
+<!-- Exhibit for work/cleargrid-borrower-profile.html: ClearGrid's original
+     Borrower Profile, rebuilt from the four screenshots in their design brief.
+     Every name, contact detail, ID and amount is fabricated (Omar Al-Hassan
+     from the redesign's own test data), so nothing from the real screenshots
+     is published. Standalone on purpose, like index.html beside it: it copies
+     their UI, so it does not use the portfolio's tokens or styles. -->
+<style>
+@font-face{font-family:Inter;src:url(../../assets/fonts/InterVariable.woff2) format("woff2");font-weight:100 900;font-display:swap}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.45 Inter,system-ui,sans-serif;color:#0a0a0a;background:#fff}
+a{color:inherit}
+button,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid #2563eb;outline-offset:2px}
+.exhibit{margin:0;position:sticky;top:0;z-index:5;display:flex;gap:16px;justify-content:space-between;align-items:center;padding:8px 20px;background:#1f2937;color:#fff;font-size:13px}
+.exhibit a{color:#fff;font-weight:600}
+.app{display:grid;grid-template-columns:208px 1fr;min-height:100vh}
+nav.side{position:sticky;top:35px;height:calc(100vh - 35px);overflow:auto;background:#fafafa;border-inline-end:1px solid #e5e5e5;display:flex;flex-direction:column;padding:14px 10px 10px}
+.logo{display:block;width:118px;height:auto;margin:0 0 22px 4px}
+.grp{font-size:11px;color:#737373;margin:0 0 6px 4px}
+.side ul{list-style:none;margin:0;padding:0}
+.side li>a{display:flex;align-items:center;gap:8px;padding:6px 4px;border-radius:6px;text-decoration:none;font-size:13px}
+.side li>a svg{flex:none}
+.side .sub{margin-inline-start:20px;border-inline-start:1px solid #e5e5e5;padding-inline-start:4px}
+.side .sub a{font-size:12px;padding:5px 8px}
+.side .caret{margin-inline-start:auto}
+.voice{margin-top:auto;border:1px solid #eee;border-radius:10px;padding:12px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.voice b{display:block;font-size:12.5px}
+.voice small{display:block;color:#737373;font-size:11px;margin:2px 0 8px}
+.voice button{width:100%;background:#0a0a0a;color:#fff;border:0;border-radius:6px;padding:6px;font-size:12px}
+.user{display:flex;gap:8px;align-items:center;padding:12px 4px 0}
+.av{width:30px;height:30px;border-radius:50%;background:#0a0a0a;color:#fff;display:grid;place-items:center;font-weight:600;font-size:13px}
+.user b{display:block;font-size:12px}.user small{color:#737373;font-size:10.5px}
+main{padding:0 24px 40px;min-width:0}
+.top{display:flex;align-items:center;gap:12px;height:62px}
+.iconbtn{width:30px;height:30px;border:1px solid #eee;border-radius:6px;background:#fff;display:grid;place-items:center}
+.search{margin-inline:auto;width:300px;height:30px;border:1px solid #e5e5e5;border-radius:6px;display:flex;align-items:center;gap:8px;padding:0 10px;color:#737373;font-size:12px}
+.back{display:inline-flex;gap:6px;align-items:center;color:#525252;font-size:13px;text-decoration:none;margin-top:8px}
+.head{display:flex;justify-content:space-between;align-items:center;padding:14px 0 16px;border-bottom:1px solid #eee;margin-bottom:40px}
+h1{font-size:22px;margin:0;font-weight:600}
+.sel{border:1px solid #e5e5e5;border-radius:6px;padding:6px 10px;background:#fff;font-weight:600;font-size:12px;display:inline-flex;gap:14px;align-items:center}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{border:1px solid #f0f0f0;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.05);padding:18px 18px 8px}
+.card h2{font-size:15px;font-weight:600;margin:0 0 14px;padding-bottom:12px;border-bottom:1px solid #eee}
+.kv{padding:0 0 10px;margin:0 0 10px;border-bottom:1px solid #f3f3f3}
+.kv:last-child{border:0}
+.kv dt{color:#525252;font-size:12px}.kv dd{margin:3px 0 0;font-size:13px}
+.actions{display:flex;gap:8px;margin:12px 0 18px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #e5e5e5;border-radius:6px;background:#fff;padding:7px 11px;font-size:12.5px}
+.btn.dark{background:#0a0a0a;color:#fff;border-color:#0a0a0a}
+details{border-bottom:1px solid #eee}
+summary{list-style:none;display:flex;justify-content:space-between;align-items:center;padding:14px 0;font-weight:600;font-size:13.5px;cursor:pointer}
+summary::-webkit-details-marker{display:none}
+summary svg{transition:transform .15s}
+details[open] summary svg{transform:rotate(90deg)}
+.panel{padding:4px 12px 18px}
+.panel small{display:block;font-size:11px;color:#525252}
+.copyrow{display:flex;align-items:center;gap:10px;margin-top:4px;font-size:13px}
+.attrs{display:grid;grid-template-columns:repeat(4,1fr);gap:22px 20px;padding:4px 0 18px}
+.attrs dt{font-weight:600;font-size:13px}.attrs dd{margin:10px 0 0;font-size:13px}
+.ddl{display:inline-flex;gap:10px;align-items:center;border:1px solid #e5e5e5;border-radius:6px;padding:5px 8px;margin-top:-4px}
+.empty{text-align:center;color:#262626;padding:30px 0 40px;font-size:13px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin:36px 0 12px}
+.toolbar .search{margin:0;width:360px;background:#fafafa;border-color:#fafafa}
+table{width:100%;border-collapse:collapse;border:1px solid #eee;border-radius:8px;font-size:12.5px}
+th{text-align:start;font-size:10.5px;letter-spacing:.06em;color:#525252;font-weight:600;padding:14px 12px;border-bottom:1px solid #e5e5e5;white-space:nowrap}
+td{padding:14px 12px;border-bottom:1px solid #f0f0f0;white-space:nowrap}
+.num{text-align:end}
+.pager{display:flex;justify-content:space-between;align-items:center;padding:14px 8px;color:#525252;font-size:12.5px}
+.pager span{display:flex;gap:6px}
+.tabsrow{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+[role=tablist]{display:inline-flex;background:#f5f5f5;border-radius:8px;padding:3px}
+[role=tab]{border:0;background:none;padding:6px 14px;border-radius:6px;color:#525252;font-size:12.5px}
+[role=tab][aria-selected=true]{background:#fff;color:#0a0a0a;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+h3{font-size:17px;margin:18px 0 12px;padding-bottom:12px;border-bottom:1px solid #eee}
+</style>
+</head>
+<body>
+<p class="exhibit"><span>Recreation of ClearGrid's original Borrower Profile, from the brief's screenshots. All data is fabricated.</span> <a href="../cleargrid-borrower-profile.html">Back to the case study</a></p>
+
+<div class="app">
+<nav class="side" aria-label="Platform">
+  <img class="logo" src="cleargrid-logo.webp" width="761" height="250" alt="ClearGrid" />
+  <p class="grp">Platform</p>
+  <ul>
+    <li><a href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M9 12h12"/></svg>Dashboard</a></li>
+    <li><a href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Borrowers<svg class="caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></a>
+      <ul class="sub"><li><a href="#">All</a></li><li><a href="#">Deals</a></li><li><a href="#">Accounts</a></li></ul></li>
+    <li><a href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 12a8 8 0 0 1-8 8H4l2-3a8 8 0 1 1 15-5z"/></svg>Inbound Support<svg class="caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></a>
+      <ul class="sub"><li><a href="#">Inbox</a></li><li><a href="#">Tickets</a></li></ul></li>
+    <li><a href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h5"/></svg>Reports</a></li>
+    <li><a href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg>AI Agents</a></li>
+    <li><a href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 11l15-6v14L3 13z"/><path d="M7 13v5h3"/></svg>Campaigns</a></li>
+    <li><a href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M10 6.5h4a3 3 0 0 1 3 3V14"/></svg>Workflows</a></li>
+  </ul>
+  <div class="voice"><b>Explore Clear Voice</b><small>Visit our AI Powered voice platform</small><button type="button">ClearVoice</button></div>
+  <div class="user"><span class="av" aria-hidden="true">S</span><span><b>sara.haddad</b><small>sara.haddad@example.com</small></span></div>
+</nav>
+
+<main>
+  <div class="top">
+    <span class="iconbtn" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></span>
+    <span class="search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Search here...</span>
+    <span class="iconbtn" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg></span>
+    <span class="iconbtn" aria-hidden="true" style="font-size:11px;font-weight:600">EN</span>
+    <span class="iconbtn" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg></span>
+  </div>
+
+  <a class="back" href="#"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</a>
+  <div class="head"><h1>Omar Al-Hassan</h1><span class="sel">Outbound <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span></div>
+
+  <div class="cards">
+    <section class="card"><h2>Borrower &amp; Loan Info</h2><dl>
+      <div class="kv"><dt>Date of Birth:</dt><dd>05-11-1988</dd></div>
+      <div class="kv"><dt>Nationality:</dt><dd>JOR</dd></div>
+      <div class="kv"><dt>Gender:</dt><dd>MALE</dd></div>
+      <div class="kv"><dt>Emirates ID:</dt><dd>784198844712093</dd></div>
+      <div class="kv"><dt>Submit Date:</dt><dd>30/04/2026</dd></div>
+      <div class="kv"><dt>Deal Owner:</dt><dd>FAISAL NOOR</dd></div>
+      <div class="kv"><dt>Deal Stage:</dt><dd>DISPUTE</dd></div>
+    </dl></section>
+    <section class="card"><h2>Financial Status</h2><dl>
+      <div class="kv"><dt>Total Amount ⓘ :</dt><dd>18,500</dd></div>
+      <div class="kv"><dt>Outstanding Amount ⓘ :</dt><dd>12,860</dd></div>
+      <div class="kv"><dt>Overdue Amount ⓘ :</dt><dd>6,280</dd></div>
+      <div class="kv"><dt>Last Due Date:</dt><dd>06/05/2026</dd></div>
+      <div class="kv"><dt>Days Past Due (DPD):</dt><dd>146</dd></div>
+    </dl></section>
+    <section class="card"><h2>PTP &amp; Collections Log</h2><dl>
+      <div class="kv"><dt>PTP Via Interaction Log:</dt><dd>N/A</dd></div>
+      <div class="kv"><dt>PTP Amount Via Interaction Log:</dt><dd>N/A</dd></div>
+      <div class="kv"><dt>Total Human Calls:</dt><dd>1</dd></div>
+      <div class="kv"><dt>Latest Human Call Ans.:</dt><dd>27/08/2026 04:20 PM</dd></div>
+      <div class="kv"><dt>Total AI Calls:</dt><dd>3</dd></div>
+      <div class="kv"><dt>Latest AI Call Answered:</dt><dd>09/09/2026 08:15 PM</dd></div>
+    </dl></section>
+  </div>
+
+  <div class="actions">
+    <button class="btn" type="button">SMS</button>
+    <button class="btn" type="button">Email</button>
+    <button class="btn" type="button">Call</button>
+    <button class="btn" type="button">WhatsApp</button>
+    <button class="btn" type="button">Email Inbox</button>
+  </div>
+
+  <details open><summary>Email Addresses<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></summary>
+    <div class="panel"><small>Email 1</small><div class="copyrow">omar.h@example.com <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/></svg></div></div>
+  </details>
+  <details><summary>Phone Numbers<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></summary>
+    <div class="panel"><small>Phone 1</small><div class="copyrow">971553217740</div></div>
+  </details>
+  <details><summary>Custom Attributes<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></summary>
+    <dl class="attrs">
+      <div><dt>Total Deal Value</dt><dd>7000</dd></div>
+      <div><dt>Deal Stage</dt><dd>DISPUTE</dd></div>
+      <div><dt>Deal Owner</dt><dd><span class="ddl">FAISAL NOOR <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span></dd></div>
+      <div><dt>Account Status</dt><dd>DISPUTED</dd></div>
+      <div><dt>Principal Amount</dt><dd>6500</dd></div>
+      <div><dt>Ptp Date</dt><dd>-</dd></div>
+      <div><dt>Ptp Amount</dt><dd>-</dd></div>
+      <div><dt>Ptp Date A I</dt><dd>-</dd></div>
+      <div><dt>Ptp Amount A I</dt><dd>-</dd></div>
+      <div><dt>Deal Created At</dt><dd>30/04/2026</dd></div>
+      <div><dt>Deal Created By</dt><dd>SYSTEM</dd></div>
+      <div><dt>Deal Updated At</dt><dd>26/08/2026</dd></div>
+      <div><dt>Deal Updated By</dt><dd>FAISAL NOOR</dd></div>
+      <div><dt>Days Past Due</dt><dd>146</dd></div>
+      <div><dt>Last Due Date</dt><dd>18/04/2026</dd></div>
+      <div><dt>Broken Promise Count</dt><dd>0</dd></div>
+      <div><dt>Lender Verification Required</dt><dd><span class="ddl">No <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span></dd></div>
+      <div><dt>Disputed</dt><dd><span class="ddl">Yes <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span></dd></div>
+    </dl>
+  </details>
+  <details><summary>Broken Promise Details<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></summary>
+    <p class="empty">No broken promises found</p>
+  </details>
+  <details><summary>Deal Activity Timeline<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></summary>
+    <p class="empty">No activities found for this deal.</p>
+  </details>
+
+  <div class="toolbar">
+    <span class="search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Search by reference id, account reference id.</span>
+    <button class="btn" type="button">Columns</button>
+  </div>
+  <table>
+    <thead><tr><th>REFERENCE ID ⇅</th><th>ACCOUNT REFERENCE ID ⇅</th><th class="num">BALANCE AMOUNT ⇅</th><th class="num">TOTAL AMOUNT ⇅</th><th>DUE DATE ⇅</th><th>LOAN TYPE ⇅</th><th>STATUS ⇅</th><th>MERCHANT NAME ⇅</th><th class="num">ACTION</th></tr></thead>
+    <tbody>
+      <tr><td>CC-77102</td><td>AC-33011-GMB</td><td class="num">4,860</td><td class="num">7,000</td><td>18/04/2026</td><td>CREDIT_CARD</td><td>DISPUTED</td><td></td><td class="num"><button class="btn" type="button">View</button></td></tr>
+      <tr><td>PL-11833</td><td>AC-33011-GMB2</td><td class="num">8,000</td><td class="num">11,500</td><td>06/05/2026</td><td>PERSONAL_LOAN</td><td>IN_COLLECTION</td><td></td><td class="num"><button class="btn" type="button">View</button></td></tr>
+    </tbody>
+  </table>
+  <div class="pager">Page 1 of 1 | Total 2 records <span><button class="btn" type="button">Previous</button><button class="btn" type="button">Next</button></span></div>
+
+  <div class="tabsrow">
+    <div role="tablist" aria-label="Logs">
+      <button role="tab" type="button" id="t-i" aria-selected="true" aria-controls="p-i">Interaction Logs</button>
+      <button role="tab" type="button" id="t-c" aria-selected="false" aria-controls="p-c" tabindex="-1">Communication Logs</button>
+      <button role="tab" type="button" id="t-t" aria-selected="false" aria-controls="p-t" tabindex="-1">Tickets</button>
+    </div>
+    <button class="btn dark" type="button">Add Interaction Log</button>
+  </div>
+
+  <section role="tabpanel" id="p-i" aria-labelledby="t-i"><h3>Interaction Logs</h3>
+    <table><thead><tr><th>INTERACTION SOURCE</th><th>COMMUNICATION TYPE</th><th>OUTCOME</th><th>CREATED BY</th><th>COMMUNICATED AT</th><th>CREATED AT</th><th>ACTIONS</th></tr></thead>
+    <tbody>
+      <tr><td>Phone</td><td>Outgoing</td><td>Rpc</td><td>FAISAL NOOR</td><td>27/08/2026 16:20</td><td>27/08/2026 16:31</td><td><button class="btn" type="button">Details</button></td></tr>
+      <tr><td>Phone</td><td>Outgoing</td><td>Promise_to_pay</td><td>FAISAL NOOR</td><td>14/07/2026 11:40</td><td>14/07/2026 11:52</td><td><button class="btn" type="button">Details</button></td></tr>
+    </tbody></table>
+  </section>
+  <section role="tabpanel" id="p-c" aria-labelledby="t-c" hidden><h3>Communication Logs</h3>
+    <table><thead><tr><th>CHANNEL</th><th>DIRECTION</th><th>STATUS</th><th>CREATED BY</th><th>SENT AT</th></tr></thead>
+    <tbody>
+      <tr><td>SMS</td><td>Outgoing</td><td>DELIVERED</td><td>SYSTEM</td><td>08/09/2026 10:00</td></tr>
+      <tr><td>WHATSAPP</td><td>Outgoing</td><td>FAILED</td><td>SYSTEM</td><td>06/09/2026 19:30</td></tr>
+      <tr><td>EMAIL</td><td>Incoming</td><td>RECEIVED</td><td>BORROWER</td><td>01/09/2026 14:05</td></tr>
+    </tbody></table>
+  </section>
+  <section role="tabpanel" id="p-t" aria-labelledby="t-t" hidden><h3>Tickets</h3><p class="empty">No tickets found</p></section>
+</main>
+</div>
+
+<script>
+// Tabs: click or arrow keys, the only behaviour the recreation needs beyond native <details>.
+const tabs=[...document.querySelectorAll('[role=tab]')];
+function pick(t){tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});t.focus();}
+tabs.forEach((t,i)=>{t.onclick=()=>pick(t);t.onkeydown=e=>{const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(d){e.preventDefault();pick(tabs[(i+d+tabs.length)%tabs.length]);}};});
+</script>
+</body>
+</html>
