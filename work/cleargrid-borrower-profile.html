@@ -114,13 +114,56 @@
           <li><strong>Stack.</strong> HTML · CSS · vanilla JS · Claude Code · Figma</li>
         </ul>
 
+        <h2>The brief</h2>
+        <p>ClearGrid isn't a typical SaaS company. They get paid on debt actually recovered, and by their own account about 95% of cases are resolved by AI voice calls alone. The other 5% escalate to a human agent, and the Borrower Profile is that agent's workspace.</p>
+        <p>The brief asked for a redesign of that page, desktop only, in English (LTR) and Arabic (RTL), within 48 hours. It named five issues with the live page:</p>
+        <ul class="detail-list">
+          <li><strong>Visual hierarchy.</strong> No clear line between primary and secondary data; inconsistent sizes and weights.</li>
+          <li><strong>Data grouping.</strong> Contact details, financial status and interaction history scattered across disconnected sections.</li>
+          <li><strong>Layout efficiency.</strong> Too much scrolling to reach key information, and poor use of the screen.</li>
+          <li><strong>Component scalability.</strong> No modular, reusable components to keep the platform consistent as it grows.</li>
+          <li><strong>Bilingual support.</strong> Little consideration for Arabic and right-to-left layouts.</li>
+        </ul>
+        <p>Every redesign had to carry six groups of data: borrower and loan details, financial status, promises and call logs, a multi-deal table, expanded account details, and five contact actions. The deliverables were a Figma file, English and Arabic layouts, and a short UX rationale. It was scored on four criteria:</p>
+        <ul class="case-stats">
+          <li class="case-stat"><span class="case-stat-number">30%</span><p class="case-stat-desc">UX thinking: hierarchy, grouping and layout decisions.</p></li>
+          <li class="case-stat"><span class="case-stat-number">25%</span><p class="case-stat-desc">Visual design clarity, aligned with ClearGrid's brand.</p></li>
+          <li class="case-stat"><span class="case-stat-number">25%</span><p class="case-stat-desc">Arabic support and proper right-to-left execution.</p></li>
+          <li class="case-stat"><span class="case-stat-number">20%</span><p class="case-stat-desc">Initiative and ownership: thoughtful touches beyond the ask.</p></li>
+        </ul>
+
+        <h2>The page agents had</h2>
+        <p>The brief came with four screenshots of the live page. I've rebuilt it here with the same layout and labels, filled with the fabricated borrower used throughout this case study, so nothing from the real screenshots is published.</p>
+
+        <figure>
+          <img src="../assets/images/cleargrid/cleargrid-before-top.webp" width="1440" height="900" alt="Recreation of the original Borrower Profile for Omar Al-Hassan. Three equal cards list borrower and loan info, financial status, and a promise and call log as label and value pairs at the same size, followed by a row of five contact buttons and an Email Addresses section." loading="lazy" decoding="async" />
+          <figcaption>Fig 1 — The original page, recreated with fabricated data. Every field has the same weight, and the cards don't say which account their numbers belong to.</figcaption>
+        </figure>
+
+        <p>What the live page gave an agent, mid-call:</p>
+        <ul class="detail-list">
+          <li><strong>Nothing stands out.</strong> 39 fields at the same size and weight.</li>
+          <li><strong>Brief data behind arrows.</strong> Five collapsible sections, four closed by default, holding fields the brief required.</li>
+          <li><strong>No reason on the page.</strong> Nothing says why the AI handed this case to a human.</li>
+          <li><strong>AI activity as bare counts.</strong> "3 AI calls" and a timestamp, with nothing about what those calls established.</li>
+          <li><strong>Fields shown twice.</strong> Seven, including deal stage, owner and days past due.</li>
+          <li><strong>Raw system values.</strong> IN_COLLECTION, Rpc, and three different symbols for empty.</li>
+          <li><strong>Empty space.</strong> Empty sections took about 40% of the screen.</li>
+        </ul>
+
+        <figure>
+          <img src="../assets/images/cleargrid/cleargrid-before-bottom.webp" width="1232" height="1105" alt="Lower half of the recreated original page. An open Custom Attributes section repeats deal stage, owner, days past due and last due date in a four-column grid, followed by collapsed sections, a deal table with two rows showing raw values such as CREDIT_CARD and IN_COLLECTION, and an interaction log table." loading="lazy" decoding="async" />
+          <figcaption>Fig 2 — Further down: the same fields again under Custom Attributes, then the deal table and logs.</figcaption>
+        </figure>
+
+        <p><a href="cleargrid-prototype/before.html" target="_blank" rel="noopener noreferrer">Open the original layout (recreated)<span class="visually-hidden"> (opens in a new tab)</span></a> to scroll and click through it yourself.</p>
+
         <h2>The problem</h2>
-        <p>ClearGrid isn't a typical SaaS company. They get paid on debt actually recovered, and by their own account about 95% of cases are resolved by AI voice calls alone. The other 5% escalate to a human agent, and this page is that agent's workspace.</p>
-        <p>The old page mixed three different things into one flat list: facts about the borrower, facts about one account, facts about one call. That's why the header total and the deal-table total could disagree on the same screen. One early prototype reproduced this exact bug: the header read AED 11,800, the deal table below it summed to AED 16,000.</p>
+        <p>Under the five issues the brief named sat one structural cause. The page mixed three different things into one flat list: facts about the borrower, facts about one account, facts about one call. That's why the header total and the deal-table total could disagree on the same screen. One early prototype reproduced this exact bug: the header read AED 11,800, the deal table below it summed to AED 16,000.</p>
 
         <figure>
           <img src="../assets/images/cleargrid/cleargrid-v2-bug.webp" width="1250" height="715" alt="Early prototype of Omar Al-Hassan's profile. The outstanding balance card reads AED 11,800, while the deals table lists two deals of AED 11,800 and AED 4,200." loading="lazy" decoding="async" />
-          <figcaption>Fig 1 — An early pass, caught in the act. The header shows one account's balance as the borrower's total; the two deals below add up to AED 16,000.</figcaption>
+          <figcaption>Fig 3 — An early pass, caught in the act. The header shows one account's balance as the borrower's total; the two deals below add up to AED 16,000.</figcaption>
         </figure>
 
         <p>The fix: split the page into three columns, one per data type, under a strip of facts that never scrolls.</p>
@@ -141,14 +184,14 @@
 
         <figure>
           <img src="../assets/images/cleargrid/cleargrid-profile-en.webp" width="1440" height="900" alt="The redesigned borrower profile for Omar Al-Hassan in English. A top band shows total outstanding AED 12,860, worst days past due 146 and promise state, then a coral line reading why this reached you: borrower disputes the Gulf Meridian Bank account. Below sit three columns: accounts and contact history, the selected account's balance and terms, and an interactions timeline." loading="lazy" decoding="async" />
-          <figcaption>Fig 2 — The locked top band, then one column per scope: the borrower, the working account, and what happened on it.</figcaption>
+          <figcaption>Fig 4 — The locked top band, then one column per scope: the borrower, the working account, and what happened on it.</figcaption>
         </figure>
 
         <p>The RTL decision is the clearest case of catching my own bad instinct. My first idea was side-by-side English and Arabic, based on one ClearGrid screen that does it that way. I checked that against outside examples first: enterprise BI tools, government portals, Arabic-UX guidance. None of them do side-by-side for a dense data screen. Dropped the instinct, built mirrored RTL instead, with its own Arabic typeface and real Arabic plural rules. Only the borrower's name shows in both scripts, because the agent says it aloud.</p>
 
         <figure>
           <img src="../assets/images/cleargrid/cleargrid-profile-ar.webp" width="1440" height="900" alt="The same profile in Arabic. The whole layout mirrors: navigation on the right, the top band and three columns reading right to left, with amounts and account numbers kept in Western digits." loading="lazy" decoding="async" />
-          <figcaption>Fig 3 — The Arabic build. Layout, navigation and reading order mirror; figures and IDs stay left-to-right.</figcaption>
+          <figcaption>Fig 5 — The Arabic build. Layout, navigation and reading order mirror; figures and IDs stay left-to-right.</figcaption>
         </figure>
 
         <h2>What I chose not to build</h2>
@@ -161,13 +204,23 @@
 
         <figure>
           <img src="../assets/images/cleargrid/cleargrid-queue.webp" width="1440" height="440" alt="The case queue listing four borrowers. Each row shows the reason the case is in the queue, such as dispute or hardship, total outstanding, worst days past due, AI and human call counts, and an open case button." loading="lazy" decoding="async" />
-          <figcaption>Fig 4 — How a case arrives: the queue, sorted by escalation severity, then by amount owed.</figcaption>
+          <figcaption>Fig 6 — How a case arrives: the queue, sorted by escalation severity, then by amount owed.</figcaption>
         </figure>
 
         <figure>
           <img src="../assets/images/cleargrid/cleargrid-wrapup.webp" width="1440" height="560" alt="The wrap-up screen for Omar Al-Hassan. The top band and account cards stay visible while a form on the right records the call outcome, an optional note and a promise amount and date." loading="lazy" decoding="async" />
-          <figcaption>Fig 5 — How it closes: the outcome form sits beside the record it describes, and is scored on the same rubric as AI-handled calls.</figcaption>
+          <figcaption>Fig 7 — How it closes: the outcome form sits beside the record it describes, and is scored on the same rubric as AI-handled calls.</figcaption>
         </figure>
+
+        <h2>How the redesign answers the brief</h2>
+        <ul class="detail-list">
+          <li><strong>Visual hierarchy.</strong> Four text styles. Only the numbers an agent reads aloud are large.</li>
+          <li><strong>Data grouping.</strong> One column per scope, and one home per field.</li>
+          <li><strong>Layout efficiency.</strong> A locked top band; the page never scrolls, only the columns do, and nothing the brief required sits behind a click.</li>
+          <li><strong>Component scalability.</strong> Account cards, field rows and blocks are reused across all three screens on one token set.</li>
+          <li><strong>Bilingual support.</strong> A real mirrored Arabic build, not a flipped text alignment.</li>
+        </ul>
+        <p>The English and Arabic layouts shipped as a working prototype with a written rationale; the Figma file followed, built by hand from the build.</p>
 
         <h2>Result</h2>
         <p>Brief to submission: 47 hours. One interactive prototype, tested against four fake borrowers, including a near-empty one, in both languages and both directions. If this continued past the interview, the first thing I'd want to know is whether the "why this reached you" line actually saves agents time on a real call.</p>
