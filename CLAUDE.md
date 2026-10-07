@@ -20,27 +20,7 @@ because that is the entire point.
 - Hosting target: any static host (GitHub Pages / Vercel / Netlify).
 - Local preview: `npx serve .` or VS Code Live Server. Never require a build.
 
-## File map
-
-```
-portfolio/
-├── CLAUDE.md                  ← you are here
-├── README.md                  ← setup + workflow for the human
-├── index.html                 ← landing page (hero, work, skills, about)
-├── work/
-│   └── blueprint-design-system.html   ← case study; ALSO the template for new ones
-├── css/
-│   ├── tokens.css             ← ALL design tokens. The only place colors/sizes live.
-│   ├── styles.css             ← base + components. Consumes tokens only.
-│   └── desk.css               ← shared mat/paper material system, linked by every page
-├── js/
-│   └── main.js                ← direction/language toggle, mat picker, reveal, misc
-├── docs/
-│   ├── DESIGN-GUIDELINES.md   ← typography, grid, spacing, motion, component specs
-│   ├── ACCESSIBILITY-RTL-CHECKLIST.md ← test before every release
-│   └── CONTENT-GUIDE.md       ← how to add case studies + image specs
-└── assets/images/             ← optimized images only (see CONTENT-GUIDE)
-```
+Case-study template: `work/blueprint-design-system.html` (see `docs/CONTENT-GUIDE.md`).
 
 ## Non-negotiable rules
 
@@ -102,7 +82,7 @@ portfolio/
 
 ### 4. Performance budget
 
-- No JS libraries. No web-font families beyond the three Plex families.
+- No JS libraries. No font families beyond those already self-hosted (see Tech stack).
 - Images: WebP/AVIF, `loading="lazy"` below the fold, explicit `width`/`height`
   to prevent layout shift.
 - Target: Lighthouse ≥ 95 on Performance, 100 on Accessibility, ≥ 95 Best
@@ -119,13 +99,6 @@ portfolio/
   and only when asked).
 
 ## Agent skills to use
-
-Install once from the repo root:
-
-```
-npx skills add jakubkrehel/skills     # better-ui, better-typography, better-colors
-npx skills add emilkowalski/skills    # animation-vocabulary, improve-animations, review-animations
-```
 
 When to invoke:
 - Touching type scale, line-height, or measure → **better-typography**
