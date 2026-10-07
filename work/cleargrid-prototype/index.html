@@ -1,0 +1,1336 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ClearGrid — Borrower Profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Tajawal:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<style>
+:root{
+  --bg:#F4F5F7; --surface:#FFF; --sunken:#EDEFF2; --nav:#14161A;
+  --text:#0A0A08; --text2:#5B6166; --muted:#8A9094;
+  --line:#E5E7E9; --line2:#D3D7DA; --line-soft:#EEF0F2;
+  /* control boundaries. --btnline is decorative (the label identifies a button);
+     --ctl is an input's only boundary, so it clears WCAG 1.4.11's 3:1 on white. */
+  --btnline:#C4C9CD; --ctl:#8A9094;
+  --teal:#069494; --tealDeep:#04716D; --tealDeeper:#035854; --tealWash:#EAF5F5;
+  --coral:#DC4A3E; --coralDeep:#B23A30; --coralWash:#FDEEEC;
+  --green:#1E8E5A; --greenWash:#E9F5EF; --amber:#B8790A; --amberWash:#FBF2E0;
+  /* -Text pairs: the base hues are 3:1-only (dots, bars, fills). Text on a wash uses
+     these, each measured ≥5:1 on its own wash. The old pairs measured 3.99–4.05:1. */
+  --coralText:#B8342A; --greenText:#17744A; --amberText:#8A5A06;
+  --sans:'Inter',system-ui,-apple-system,sans-serif;
+  --ar:'Tajawal','IBM Plex Sans Arabic','Noto Sans Arabic',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  /* type: four sizes, each with one job. meta 12 · body 13 · title 16 · display 24. */
+  --fs-meta:12px; --fs-body:13px; --fs-title:16px; --fs-display:24px;
+  --lh-meta:16px; --lh-body:20px; --lh-title:24px; --lh-display:28px;
+  /* space: 4px grid. nothing between the steps. */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s6:24px;
+  --r-sm:4px; --r-md:6px;
+  --shadow-sm:0 1px 2px rgba(16,24,28,.08);
+  --shadow-md:0 4px 12px rgba(16,24,28,.12);
+  --focus-ring:0 0 0 2px var(--surface),0 0 0 4px var(--teal);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:var(--fs-body);line-height:var(--lh-body);overflow:hidden;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+b,strong{font-weight:600}
+
+/* Arabic: real font, ×1.7 leading on every text tier, zero tracking on anything with Arabic glyphs */
+html[lang="ar"]{--lh-meta:1.7; --lh-body:1.7; --lh-title:1.7}
+html[lang="ar"] body{font-family:var(--ar)}
+html[lang="ar"] *{letter-spacing:normal!important;font-style:normal!important;text-transform:none!important}
+.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block;max-inline-size:100%;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* type tiers — display / title / emphasis / label. everything on screen is one of these
+   sizes; a new need is a modifier (mono, muted), never a new size. weights 400/600 only,
+   plus 500 on mono display (JetBrains Mono ships no 600 file). */
+.t-display{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:var(--fs-display);line-height:var(--lh-display);font-weight:500;letter-spacing:-.01em}
+.t-display.sm{font-size:var(--fs-title);line-height:24px}
+.t-title{font-size:var(--fs-title);line-height:var(--lh-title);font-weight:600;letter-spacing:-.01em}
+.t-pri{font-size:var(--fs-body);font-weight:600}
+.t-sec,.eyebrow{font-size:var(--fs-meta);line-height:var(--lh-meta);font-weight:400;color:var(--text2)}
+html[lang="ar"] .eyebrow{font-family:var(--ar)}
+/* .empty stays on --muted: CLAUDE.md's null glyph must look quieter than data. */
+.dim{color:var(--text2)} .empty{color:var(--muted)}
+
+/* ── shared interaction states ── */
+.nav-promo-btn,.nav-lang button,.act,.mini,.qrow{transition:transform 120ms cubic-bezier(.23,1,.32,1)}
+.nav-promo-btn:active,.nav-lang button:active,.act:active,.mini:active,.qrow:active{transform:scale(.97)}
+.act:focus-visible,.mini:focus-visible,.card:focus-visible,.qrow:focus-visible,.nav-promo-btn:focus-visible,
+.tabs button:focus-visible,.nav-lang button:focus-visible,.nav .item:focus-visible,.nav-foot button:focus-visible{
+  outline:none;box-shadow:var(--focus-ring)}
+
+/* ── buttons: two sizes, one shape. md 32/13 (rail, wrap-up), sm 28/12 (column heads, rows).
+   label centred, never stretched: width comes from padding, not a min-width. ── */
+.act,.mini{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);white-space:nowrap;
+  font:inherit;font-weight:600;color:var(--text);background:var(--surface);border:1px solid var(--btnline);
+  border-radius:var(--r-md);padding:0 var(--s3);cursor:pointer}
+.act{block-size:32px;font-size:var(--fs-body)}
+.act .icon{font-size:16px}
+.mini{block-size:28px;font-size:var(--fs-meta);gap:var(--s1)}
+.act.primary,.mini.pri{background:var(--tealDeep);border-color:var(--tealDeep);color:#fff}
+.act.off{background:var(--sunken);color:var(--text2);cursor:not-allowed}
+.act.off:active{transform:none}
+/* hover: every control answers the pointer. secondary darkens its edge and fill,
+   primary deepens, a disabled one only shows its tooltip. */
+.act:not(.off):hover,.mini:not(.pri):hover,.dd-trigger:hover{background:var(--bg);border-color:var(--ctl)}
+.act.primary:hover,.mini.pri:hover,.qrow:hover .mini.pri{background:var(--tealDeeper);border-color:var(--tealDeeper)}
+.tabs button:not(.on):hover{color:var(--text);background:rgba(255,255,255,.55)}
+.nav-lang button:not(.on):hover{opacity:1;background:rgba(255,255,255,.08)}
+.nav-promo-btn:hover{background:var(--line)}
+tbody tr:hover .mini{border-color:var(--ctl)}
+
+/* tooltip: plain-language reason on a disabled control, on hover and keyboard focus.
+   start-aligned under the control; logical insets so it sits right in RTL too. */
+[data-tip]{position:relative}
+[data-tip]:hover::after,[data-tip]:focus-visible::after{content:attr(data-tip);position:absolute;z-index:80;
+  inset-block-start:calc(100% + var(--s2));inset-inline-start:0;inline-size:max-content;max-inline-size:240px;
+  padding:var(--s1) var(--s2);border-radius:var(--r-sm);background:var(--nav);color:#fff;box-shadow:var(--shadow-md);
+  font-size:var(--fs-meta);line-height:var(--lh-meta);font-weight:400;text-align:start;white-space:normal;pointer-events:none}
+
+/* ── frame ─────────────────────────────────────────────────────── */
+.app{height:100%;display:flex;min-height:0}
+.nav{inline-size:184px;flex:0 0 184px;background:var(--nav);color:#fff;overflow:hidden;display:flex;flex-direction:column}
+.nav-scroll{flex:1;min-height:0;overflow:auto;padding:var(--s4) var(--s2)}
+.nav-bottom{flex:0 0 auto;border-block-start:1px solid rgba(255,255,255,.1);padding:var(--s2)}
+.nav-foot{flex:0 0 auto;border-block-start:1px solid rgba(255,255,255,.1);padding:var(--s1) var(--s2)}
+.nav .logo{display:flex;align-items:center;block-size:32px;padding:0 var(--s2);margin-block-end:var(--s4)}
+.logo-full{block-size:32px;inline-size:auto;display:block}
+.logo-mark{inline-size:32px;block-size:32px;display:none}
+.nav .gl{font-size:var(--fs-meta);line-height:var(--lh-meta);opacity:.5;margin:var(--s4) var(--s2) var(--s1)}
+.nav .item{display:flex;align-items:center;gap:var(--s2);block-size:32px;padding:0 var(--s2);border-radius:var(--r-md);
+  opacity:.75;cursor:pointer}
+.nav .item:hover{opacity:1;background:rgba(255,255,255,.06)}
+.nav .item.on{background:rgba(6,148,148,.22);opacity:1;font-weight:600}
+.nav .item .icon{font-size:16px}
+.nav-promo{background:rgba(255,255,255,.06);border-radius:var(--r-md);padding:var(--s3);margin-block-end:var(--s2)}
+.nav-promo .t-sec{color:rgba(255,255,255,.7)}
+.nav-promo-btn{margin-block-start:var(--s2);display:inline-flex;align-items:center;gap:var(--s1);background:#fff;color:var(--nav);
+  border:0;border-radius:var(--r-md);block-size:28px;padding:0 var(--s3);font:inherit;font-size:var(--fs-meta);font-weight:600;cursor:pointer}
+.nav-profile{display:flex;align-items:center;gap:var(--s2);padding:var(--s1) 0}
+.nav-profile .avatar{inline-size:24px;block-size:24px;background:var(--teal);color:#fff;font-size:var(--fs-meta)}
+.nav-profile .who{display:flex;flex-direction:column;min-width:0;flex:1}
+.nav-profile .who .t-pri,.nav-profile .who .t-sec{color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-profile .who .t-sec{color:rgba(255,255,255,.6)}
+.nav-profile .icon{opacity:.6}
+.nav-foot button{inline-size:100%;block-size:32px;background:transparent;border:0;color:#fff;opacity:.7;
+  border-radius:var(--r-md);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.nav-foot button:hover{opacity:1;background:rgba(255,255,255,.08)}
+.nav.collapsed .nav-foot .icon{transform:scaleX(-1)}
+html[dir="rtl"] .nav-foot .icon{transform:scaleX(-1)}
+html[dir="rtl"] .nav.collapsed .nav-foot .icon{transform:scaleX(1)}
+.nav-lang{display:flex;background:rgba(255,255,255,.09);border-radius:var(--r-md);padding:2px;gap:2px;margin-block-end:var(--s2)}
+.nav-lang button{flex:1;border:0;padding:0;background:transparent;color:#fff;opacity:.75;font:inherit;font-size:var(--fs-meta);
+  block-size:28px;border-radius:var(--r-sm);cursor:pointer}
+.nav-lang button.on{background:#fff;color:var(--nav);opacity:1;font-weight:600}
+.nav-lang button[data-v="ar"]{font-family:var(--ar)}
+.nav-lang .ic{display:none}
+
+/* collapsed nav: same rule bodies fire from the .collapsed class or the narrow-viewport
+   media query — CSS has no clean "media OR class" selector, so they're duplicated.
+   section labels are removed outright, not shrunk to dividers: they'd still hold space. */
+.nav.collapsed{inline-size:64px;flex:0 0 64px}
+.nav.collapsed .logo-full,.nav.collapsed .gl,.nav.collapsed .item .label,
+.nav.collapsed .nav-promo,.nav.collapsed .nav-profile .who,.nav.collapsed .nav-profile .icon{display:none}
+.nav.collapsed .logo{justify-content:center;padding:0}
+.nav.collapsed .logo-mark{display:block}
+.nav.collapsed .item{justify-content:center;padding:0}
+.nav.collapsed .nav-profile{justify-content:center}
+.nav.collapsed .nav-scroll{overflow-x:hidden}
+.nav.collapsed .nav-lang{background:transparent;padding:0;gap:0}
+.nav.collapsed .nav-lang button:not(.on){display:none}
+.nav.collapsed .nav-lang button.on{background:rgba(255,255,255,.09);color:#fff;block-size:32px}
+.nav.collapsed .nav-lang .full{display:none}
+.nav.collapsed .nav-lang .ic{display:block}
+@media(max-width:1360px){
+  .nav{inline-size:64px;flex:0 0 64px}
+  .nav .logo-full,.nav .gl,.nav .item .label,.nav .nav-promo,.nav .nav-profile .who,.nav .nav-profile .icon{display:none}
+  .nav .logo{justify-content:center;padding:0}
+  .nav .logo-mark{display:block}
+  .nav .item{justify-content:center;padding:0}
+  .nav-profile{justify-content:center}
+  .nav-scroll{overflow-x:hidden}
+  .nav-lang{background:transparent;padding:0;gap:0}
+  .nav-lang button:not(.on){display:none}
+  .nav-lang button.on{background:rgba(255,255,255,.09);color:#fff;block-size:32px}
+  .nav-lang .full{display:none}
+  .nav-lang .ic{display:block}
+}
+#nav-flyout{position:fixed;z-index:70;transform:translateY(-50%);background:var(--nav);color:#fff;
+  font-size:var(--fs-meta);line-height:var(--lh-meta);padding:var(--s1) var(--s2);border-radius:var(--r-sm);
+  box-shadow:var(--shadow-md);pointer-events:none;white-space:nowrap}
+.stack{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column}
+
+/* ── REGION 1 · spine. locked. never scrolls. ──────────────────── */
+.spine{flex:0 0 auto;position:relative;z-index:5;background:var(--surface);border-block-end:1px solid var(--line);padding:var(--s3) var(--s4)}
+.spine-row{display:flex;align-items:center;gap:var(--s6)}
+.idb{display:flex;gap:var(--s3);min-width:0}
+.avatar{inline-size:32px;block-size:32px;border-radius:50%;background:var(--sunken);color:var(--text2);
+  display:flex;align-items:center;justify-content:center;font-weight:600;font-size:var(--fs-meta);flex:0 0 auto}
+.names{display:flex;align-items:baseline;gap:var(--s2);flex-wrap:wrap}
+.names .n2,.idline{font-size:var(--fs-meta);line-height:var(--lh-meta);color:var(--text2)}
+.idline{display:flex;gap:var(--s2);align-items:center;flex-wrap:wrap;margin-block-start:var(--s1)}
+.stats{display:flex;gap:var(--s6);margin-inline-start:auto;text-align:end;flex:0 0 auto}
+.stat{flex:0 0 auto}
+.stat .sub{font-size:var(--fs-meta);line-height:var(--lh-meta);color:var(--text2);display:block}
+.badge{display:inline-flex;align-items:center;gap:var(--s1);block-size:20px;padding:0 var(--s2);border-radius:var(--r-sm);
+  font-size:var(--fs-meta);line-height:var(--lh-meta);font-weight:600;white-space:nowrap}
+.badge .dot{inline-size:6px;block-size:6px;border-radius:50%;background:currentColor}
+.badge.q{background:var(--sunken);color:var(--text2)}
+.badge.alert{background:var(--coralWash);color:var(--coralText)}
+.badge.ok{background:var(--greenWash);color:var(--greenText)}
+.badge.warn{background:var(--amberWash);color:var(--amberText)}
+.badge.teal{background:var(--tealWash);color:var(--tealDeep)}
+
+.band{margin-block-start:var(--s3);display:flex;flex-direction:column;gap:var(--s1)}
+.why{display:flex;align-items:center;gap:var(--s2);background:var(--coralWash);border-radius:var(--r-sm);padding:var(--s1) var(--s2)}
+.why.calm{background:var(--sunken)}
+.why .badge{padding:0}
+
+.rail{display:flex;align-items:center;gap:var(--s2);margin-block-start:var(--s3);flex-wrap:wrap}
+.rail .log-btn{margin-inline-start:auto}
+
+/* ── REGIONS 2–4 · one column per scope ────────────────────────── */
+.cols{flex:1;min-height:0;display:grid;grid-template-columns:320px 480px minmax(340px,1fr)}
+.cols.compare{grid-template-columns:320px 1fr}
+.col{min-height:0;overflow:auto;border-inline-end:1px solid var(--line);scrollbar-width:thin;scrollbar-gutter:stable}
+.col:last-child{border-inline-end:0}
+/* fixed height so the three heads share one baseline whatever each one holds */
+.colhead{position:sticky;top:0;z-index:4;background:var(--bg);block-size:44px;padding:0 var(--s3);
+  border-block-end:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:var(--s2)}
+.colhead>.eyebrow{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.colbody{padding:var(--s3) var(--s3) 32px}
+.colbody.flush{padding:0}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s3);
+  margin-block-end:var(--s2);cursor:pointer;position:relative}
+.card:hover{border-color:var(--line2);box-shadow:var(--shadow-sm)}
+.card.on{box-shadow:0 0 0 1px var(--teal),var(--shadow-sm)}
+.card .kbd{position:absolute;inset-inline-end:var(--s2);inset-block-start:var(--s2);font-size:var(--fs-meta);line-height:var(--lh-meta);
+  color:var(--text2);font-family:var(--mono)}
+.card .flagdot{display:inline-block;inline-size:6px;block-size:6px;border-radius:50%;background:var(--coral);
+  margin-inline-end:var(--s1);vertical-align:middle}
+.card .reasoncue{margin-block-start:var(--s1);color:var(--coralDeep)}
+.card-r{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s2);margin-block-start:var(--s1)}
+.card-b{display:flex;align-items:center;gap:var(--s1);flex-wrap:wrap;margin-block-start:var(--s2)}
+.bar{block-size:4px;background:var(--sunken);border-radius:var(--r-sm);overflow:hidden;margin-block-start:var(--s2)}
+.bar>i{display:block;block-size:100%;background:var(--teal)}
+
+.blk{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);margin-block-end:var(--s2)}
+.blk-h{padding:var(--s2) var(--s3);border-block-end:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:var(--s2)}
+.blk-b{padding:var(--s1) var(--s3) var(--s2)}
+/* field row: label left, value right. the label never wraps (ellipsis + title as the
+   last resort); values that hold prose are flagged wide at the call site so they get
+   the full row instead of breaking onto three lines in a half-width cell. */
+.rows .row{display:flex;align-items:baseline;gap:var(--s2);padding-block:var(--s1);border-block-end:1px solid var(--line-soft)}
+.rows .row:last-child{border-block-end:0}
+.row .k{flex:0 0 auto;max-inline-size:70%;font-size:var(--fs-meta);line-height:var(--lh-meta);color:var(--text2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .v{font-weight:600;margin-inline-start:auto;text-align:end;flex:1;min-inline-size:0;overflow-wrap:anywhere}
+.grid2{display:grid;grid-template-columns:1fr 1fr;column-gap:var(--s6)}
+.grid2 .row.wide{grid-column:1/-1}
+#c-bor .grid2{grid-template-columns:1fr}
+.row.prose{display:block;padding-block:var(--s2);border-block-end:1px solid var(--line-soft)}
+.hero{display:flex;gap:var(--s6);align-items:flex-start;padding-block-end:var(--s3);border-block-end:1px solid var(--line-soft);margin-block-end:var(--s1)}
+.hero .stat{flex:1 1 0;min-inline-size:0}
+.emptyline{color:var(--text2);font-size:var(--fs-meta);line-height:var(--lh-meta);padding-block:var(--s1)}
+
+.tabs{display:inline-flex;background:var(--sunken);border-radius:var(--r-md);padding:2px;gap:2px}
+.tabs button{border:0;background:transparent;font:inherit;font-size:var(--fs-meta);block-size:24px;padding:0 var(--s2);
+  border-radius:var(--r-sm);color:var(--text2);cursor:pointer;white-space:nowrap}
+.tabs button.on{background:var(--surface);color:var(--text);font-weight:600}
+
+.log{display:flex;gap:var(--s2);padding-block:var(--s2);border-block-end:1px solid var(--line-soft)}
+.log::before{content:'';display:inline-block;inline-size:6px;block-size:6px;border-radius:50%;
+  flex:0 0 auto;margin-block-start:7px}
+.log.ai::before{background:var(--teal)}
+.log.new{background:var(--tealWash)}
+.log .when{flex:0 0 96px;color:var(--text2);font-size:var(--fs-meta)}
+.log .meta{color:var(--text2);font-size:var(--fs-meta);line-height:var(--lh-meta)}
+
+/* shared 180ms open animation for the wrap-up pane (CLAUDE.md: entry form open 180ms) */
+@keyframes open{from{opacity:0;transform:translateY(-4px)}}
+
+/* ── wrap-up screen ─────────────────────────────────────────────── */
+.wrap{max-inline-size:480px;animation:open 180ms cubic-bezier(.23,1,.32,1)}
+.wrap .f{display:flex;flex-direction:column;gap:var(--s1);margin-block-end:var(--s4)}
+.wrap .f>span{font-size:var(--fs-meta);line-height:var(--lh-meta);color:var(--text2)}
+.wrap .pair,.wrap .actions{display:flex;gap:var(--s2)}
+.wrap .pair{align-items:flex-start}
+.wrap .amt{max-inline-size:120px}
+.wrap input{font:inherit;block-size:32px;padding:0 var(--s3);border:1px solid var(--ctl);
+  border-radius:var(--r-md);background:var(--surface);color:var(--text)}
+.wrap input::placeholder{color:var(--text2)}
+.wrap input:hover{border-color:var(--text2)}
+.wrap input:focus-visible,.dd-trigger:focus-visible,.dd-opt:focus-visible,.cal-day:focus-visible,.cal-nav:focus-visible{
+  outline:none;box-shadow:var(--focus-ring)}
+
+/* ── select + date picker (shadcn Select / Popover+Calendar). trigger = input metrics;
+   popover = surface, hairline, md shadow, 4px inset; items 32px, radius sm. ── */
+.dd{position:relative}
+.dd-trigger{display:flex;align-items:center;gap:var(--s2);inline-size:100%;block-size:32px;padding:0 var(--s3);
+  font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--ctl);border-radius:var(--r-md);
+  cursor:pointer;text-align:start}
+.dd-trigger .dd-val{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dd-trigger .icon{font-size:16px;color:var(--text2)}
+.dd-trigger[aria-expanded="true"]{border-color:var(--teal)}
+.dd-trigger.date{inline-size:200px}
+.dd-trigger .empty-val{color:var(--text2)}
+.dd-pop{position:absolute;z-index:20;inset-block-start:calc(100% + var(--s1));inset-inline-start:0;min-inline-size:100%;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);box-shadow:var(--shadow-md);padding:var(--s1)}
+.dd-opt{display:flex;align-items:center;justify-content:space-between;gap:var(--s2);block-size:32px;padding:0 var(--s2);
+  border-radius:var(--r-sm);cursor:pointer}
+.dd-opt:hover,.dd-opt:focus-visible{background:var(--sunken)}
+.dd-opt .icon{font-size:16px;color:var(--tealDeep);visibility:hidden}
+.dd-opt[aria-selected="true"]{font-weight:600}
+.dd-opt[aria-selected="true"] .icon{visibility:visible}
+.dd-pop.cal{min-inline-size:0;padding:var(--s3)}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-block-end:var(--s2)}
+.cal-cap{font-weight:600}
+.cal-nav{inline-size:28px;block-size:28px;display:inline-flex;align-items:center;justify-content:center;padding:0;
+  background:var(--surface);border:1px solid var(--btnline);border-radius:var(--r-md);color:var(--text);cursor:pointer}
+.cal-nav:hover{background:var(--bg);border-color:var(--ctl)}
+.cal-nav[aria-disabled="true"]{color:var(--muted);background:var(--surface);border-color:var(--line);cursor:not-allowed}
+html[dir="rtl"] .cal-nav .icon{transform:scaleX(-1)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,32px);gap:2px 0}
+.cal-wd{block-size:24px;display:flex;align-items:center;justify-content:center;font-size:var(--fs-meta);color:var(--text2)}
+.cal-day{inline-size:32px;block-size:32px;display:flex;align-items:center;justify-content:center;padding:0;border:0;
+  border-radius:var(--r-md);background:transparent;font:inherit;font-family:var(--mono);font-variant-numeric:tabular-nums;
+  color:var(--text);cursor:pointer}
+.cal-day:hover{background:var(--sunken)}
+.cal-day.today{background:var(--tealWash);color:var(--tealDeep);font-weight:600}
+.cal-day.on,.cal-day.on:hover{background:var(--tealDeep);color:#fff;font-weight:600}
+.cal-day.past{color:var(--muted);cursor:default}
+.wrap-note{font-size:var(--fs-meta);line-height:var(--lh-meta);color:var(--text2);max-inline-size:420px;margin-block-end:var(--s4)}
+.wrap-done{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s3);padding-block-start:48px;
+  animation:open 180ms cubic-bezier(.23,1,.32,1)}
+.wrap-done .icon{font-size:32px;color:var(--green)}
+
+table{inline-size:100%;border-collapse:collapse;background:var(--surface)}
+th{text-align:start;font-size:var(--fs-meta);line-height:var(--lh-meta);font-weight:600;color:var(--text2);
+  padding:var(--s2) var(--s3);background:var(--sunken);position:sticky;top:0;border-block-end:1px solid var(--line);white-space:nowrap}
+html[lang="ar"] th{font-family:var(--ar)}
+td{padding:var(--s2) var(--s3);border-block-end:1px solid var(--line-soft)}
+td.n,th.n{text-align:end;font-family:var(--mono);font-variant-numeric:tabular-nums}
+tbody tr{cursor:pointer} tbody tr:hover{background:var(--tealWash)}
+
+/* ── queue screen. one table: a single sticky header states each column's scope, so the
+   rows don't repeat it. every non-text column is a fixed width so the numbers, contact
+   counts and button sit on the same x in every row. ── */
+.queue{flex:1;min-height:0;overflow:auto;padding:var(--s6);background:var(--bg)}
+.qhead{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);margin-block-end:var(--s4)}
+/* overflow:clip, not hidden: hidden would make this the scroll container and break the sticky header */
+.qbody{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);overflow:clip}
+.qrow,.qcols{display:grid;grid-template-columns:minmax(240px,1.4fr) minmax(260px,1.8fr) 140px 150px 96px 112px;
+  align-items:center;column-gap:var(--s6);padding:var(--s3) var(--s4)}
+.qcols{position:sticky;top:0;z-index:2;background:var(--sunken);border-block-end:1px solid var(--line);
+  padding-block:var(--s2);font-size:var(--fs-meta);line-height:var(--lh-meta);font-weight:600;color:var(--text2)}
+.qcols .n{text-align:end}
+.qrow{min-block-size:64px;border-block-end:1px solid var(--line);cursor:pointer}
+.qrow:last-child{border-block-end:0}
+.qrow:hover{background:var(--bg)}
+.qrow-id{display:flex;gap:var(--s3);align-items:center;min-width:0}
+.qrow-id .who{display:flex;flex-direction:column;min-width:0}
+.qrow-id .who>*{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qrow-why{display:flex;flex-direction:column;gap:var(--s1);min-width:0}
+.qrow-why .top{display:flex;align-items:center;gap:var(--s2)}
+.qrow-why .detail{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qrow-num{text-align:end;min-width:0}
+.qrow-contact{display:flex;align-items:center;justify-content:flex-end;gap:var(--s1);color:var(--text2);font-size:var(--fs-meta)}
+.qrow-contact .icon{font-size:16px}
+.qrow-contact .icon+.num+.icon{margin-inline-start:var(--s2)}
+.qrow>.mini{justify-self:end}
+
+/* ── icon atom. Phosphor's own .ph class carries the font-face/rendering rules;
+   this just keeps icons from shrinking in flex rows and lines them up with text. ── */
+.icon{vertical-align:-0.15em;flex:0 0 auto;line-height:1}
+
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <nav class="nav" id="nav"></nav>
+  <div class="stack" id="stack"></div>
+</div>
+
+<div id="nav-flyout" hidden></div>
+
+<script>
+// clock, formatters, state, selectors, escalation logic. changes rarely.
+
+/* ═══ 0 · clock. every derived figure computed against it, and stamped. ═══ */
+const TODAY=new Date(2026,8,11), DAY=864e5;
+const days=iso=>Math.round((TODAY-new Date(iso))/DAY);
+/* ═══ 3 · formatters. one per locale. Western digits + Gregorian, pinned. ═══ */
+const F={
+ en:{m:new Intl.NumberFormat('en-AE',{style:'currency',currency:'AED',maximumFractionDigits:0}),
+     d:new Intl.DateTimeFormat('en-AE-u-ca-gregory',{day:'numeric',month:'short',year:'numeric'}),
+     dt:new Intl.DateTimeFormat('en-AE-u-ca-gregory',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',hour12:false}),
+     n:new Intl.NumberFormat('en-AE')},
+ ar:{m:new Intl.NumberFormat('ar-AE-u-nu-latn',{style:'currency',currency:'AED',maximumFractionDigits:0}),
+     d:new Intl.DateTimeFormat('ar-AE-u-ca-gregory-nu-latn',{day:'numeric',month:'short',year:'numeric'}),
+     dt:new Intl.DateTimeFormat('ar-AE-u-ca-gregory-nu-latn',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',hour12:false}),
+     n:new Intl.NumberFormat('ar-AE-u-nu-latn')}};
+
+/* mode: 'queue' (case list, screen zero) | 'profile' | 'compare' | 'wrapup' (post-call write) */
+let S={rec:'omar',lang:'en',sel:0,tab:'i',scope:'a',mode:'queue',wrapDone:false,justLogged:null,navCollapsed:false};
+
+const t=()=>T[S.lang];
+const L=o=>o==null?null:(typeof o==='string'?o:(o[S.lang]??o.en));
+const rec=()=>R[S.rec];
+const dash=()=>'<span class="empty">–</span>';
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const M=v=>v==null?dash():F[S.lang].m.format(v);
+const D=v=>v?F[S.lang].d.format(new Date(v)):dash();
+const DT=v=>v?F[S.lang].dt.format(new Date(v)):dash();
+const N=v=>v==null?dash():F[S.lang].n.format(v);
+const ltr=(s,plain)=>s?`<span class="ltr${plain?'':' num'}" title="${esc(s)}">${esc(s)}</span>`:dash();   // inline island only; plain=phone/email text, not an ID
+const E=(g,k)=>(t().e[g]&&t().e[g][k])||k;
+
+/* accounts always sorted by outstanding desc. deterministic, never by flag.
+   takes an optional record so the queue screen can sort accounts of a borrower
+   that isn't the currently-loaded one, without duplicating this logic. */
+const accts=(r=rec())=>[...r.accts].sort((a,b)=>b.out-a.out);
+const acc=()=>accts()[Math.min(S.sel,accts().length-1)];
+const dpd=a=>days(a.due);
+const sumOut=r=>r.accts.reduce((s,a)=>s+a.out,0);
+const sumTot=r=>r.accts.reduce((s,a)=>s+a.total,0);
+const worst=r=>r.accts.reduce((w,a)=>dpd(a)>dpd(w)?a:w,r.accts[0]);
+/* ═══ 4 · escalation line. computed from existing fields, capped at two shown.
+   x = the spine's full sentence; k + d = the queue's type label and specifics. ═══ */
+function reasons(r){
+ const o=[],T_=t();
+ r.accts.forEach(a=>{
+  if(a.status==='disputed'&&a.dispute) o.push({s:5,k:'dispute',ref:a.ref,x:T_.r.dispute(L(a.lender),D(a.dispute.date)),d:T_.rd.dispute(L(a.lender),D(a.dispute.date))});
+ });
+ if(r.hardship) o.push({s:4,k:'hardship',ref:r.accts[0].ref,x:T_.r.hardship(D(r.hardship)),d:T_.rd.hardship(D(r.hardship))});
+ r.accts.forEach(a=>{ if(a.broken>0) o.push({s:3,k:'broken',ref:a.ref,x:T_.r.broken(a.broken,L(a.lender)),d:T_.rd.broken(a.broken,L(a.lender))}); });
+ if(r.calls.ai>0&&r.calls.h===0) o.push({s:2,k:'first',ref:null,x:T_.r.first(r.calls.ai),d:T_.rd.first(r.calls.ai)});
+ return o.sort((a,b)=>b.s-a.s);
+}
+/* only the accounts the line names may carry coral. 1 band + max 2 cards = the budget. */
+const hot=r=>new Set(reasons(r).slice(0,2).map(x=>x.ref).filter(Boolean));
+
+// EN/AR dictionary. the Arabic view is generated from this, not mirrored.
+
+/* ═══ 0.1 · Arabic counted-noun agreement: dual for 2, plural for 3–10, singular
+   (accusative) for 11+. one helper instead of five duplicated ternary chains —
+   English doesn't need this (singular/plural only), so it's Arabic-only. ═══ */
+const pluralAr=(n,f)=>n===1?f.one:n===2?f.two:n<=10?f.few:f.many;
+
+/* ═══ 1 · dictionary. written before markup. the AR view is generated, not mirrored. ═══ */
+const T={
+en:{
+ nav:{p:'Platform',dash:'Dashboard',bor:'Borrowers',acc:'Accounts',sup:'Support',inbox:'Inbox',tick:'Tickets',
+      tools:'Tools',rep:'Reports',ai:'AI agents',camp:'Campaigns',wf:'Workflows',
+      voiceTitle:'ClearVoice',voiceSub:'Let AI make the first call',voiceBtn:'Try it',
+      agent:'Agent',collapse:'Collapse',expand:'Expand'},
+ outstanding:'Total outstanding', across:n=>n===1?'on 1 account':`across ${n} accounts`,
+ original:'of', worstDpd:'Worst days past due', on:'on', asOf:'as of', promise:'Promise state',
+ noPromise:'None on record', promised:'promised', brokenN:n=>n===1?'1 broken':`${n} broken`,
+ promiseAcross:(o,n)=>`${o} open across ${n} accounts`,
+ why:'Why this reached you', lastAi:'Last AI contact', noAi:'No AI handoff summary in the system today.',
+ more:n=>n===1?'+1 more condition':`+${n} more conditions`,
+ calm:'No escalation flag on record. Routine review.',
+ reasonCue:'Reason for assignment ↑',
+ noContact:'No contact history on record.', emailInbox:'Email inbox',
+ r:{dispute:(a,d)=>`Borrower disputes the ${a} account, raised ${d}.`,
+    hardship:d=>`Hardship reported to the AI agent on ${d}.`,
+    broken:(n,a)=>`${n===1?'1 broken promise':n+' broken promises'} on ${a}.`,
+    first:n=>`First human contact. AI reached them ${n} times.`},
+ /* queue: the reason's type is the scannable label, the detail is the specifics */
+ rk:{dispute:'Dispute',hardship:'Hardship',broken:'Broken promises',first:'First human contact'},
+ rd:{dispute:(a,d)=>`${a} · raised ${d}`,
+    hardship:d=>`Reported to the AI agent on ${d}`,
+    broken:(n,a)=>`${n===1?'1 broken':n+' broken'} on ${a}`,
+    first:n=>`AI reached them ${n===1?'once':n+' times'}`},
+ langName:{ar:'Arabic',en:'English'}, pickDate:'Pick a date', prevMonth:'Previous month', nextMonth:'Next month',
+ noPast:'Promise dates can’t be in the past', dUnit:'d', perMo:'mo', noPlan:'No payment plan on this account.',
+ call:'Call',sms:'SMS',wa:'WhatsApp',email:'Email',
+ ch:{cap:'2 of 3 today',review:'Paused while the dispute is open',dnc:'The borrower opted out on 14 Jun',window:'until 20:00 GST'},
+ accounts:'Accounts', compare:'Compare all', back:'Back to account', selected:'Working account',
+ reference:'Borrower reference',
+ blk:{balance:'Balance and terms',plan:'Payment plan',promises:'Promises on this account',
+      fields:'Portfolio fields',meta:'Record metadata',calls:'Contact history'},
+ tab:{i:'Interactions',m:'Messages',t:'Timeline',k:'Tickets'},
+ scopeAcct:'This account', scopeAll:'All accounts', logOutcome:'Log outcome',
+ cancel:'Cancel', outcome:'Outcome', notes:'Note (optional)', setPtp:'Promise',
+ noLogs:'Nothing logged on this account yet.', noTickets:'No open tickets.', noTimeline:'No timeline entries.',
+ q:{title:'Queue', openCase:'Open case', noFlag:'No flag',
+    cols:{who:'Borrower',why:'Why it’s in your queue',calls:'AI · human calls'},
+    count:n=>n===1?'1 case':`${n} cases`,
+    needsAttention:n=>n===1?'1 needs attention':`${n} need attention`},
+ wrap:{title:'Wrap up', forAccount:'Outcome for', save:'Save outcome',
+    logged:'Outcome logged', returnToQueue:'Return to queue',
+    note:'This outcome is scored on the same rubric as AI-handled calls, and feeds back into the models that route the next case.'},
+ f:{dob:'Date of birth',gender:'Gender',nat:'Nationality',eid:'Emirates ID',visa:'Visa status',
+    lang:'Language',owner:'Owner',stage:'Stage',submit:'Submitted',phone:'Phone',mail:'Email',
+    total:'Original amount',out:'Outstanding',over:'Overdue',due:'Last due date',dpd:'Days past due',
+    status:'Status',product:'Product',lender:'Lender',merchant:'Merchant',lenderId:'Lender ID',ref:'Reference',acctRef:'Account reference',
+    principal:'Principal',interest:'Interest',emi:'Instalment',next:'Next instalment',paid:'Instalments paid',
+    flags:'Schedule flags',ptpAmt:'Promised amount',ptpDate:'Promised date',ptpState:'Promise state',
+    broken:'Broken promises',brokenLast:'Last broken',brokenType:'Broken promise type',disputed:'Disputed',disputeWhy:'Dispute reason',
+    verif:'Lender verification',settle:'Settlement authority',churn:'Churn risk',repo:'Repossession eligible',
+    hardship:'Hardship review',employer:'Employer category',
+    cby:'Created by',cat:'Created',uby:'Updated by',uat:'Updated',
+    humanCalls:'Human contacts',aiCalls:'AI contacts',lastHuman:'Last human contact',aiSummary:'AI outcome summary'},
+ tbl:{ref:'Reference',acctRef:'Account',product:'Product',merchant:'Merchant',bal:'Balance',
+      total:'Original',due:'Due date',dpd:'DPD',status:'Status',open:'Open'},
+ yes:'Yes',no:'No',of:'of',
+ e:{status:{coll:'In collection',disputed:'Disputed',plan:'Payment plan active',legal:'With legal',settled:'Settled'},
+    product:{card:'Credit card',bnpl:'Buy now pay later',auto:'Auto finance',personal:'Personal loan',telecom:'Telecom postpaid',sme:'SME facility'},
+    stage:{rpc:'Right party contact',ptp:'Promise to pay',disp:'In dispute',ntc:'Not contactable'},
+    gender:{m:'Male',f:'Female',na:'–'},
+    ptp:{open:'Open',broken:'Broken',kept:'Kept'},
+    src:{phone:'Phone',ai:'AI voice',sms:'SMS',wa:'WhatsApp',email:'Email',portal:'Portal',sys:'System'},
+    dir:{out:'Outgoing',in:'Inbound'},
+    out:{rpc:'Reached borrower',noans:'No answer',promise:'Promise taken',broken:'Promise broken',
+         dispute:'Dispute raised',hardship:'Hardship reported',callback:'Callback requested',
+         wrong:'Wrong number',plan:'Plan agreed',delivered:'Delivered',read:'Read',failed:'Failed',received:'Received'},
+    brokenType:{missed:'Missed entirely',partial:'Partial payment',noContact:'No contact attempted'}}
+},
+ar:{
+ nav:{p:'المنصة',dash:'لوحة المتابعة',bor:'المدينون',acc:'الحسابات',sup:'الدعم',inbox:'الوارد',tick:'التذاكر',
+      tools:'الأدوات',rep:'التقارير',ai:'الوكلاء الآليون',camp:'الحملات',wf:'مسارات العمل',
+      voiceTitle:'كلير فويس',voiceSub:'دع الذكاء الاصطناعي يبدأ الاتصال الأول',voiceBtn:'جرّبها',
+      agent:'الموظف',collapse:'طي',expand:'توسيع'},
+ outstanding:'إجمالي الرصيد المستحق',
+ across:n=>`على ${pluralAr(n,{one:'حساب واحد',two:'حسابين',few:`${n} حسابات`,many:`${n} حساباً`})}`,
+ original:'من', worstDpd:'أطول تأخر', on:'على', asOf:'حتى', promise:'حالة الوعد',
+ noPromise:'لا يوجد وعد مسجل', promised:'موعود',
+ brokenN:n=>pluralAr(n,{one:'وعد واحد لم يُنفَّذ',two:'وعدان لم يُنفَّذا',few:`${n} وعود لم تُنفَّذ`,many:`${n} وعداً لم يُنفَّذ`}),
+ promiseAcross:(o,n)=>{
+   const acc=pluralAr(n,{one:'حساب واحد',two:'حسابين',few:`${n} حسابات`,many:`${n} حساباً`});
+   const open=pluralAr(o,{one:'وعد قائم واحد',two:'وعدان قائمان',few:`${o} وعود قائمة`,many:`${o} وعداً قائماً`});
+   return `${open} على ${acc}`;},
+ why:'سبب وصول الملف إليك', lastAi:'آخر تواصل آلي', noAi:'لا يوجد ملخص تسليم من الوكيل الآلي حالياً.',
+ /* was missing the 11+ singular split every sibling function here has — fixed to match. */
+ more:n=>pluralAr(n,{one:'وحالة أخرى',two:'وحالتان أخريان',few:`و${n} حالات أخرى`,many:`و${n} حالة أخرى`}),
+ calm:'لا توجد حالة تصعيد مسجلة. مراجعة اعتيادية.',
+ reasonCue:'سبب الإسناد ↑',
+ noContact:'لا يوجد سجل تواصل.', emailInbox:'صندوق البريد',
+ r:{dispute:(a,d)=>`المدين يعترض على حساب ${a}، سُجل في ${d}.`,
+    hardship:d=>`أبلغ المدين الوكيل الآلي بتعثر مالي في ${d}.`,
+    broken:(n,a)=>`${pluralAr(n,{one:'وعد واحد لم يُنفَّذ',two:'وعدان لم يُنفَّذا',few:`${n} وعود لم تُنفَّذ`,many:`${n} وعداً لم يُنفَّذ`})} على ${a}.`,
+    first:n=>`أول تواصل بشري. تواصل معه النظام الآلي ${pluralAr(n,{one:'مرة واحدة',two:'مرتين',few:`${n} مرات`,many:`${n} مرة`})}.`},
+ rk:{dispute:'اعتراض',hardship:'تعثر مالي',broken:'وعود لم تُنفَّذ',first:'أول تواصل بشري'},
+ rd:{dispute:(a,d)=>`${a} · سُجل في ${d}`,
+    hardship:d=>`أُبلغ الوكيل الآلي في ${d}`,
+    broken:(n,a)=>`${pluralAr(n,{one:'وعد واحد',two:'وعدان',few:`${n} وعود`,many:`${n} وعداً`})} على ${a}`,
+    first:n=>`تواصل معه النظام الآلي ${pluralAr(n,{one:'مرة واحدة',two:'مرتين',few:`${n} مرات`,many:`${n} مرة`})}`},
+ langName:{ar:'العربية',en:'الإنجليزية'}, pickDate:'اختر تاريخاً', prevMonth:'الشهر السابق', nextMonth:'الشهر التالي',
+ noPast:'لا يمكن أن يكون تاريخ الوعد في الماضي', dUnit:'يوم', perMo:'شهر', noPlan:'لا توجد خطة سداد على هذا الحساب.',
+ call:'اتصال',sms:'رسالة نصية',wa:'واتساب',email:'بريد',
+ ch:{cap:'2 من 3 اليوم',review:'موقوفة طالما الاعتراض قائم',dnc:'ألغى المدين الاستقبال في 14 يونيو',window:'حتى 20:00'},
+ accounts:'الحسابات', compare:'مقارنة الكل', back:'العودة للحساب', selected:'حساب العمل',
+ reference:'بيانات المدين',
+ blk:{balance:'الرصيد والشروط',plan:'خطة السداد',promises:'وعود هذا الحساب',
+      fields:'حقول المحفظة',meta:'بيانات السجل',calls:'سجل التواصل'},
+ tab:{i:'التفاعلات',m:'الرسائل',t:'المسار الزمني',k:'التذاكر'},
+ scopeAcct:'هذا الحساب', scopeAll:'كل الحسابات', logOutcome:'تسجيل النتيجة',
+ cancel:'إلغاء', outcome:'النتيجة', notes:'ملاحظة (اختياري)', setPtp:'وعد بالسداد',
+ noLogs:'لا توجد سجلات على هذا الحساب.', noTickets:'لا توجد تذاكر مفتوحة.', noTimeline:'لا توجد إدخالات زمنية.',
+ q:{title:'قائمة الانتظار', openCase:'فتح الحالة', noFlag:'لا يوجد تصعيد',
+    cols:{who:'المدين',why:'سبب وجوده في قائمتك',calls:'تواصل آلي · بشري'},
+    count:n=>pluralAr(n,{one:'حالة واحدة',two:'حالتان',few:`${n} حالات`,many:`${n} حالة`}),
+    needsAttention:n=>pluralAr(n,{one:'حالة واحدة تحتاج انتباهاً',two:'حالتان تحتاجان انتباهاً',few:`${n} حالات تحتاج انتباهاً`,many:`${n} حالة تحتاج انتباهاً`})},
+ wrap:{title:'إنهاء المكالمة', forAccount:'النتيجة لحساب', save:'حفظ النتيجة',
+    logged:'تم تسجيل النتيجة', returnToQueue:'العودة إلى القائمة',
+    note:'تُقيَّم هذه النتيجة على نفس معايير المكالمات الآلية، وتُغذّي النماذج التي توجّه الحالة التالية.'},
+ f:{dob:'تاريخ الميلاد',gender:'الجنس',nat:'الجنسية',eid:'رقم الهوية',visa:'حالة الإقامة',
+    lang:'اللغة',owner:'المسؤول',stage:'المرحلة',submit:'تاريخ الإحالة',phone:'الهاتف',mail:'البريد',
+    total:'المبلغ الأصلي',out:'الرصيد المستحق',over:'المبلغ المتأخر',due:'آخر استحقاق',dpd:'أيام التأخر',
+    status:'الحالة',product:'المنتج',lender:'الجهة الدائنة',merchant:'التاجر',lenderId:'رقم الجهة',ref:'الرقم المرجعي',acctRef:'مرجع الحساب',
+    principal:'أصل المبلغ',interest:'الفائدة',emi:'القسط',next:'القسط القادم',paid:'الأقساط المسددة',
+    flags:'ملاحظات الجدول',ptpAmt:'المبلغ الموعود',ptpDate:'تاريخ الوعد',ptpState:'حالة الوعد',
+    broken:'وعود لم تُنفَّذ',brokenLast:'آخر إخلاف',brokenType:'نوع الإخلاف',disputed:'يوجد اعتراض',disputeWhy:'سبب الاعتراض',
+    verif:'تحقق الجهة الدائنة',settle:'صلاحية التسوية',churn:'احتمال فقد العميل',repo:'قابل للحجز',
+    hardship:'مراجعة التعثر',employer:'قطاع العمل',
+    cby:'أُنشئ بواسطة',cat:'تاريخ الإنشاء',uby:'حُدّث بواسطة',uat:'تاريخ التحديث',
+    humanCalls:'تواصل بشري',aiCalls:'تواصل آلي',lastHuman:'آخر تواصل بشري',aiSummary:'ملخص نتيجة الوكيل الآلي'},
+ tbl:{ref:'الرقم المرجعي',acctRef:'الحساب',product:'المنتج',merchant:'التاجر',bal:'الرصيد',
+      total:'الأصلي',due:'الاستحقاق',dpd:'أيام التأخر',status:'الحالة',open:'فتح'},
+ yes:'نعم',no:'لا',of:'من',
+ e:{status:{coll:'قيد التحصيل',disputed:'محل اعتراض',plan:'خطة سداد نشطة',legal:'محال للقانوني',settled:'مسدد'},
+    product:{card:'بطاقة ائتمانية',bnpl:'اشترِ الآن وادفع لاحقاً',auto:'تمويل سيارة',personal:'قرض شخصي',telecom:'اتصالات آجل',sme:'تسهيل للمنشآت'},
+    stage:{rpc:'تواصل مع الشخص المعني',ptp:'وعد بالسداد',disp:'قيد الاعتراض',ntc:'تعذر التواصل'},
+    gender:{m:'ذكر',f:'أنثى',na:'–'},
+    ptp:{open:'قائم',broken:'لم يُنفَّذ',kept:'تم الوفاء'},
+    src:{phone:'هاتف',ai:'مكالمة آلية',sms:'رسالة نصية',wa:'واتساب',email:'بريد',portal:'البوابة',sys:'النظام'},
+    dir:{out:'صادر',in:'وارد'},
+    out:{rpc:'تم التواصل مع المدين',noans:'لا يوجد رد',promise:'تم أخذ وعد',broken:'إخلاف بالوعد',
+         dispute:'تسجيل اعتراض',hardship:'إبلاغ بتعثر مالي',callback:'طلب معاودة الاتصال',
+         wrong:'رقم خاطئ',plan:'الاتفاق على خطة',delivered:'تم التسليم',read:'تمت القراءة',failed:'فشل الإرسال',received:'تم الاستلام'},
+    brokenType:{missed:'إخلاف تام',partial:'سداد جزئي',noContact:'لم يُحاول التواصل'}}
+}};
+
+// the four test records. every DPD derived from its due date.
+
+/* ═══ 2 · records. every DPD derived from its due date. nothing hardcoded twice. ═══ */
+const R={
+omar:{
+  name:{en:'Omar Al-Hassan',ar:'عمر الحسن'},ini:'OH',lang:'ar',gender:'m',nat:'JOR',
+  dob:'1988-11-05',eid:'784-1988-4471209-3',visa:{en:'Resident',ar:'مقيم'},
+  owner:'Faisal Noor',stage:'disp',submit:'2026-04-30',synced:'2026-09-11T08:41',
+  phone:'+971 55 321 7740',mail:'omar.h@example.com',
+  ch:{call:'ok',sms:'ok',wa:'review',email:'ok'},
+  calls:{h:1,ai:3,lastH:'2026-08-27T16:20',lastAi:'2026-09-09T20:15',
+    ai_sum:{en:'Borrower disputed the card transaction and declined to discuss payment on either account.',
+            ar:'اعترض المدين على عملية البطاقة ورفض مناقشة السداد على أي من الحسابين.'}},
+  accts:[
+   {ref:'CC-77102',aref:'AC-33011-GMB',lender:{en:'Gulf Meridian Bank',ar:'بنك الخليج ميريديان'},lid:'GMB-021',
+    merchant:null,product:'card',total:7000,out:4860,over:4860,principal:6500,due:'2026-04-18',
+    status:'disputed',interest:'2.99% monthly',plan:null,ptp:null,broken:0,
+    dispute:{date:'2026-08-26',why:{en:'Transaction not recognised',ar:'عملية غير معروفة'}},
+    fields:{verif:'no',settle:{en:'Blocked while disputed',ar:'موقوفة أثناء الاعتراض'}},
+    meta:{cby:'System',cat:'2026-04-30',uby:'Faisal Noor',uat:'2026-08-26'}},
+   {ref:'PL-11833',aref:'AC-33011-GMB2',lender:{en:'Gulf Meridian Bank',ar:'بنك الخليج ميريديان'},lid:'GMB-021',
+    merchant:null,product:'personal',total:11500,out:8000,over:1420,principal:11000,due:'2026-05-06',
+    status:'plan',interest:'4.2% flat',plan:{emi:1420,paid:4,of:12,next:'2026-10-06',
+      flags:{en:'On schedule, next instalment not yet due',ar:'ملتزم بالجدول، القسط القادم لم يستحق بعد'}},
+    ptp:{amt:1420,date:'2026-10-06',state:'open'},broken:0,
+    fields:{verif:'yes',settle:{en:'Up to 20%',ar:'حتى 20%'}},
+    meta:{cby:'System',cat:'2026-04-30',uby:'System',uat:'2026-09-06'}}],
+  logs:[
+   {at:'2026-09-09T20:15',a:'CC-77102',src:'ai',dir:'out',out:'dispute',by:'ClearVoice',
+    note:{en:'Borrower repeated that the transaction is not his and asked for the investigation result.',ar:'كرر المدين أن العملية ليست له وطلب نتيجة التحقيق.'}},
+   {at:'2026-08-27T16:20',a:'CC-77102',src:'phone',dir:'out',out:'rpc',by:'Faisal Noor',
+    note:{en:'Explained the review takes up to 14 days. No payment requested on this account.',ar:'تم توضيح أن المراجعة تستغرق حتى 14 يوماً. لم يُطلب سداد على هذا الحساب.'}},
+   {at:'2026-08-26T14:05',a:'CC-77102',src:'portal',dir:'in',out:'dispute',by:'Borrower',
+    note:{en:'Dispute filed through the borrower portal.',ar:'تم تسجيل الاعتراض عبر بوابة المدين.'}},
+   {at:'2026-09-06T09:30',a:'PL-11833',src:'sys',dir:'out',out:'plan',by:'System',
+    note:{en:'Instalment 4 of 12 posted.',ar:'تم تسجيل القسط 4 من 12.'}},
+   {at:'2026-07-14T11:40',a:'PL-11833',src:'phone',dir:'out',out:'promise',by:'Faisal Noor',
+    note:{en:'Plan agreed at AED 1,420 monthly.',ar:'تم الاتفاق على خطة بقيمة 1,420 درهماً شهرياً.'}}],
+  msgs:[
+   {at:'2026-09-08T10:00',a:'CC-77102',src:'sms',dir:'out',out:'delivered',by:'System',note:{en:'Dispute acknowledgement (AR)',ar:'إشعار استلام الاعتراض (عربي)'}},
+   {at:'2026-09-06T19:30',a:'CC-77102',src:'wa',dir:'out',out:'failed',by:'System',note:{en:'Blocked: channel paused while the dispute is open.',ar:'مُنعت: القناة موقوفة أثناء الاعتراض.'}},
+   {at:'2026-09-01T14:05',a:'CC-77102',src:'email',dir:'in',out:'received',by:'Borrower',note:{en:'Sent the transaction reference for review.',ar:'أرسل المرجع الخاص بالعملية للمراجعة.'}}],
+  time:[
+   {at:'2026-09-06',t:{en:'Instalment 4 of 12 posted on the personal loan.',ar:'تم تسجيل القسط 4 من 12 على القرض الشخصي.'}},
+   {at:'2026-08-26',t:{en:'Dispute opened on the credit card.',ar:'فُتح اعتراض على البطاقة الائتمانية.'}},
+   {at:'2026-04-30',t:{en:'Two accounts placed with ClearGrid.',ar:'تم إسناد حسابين إلى كليرجريد.'}}]
+},
+
+aisha:{
+  name:{en:'Aisha Rahman',ar:'عائشة رحمن'},ini:'AR',lang:'en',gender:'f',nat:'IND',
+  dob:'1992-03-12',eid:'784-1992-3318407-2',visa:{en:'Employment visa',ar:'تأشيرة عمل'},
+  owner:'Nadia Karim',stage:'rpc',submit:'2026-07-14',synced:'2026-09-11T08:41',
+  phone:'+971 50 555 0188',mail:'aisha.r@example.com',
+  ch:{call:'cap',sms:'ok',wa:'ok',email:'ok'},
+  hardship:'2026-09-08',
+  calls:{h:1,ai:4,lastH:'2026-09-02T11:10',lastAi:'2026-09-08T18:42',
+    ai_sum:{en:'Employer delayed payroll. Borrower still intends to pay and asked for a shorter-term arrangement.',
+            ar:'تأخر صاحب العمل في صرف الرواتب. لا تزال المدينة تنوي السداد وطلبت ترتيباً قصير الأجل.'}},
+  accts:[
+   {ref:'DL-20481',aref:'AC-90812-EFIN',lender:{en:'Emirates Finance',ar:'إمارات للتمويل'},lid:'EFN-014',
+    merchant:null,product:'personal',total:10000,out:7420,over:1000,principal:10000,due:'2026-06-10',
+    status:'coll',interest:'3.5% flat',plan:null,
+    ptp:{amt:1000,date:'2026-09-18',state:'open'},broken:1,brokenLast:'2026-08-18',brokenType:'missed',
+    fields:{verif:'yes',employer:{en:'Private sector',ar:'القطاع الخاص'},hardship:{en:'Medium',ar:'متوسط'}},
+    meta:{cby:'System',cat:'2026-07-14',uby:'Nadia Karim',uat:'2026-09-02'}}],
+  logs:[
+   {at:'2026-09-08T18:42',a:'DL-20481',src:'ai',dir:'out',out:'hardship',by:'ClearVoice',
+    note:{en:'Salary delay explained. Asked to be called after the next payroll date.',ar:'أوضحت تأخر الراتب وطلبت الاتصال بها بعد موعد الصرف القادم.'}},
+   {at:'2026-09-02T11:10',a:'DL-20481',src:'phone',dir:'out',out:'rpc',by:'Nadia Karim',
+    note:{en:'Confirmed identity. Borrower asked for a callback after payday.',ar:'تم التحقق من الهوية. طلبت المدينة معاودة الاتصال بعد صرف الراتب.'}},
+   {at:'2026-08-18T12:00',a:'DL-20481',src:'sys',dir:'out',out:'broken',by:'System',
+    note:{en:'Promise of AED 1,000 due 18 Aug not received.',ar:'لم يتم استلام الوعد بمبلغ 1,000 درهم المستحق في 18 أغسطس.'}}],
+  msgs:[{at:'2026-09-09T09:15',a:'DL-20481',src:'sms',dir:'out',out:'read',by:'System',note:{en:'Arrangement options (EN)',ar:'خيارات الترتيب (إنجليزي)'}}],
+  time:[{at:'2026-09-08',t:{en:'Hardship flag raised by the AI agent.',ar:'رصد الوكيل الآلي حالة تعثر مالي.'}},
+        {at:'2026-07-14',t:{en:'Account placed with ClearGrid.',ar:'تم إسناد الحساب إلى كليرجريد.'}}]
+},
+
+sparse:{
+  name:{en:'Khalid Noor',ar:'خالد نور'},ini:'KN',lang:null,gender:'na',nat:null,
+  dob:null,eid:null,visa:null,owner:null,stage:'ntc',submit:'2026-09-09',synced:'2026-09-11T08:41',
+  phone:'+971 52 000 0140',mail:null,
+  ch:{call:'window',sms:'ok',wa:'ok',email:'ok'},
+  calls:{h:0,ai:0,lastH:null,lastAi:null,ai_sum:null},
+  accts:[
+   {ref:'TL-40021',aref:'AC-77120-DU',lender:{en:'du',ar:'دو'},lid:'DU-004',
+    merchant:null,product:'telecom',total:640,out:640,over:640,principal:640,due:'2026-08-28',
+    status:'coll',interest:null,plan:null,ptp:null,broken:0,
+    fields:{verif:'no',churn:{en:'High',ar:'مرتفع'}},
+    meta:{cby:'System',cat:'2026-09-09',uby:'System',uat:'2026-09-09'}}],
+  logs:[],msgs:[],time:[]
+}};
+
+/* stress record: 7 accounts, long history. generated so the case is real. */
+(function(){
+ const b=JSON.parse(JSON.stringify(R.omar));
+ b.name={en:'Mohammed Al Suwaidi',ar:'محمد السويدي'};b.ini='MS';b.lang='ar';b.gender='m';b.nat='AE';
+ b.dob='1979-11-05';b.eid='784-1979-6620143-1';b.owner='Sara Haddad';b.stage='rpc';
+ const seed=[
+  ['FB-8802','First Abu Dhabi Bank','بنك أبوظبي الأول','card',56000,44210,'2024-11-02','coll',3,'missed'],
+  ['TM-8815','Tamara','تمارا','bnpl',2400,2400,'2026-05-19','disputed',0,null],
+  ['ET-8820','Etisalat','اتصالات','telecom',1310,980,'2026-07-01','coll',1,'partial'],
+  ['AD-8834','ADCB','بنك أبوظبي التجاري','auto',132000,88400,'2026-08-25','plan',0,null],
+  ['EN-8841','Emirates NBD','بنك الإمارات دبي الوطني','personal',90000,71250,'2025-06-30','legal',4,'noContact'],
+  ['PP-8855','Postpay','بوست باي','bnpl',760,760,'2026-04-12','coll',2,'missed'],
+  ['RK-8860','RAKBANK','بنك رأس الخيمة','sme',210000,153900,'2026-01-15','coll',0,null]];
+ b.accts=seed.map(([ref,l,la,p,tot,out,due,st,bk,bt],i)=>({
+  ref,aref:`AC-77${i}0-${l.slice(0,3).toUpperCase()}`,lender:{en:l,ar:la},lid:`${l.slice(0,3).toUpperCase()}-0${i}`,
+  merchant:p==='bnpl'?{en:l,ar:la}:null,product:p,total:tot,out,over:st==='plan'?3100:out,
+  principal:Math.round(tot*.94),due,status:st,interest:null,
+  plan:st==='plan'?{emi:3100,paid:7,of:48,next:'2026-10-02',flags:{en:'On schedule',ar:'ملتزم بالجدول'}}:null,
+  ptp:bk?{amt:1500,date:'2026-08-30',state:'broken'}:null,broken:bk,brokenLast:bk?'2026-08-30':null,brokenType:bt,
+  dispute:st==='disputed'?{date:'2026-06-01',why:{en:'Duplicate charge',ar:'رسوم مكررة'}}:null,
+  fields:{verif:i%2?'yes':'no'},
+  meta:{cby:'System',cat:'2026-01-15',uby:'System',uat:'2026-09-09'}}));
+ b.calls={h:11,ai:26,lastH:'2026-09-05T13:02',lastAi:'2026-09-10T19:15',
+  ai_sum:{en:'Asked for one combined settlement across all accounts and refused to discuss them one by one.',
+          ar:'طلب تسوية واحدة مجمعة لكل الحسابات ورفض مناقشتها حساباً حساباً.'}};
+ const o=['rpc','noans','promise','broken','callback','dispute'];
+ b.logs=[];
+ for(let i=0;i<34;i++){
+  const d=new Date(TODAY-((i*3+2)*DAY));
+  b.logs.push({at:d.toISOString().slice(0,16),a:b.accts[i%7].ref,src:i%3?'phone':'ai',
+   dir:i%9?'out':'in',out:o[i%o.length],by:i%3?'Sara Haddad':'ClearVoice',note:null});
+ }
+ R.stress=b;
+})();
+
+// atoms: badge, field row, block, bars, icons.
+
+/* ═══ 5 · atoms ═══ */
+function statusBadge(a,flag){
+ const cls=(a.status==='disputed'&&flag)?'alert':a.status==='plan'?'ok':a.status==='legal'?'warn':'q';
+ return `<span class="badge ${cls}" data-alert="${cls==='alert'?1:0}"><i class="dot"></i>${esc(E('status',a.status))}</span>`;
+}
+function dpdBadge(a,flag){
+ const d=dpd(a),f=flag&&d>=180;
+ return `<span class="badge ${f?'alert':'q'}" data-alert="${f?1:0}">${N(d)} ${esc(t().dUnit)}</span>`;
+}
+function row(k,v,mono,wide){
+ const e=v==null||v==='';
+ return `<div class="row${e?' is-empty':''}${wide?' wide':''}"><span class="k" title="${esc(k)}">${esc(k)}</span>
+  <span class="v${mono?' num':''}">${e?dash():v}</span></div>`;
+}
+function block(key,body,head){
+ return `<div class="blk"><div class="blk-h"><span class="eyebrow">${esc(t().blk[key])}</span>${head||''}</div>
+  <div class="blk-b">${body}</div></div>`;
+}
+
+/* ═══ 5.1 · icons — real Phosphor Icons (regular weight), loaded in index.html via
+   unpkg. Replaces a hand-simplified inline-SVG set that didn't hold up at small sizes —
+   this maps our short internal names to the library's actual icon slugs. ═══ */
+const PH={phone:'phone',chat:'chat-circle',wa:'whatsapp-logo',mail:'envelope-simple',
+ dash:'squares-four',users:'users',wallet:'wallet',chartbar:'chart-bar',robot:'robot',
+ megaphone:'flag',flow:'flow-arrow',pencil:'pencil-simple',columns:'columns',
+ timeline:'clock-countdown',ticket:'ticket',mic:'microphone',caret:'caret-down',
+ dcaret:'caret-left',check:'check',lock:'lock-simple',inbox:'tray',
+ calendar:'calendar-blank',prev:'caret-left',next:'caret-right'};
+/* every icon here is decorative — the adjacent text/label always carries the meaning,
+   so aria-hidden belongs on the shared atom, not repeated at each call site. */
+function icon(name,cls){ return `<i class="ph ph-${PH[name]||name} icon${cls?' '+cls:''}" aria-hidden="true"></i>`; }
+
+/* ═══ 5.2 · select + date picker, modelled on shadcn/ui's Select and Popover+Calendar.
+   A hidden input carries the value, so forms read .value exactly as with a native
+   control. Behaviour (open/close, keyboard, calendar grid) is wired in app.js. ═══ */
+function selectMenu(id,opts,labelId){
+ const [v0,l0]=opts[0];
+ return `<div class="dd" data-dd="select">
+  <input type="hidden" id="${id}" value="${v0}">
+  <button type="button" class="dd-trigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="${labelId} ${id}-v">
+   <span class="dd-val" id="${id}-v">${esc(l0)}</span>${icon('caret')}</button>
+  <div class="dd-pop" role="listbox" aria-labelledby="${labelId}" hidden>
+   ${opts.map(([v,l],i)=>`<div class="dd-opt" role="option" tabindex="-1" data-v="${v}" aria-selected="${i===0}">
+    <span>${esc(l)}</span>${icon('check')}</div>`).join('')}
+  </div></div>`;
+}
+function datePicker(id,labelId){
+ return `<div class="dd" data-dd="date">
+  <input type="hidden" id="${id}">
+  <button type="button" class="dd-trigger date" aria-haspopup="dialog" aria-expanded="false" aria-labelledby="${labelId} ${id}-v">
+   ${icon('calendar')}<span class="dd-val empty-val" id="${id}-v">${esc(t().pickDate)}</span></button>
+  <div class="dd-pop cal" role="dialog" aria-labelledby="${labelId}" hidden></div></div>`;
+}
+
+// spine + the three scope columns + compare view.
+
+/* ═══ 6 · REGION 1 · spine ═══ */
+function spine(){
+ const r=rec(),T_=t(),n=r.accts.length,w=worst(r),rs=reasons(r);
+ const openAccts=r.accts.filter(a=>a.ptp&&a.ptp.state==='open');
+ const openPtp=openAccts[0];
+ const brokenN=r.accts.reduce((s,a)=>s+a.broken,0);
+ /* T1: never a bare amount. multi-account records name the account + a count-across-accounts
+    line in `sub`; single-account records keep the short date form. Always exactly
+    eyebrow -> t-display -> sub, same shape as the other two spine stats, never a 3rd row. */
+ const promise=openPtp
+   ? (n>1
+     ? `<div class="t-display">${M(openPtp.ptp.amt)}</div><span class="sub">${esc(T_.promiseAcross(openAccts.length,n))} · ${esc(E('product',openPtp.product))}</span>`
+     : `<div class="t-display">${M(openPtp.ptp.amt)}</div><span class="sub">${esc(T_.promised)} ${D(openPtp.ptp.date)}${brokenN?` · ${esc(T_.brokenN(brokenN))}`:''}</span>`)
+   : `<div class="t-display empty">${esc(T_.noPromise)}</div><span class="sub">${brokenN?esc(T_.brokenN(brokenN)):'&nbsp;'}</span>`;
+
+ const chOff=k=>k==='review'||k==='dnc';
+ const btn=(k,label,ic,pri,id)=>{
+   const off=chOff(r.ch[k]);
+   /* aria-disabled, not disabled: the button stays focusable and hoverable so the
+      tooltip saying why can reach both mouse and keyboard users */
+   return `<button ${id?`id="${id}" `:''}class="act${pri&&!off?' primary':''}${off?' off':''}"${off?` aria-disabled="true" data-tip="${esc(T_.ch[r.ch[k]])}"`:''}>
+     ${icon(off?'lock':ic)}<span>${esc(label)}</span></button>`;
+ };
+
+ const band=rs.length
+  ? `<div class="why" data-alert="1" data-g="why"><span class="badge alert"><i class="dot"></i>${esc(T_.why)}</span>
+     <span><b>${esc(rs[0].x)}</b>${rs[1]?` ${esc(rs[1].x)}`:''}${rs.length>2?` <span class="dim">${esc(T_.more(rs.length-2))}</span>`:''}</span></div>`
+  : `<div class="why calm" data-g="why"><span>${esc(T_.calm)}</span></div>`;
+
+ return `<div class="spine">
+  <div class="spine-row">
+   <div class="idb">
+    <div class="avatar">${esc(r.ini)}</div>
+    <div>
+     <div class="names" data-g="name"><span class="t-title">${esc(L(r.name))}</span>
+      <span class="n2">${esc(S.lang==='en'?r.name.ar:r.name.en)}</span></div>
+     <div class="idline">
+      <span class="badge teal">${esc(E('stage',r.stage))}</span>
+      <span>${esc(T_.f.lang)}: <b>${r.lang?esc(T_.langName[r.lang]):dash()}</b></span>
+      <span>${esc(T_.f.owner)}: ${r.owner?esc(r.owner):dash()}</span>
+     </div>
+    </div>
+   </div>
+   <div class="stats">
+    <div class="stat" data-g="out"><span class="eyebrow">${esc(T_.outstanding)}</span>
+     <div class="t-display">${M(sumOut(r))}</div>
+     <span class="sub">${esc(T_.across(n))} · ${esc(T_.original)} ${M(sumTot(r))}</span></div>
+    <div class="stat" data-g="dpd"><span class="eyebrow">${esc(T_.worstDpd)}</span>
+     <div class="t-display">${N(dpd(w))}</div>
+     <span class="sub">${esc(T_.on)} ${esc(L(w.lender))} · ${esc(T_.asOf)} ${D(TODAY.toISOString())}</span></div>
+    <div class="stat" data-g="ptp"><span class="eyebrow">${esc(T_.promise)}</span>
+     ${promise}</div>
+   </div>
+  </div>
+  <div class="band">
+   ${band}
+  </div>
+  <div class="rail" data-g="rail">
+   ${btn('call',T_.call,'phone',true)}${btn('sms',T_.sms,'chat')}${btn('wa',T_.wa,'wa')}${btn('email',T_.email,'mail')}
+   ${btn('email',T_.emailInbox,'inbox',false,'b-inbox')}
+   <!-- the post-call write lives with the other actions: the activity head can't hold
+        four tabs, a scope toggle and this button at 1280–1440 without wrapping -->
+   <button class="act log-btn" id="b-entry">${icon('pencil')}<span>${esc(T_.logOutcome)}</span></button>
+  </div>
+ </div>`;
+}
+/* ═══ 7 · REGION 2 · borrower column ═══ */
+function borrowerCol(){
+ const r=rec(),T_=t(),h=hot(r),list=accts();
+ const cards=list.map((a,i)=>{
+  const flag=h.has(a.ref),p=Math.round((a.out/a.total)*100);
+  /* T3: the card already spends one coral element on its status badge when disputed+flagged.
+     the dot is a fallback, not an addition — it only fires when neither badge on this card
+     is already carrying the coral for the same fact, so one alert is never marked twice. */
+  const dotDue=flag&&a.status!=='disputed';
+  return `<div class="card${i===S.sel?' on':''}${flag?' hot':''}" data-a="${i}" tabindex="0" role="button">
+   ${i<9?`<span class="kbd">${i+1}</span>`:''}
+   <div class="t-pri">${dotDue?'<i class="flagdot"></i>':''}${esc(L(a.lender))}</div>
+   <div class="t-sec">${esc(E('product',a.product))} · ${ltr(a.ref)}</div>
+   <div class="card-r"><span class="t-display sm">${M(a.out)}</span>
+    <span class="t-sec">${esc(T_.of)} ${M(a.total)}</span></div>
+   <div class="bar"><i style="inline-size:${p}%"></i></div>
+   <div class="card-b">${statusBadge(a,flag)}${dpdBadge(a,flag&&a.status!=='disputed')}
+    ${a.broken?`<span class="badge q">${esc(T_.brokenN(a.broken))}</span>`:''}
+    ${a.plan?`<span class="badge ok">${M(a.plan.emi)}/${esc(T_.perMo)}</span>`:''}</div>
+   ${dotDue?`<div class="t-sec reasoncue">${esc(T_.reasonCue)}</div>`:''}
+  </div>`;
+ }).join('');
+
+ const c=r.calls||{};
+ const contactHistory=(c.h||c.ai)?`<div class="rows grid2">
+   ${row(T_.f.humanCalls,N(c.h))}${row(T_.f.aiCalls,N(c.ai))}
+   ${row(T_.f.lastHuman,c.lastH?DT(c.lastH):null)}${row(T_.lastAi,c.lastAi?DT(c.lastAi):null)}
+  </div>
+  <div class="row prose">${c.ai_sum?esc(L(c.ai_sum)):`<span class="empty">${esc(T_.noAi)}</span>`}</div>`
+  :`<div class="emptyline">${esc(T_.noContact)}</div>`;
+
+ return `<div class="col" id="c-bor">
+  <div class="colhead"><span class="eyebrow">${esc(T_.accounts)} · ${N(list.length)}</span>
+   <button class="mini" id="b-compare">${esc(S.mode==='compare'?T_.back:T_.compare)}</button></div>
+  <div class="colbody">
+   ${cards}
+   ${block('calls',contactHistory)}
+   <!-- single-column on purpose: at 320px this column only has ~64px of label space, and
+        labels like "Emirates ID" / "Date of birth" need close to that — a 2-column split
+        would wrap them. Fields ordered narrow-first, wide-last so no row goes stranded. -->
+   <div class="blk"><div class="blk-h"><span class="eyebrow">${esc(T_.reference)}</span></div>
+    <div class="blk-b"><div class="rows">
+     ${row(T_.f.dob,r.dob?D(r.dob):null)}
+     ${row(T_.f.gender,r.gender?esc(E('gender',r.gender)):null)}
+     ${row(T_.f.nat,r.nat?esc(r.nat):null)}
+     ${row(T_.f.submit,r.submit?D(r.submit):null)}
+     ${row(T_.f.phone,r.phone?ltr(r.phone,true):null)}
+     ${row(T_.f.mail,r.mail?ltr(r.mail,true):null)}
+     ${row(T_.f.visa,r.visa?esc(L(r.visa)):null)}
+     ${row(T_.f.eid,r.eid?ltr(r.eid):null)}
+    </div></div></div>
+  </div></div>`;
+}
+/* ═══ 8 · REGION 3 · account column. fixed block order, no disclosure controls. ═══ */
+function accountCol(){
+ const a=acc(),T_=t(),d=dpd(a),p=Math.round((a.out/a.total)*100);
+
+ const balance=block('balance',`
+  <div class="hero">
+   <div class="stat"><span class="eyebrow">${esc(T_.f.out)}</span>
+    <div class="t-display">${M(a.out)}</div>
+    <span class="sub">${N(p)}% ${esc(T_.of)} ${M(a.total)}</span>
+    <div class="bar"><i style="inline-size:${p}%"></i></div></div>
+   <div class="stat"><span class="eyebrow">${esc(T_.f.dpd)}</span>
+    <div class="t-display">${N(d)}</div>
+    <span class="sub">${esc(T_.asOf)} ${D(TODAY.toISOString())}</span></div>
+  </div>
+  <div class="rows grid2">
+   ${row(T_.f.over,M(a.over))}${row(T_.f.due,D(a.due))}
+   ${row(T_.f.principal,M(a.principal))}${row(T_.f.interest,a.interest?esc(a.interest):null)}
+   ${row(T_.f.status,statusBadge(a,false))}${row(T_.f.product,esc(E('product',a.product)))}
+   ${row(T_.f.lender,esc(L(a.lender)))}${row(T_.f.merchant,a.merchant?esc(L(a.merchant)):null)}
+   ${row(T_.f.ref,ltr(a.ref))}${row(T_.f.acctRef,ltr(a.aref))}
+  </div>`);
+
+ const plan=block('plan',a.plan?`<div class="rows grid2">
+   ${row(T_.f.emi,M(a.plan.emi))}${row(T_.f.next,D(a.plan.next))}
+   ${row(T_.f.paid,`${N(a.plan.paid)} ${esc(T_.of)} ${N(a.plan.of)}`)}
+   ${row(T_.f.flags,esc(L(a.plan.flags)),false,true)}
+  </div><div class="bar plan"><i style="inline-size:${Math.round(a.plan.paid/a.plan.of*100)}%"></i></div>`
+  :`<div class="emptyline">${esc(T_.noPlan)}</div>`);
+
+ const promises=block('promises',(a.ptp||a.broken)?`<div class="rows grid2">
+   ${row(T_.f.ptpAmt,a.ptp?M(a.ptp.amt):null)}${row(T_.f.ptpDate,a.ptp?D(a.ptp.date):null)}
+   ${row(T_.f.ptpState,a.ptp?`<span class="badge ${a.ptp.state==='broken'?'q':'ok'}">${esc(E('ptp',a.ptp.state))}</span>`:null)}
+   ${row(T_.f.broken,N(a.broken))}
+   ${row(T_.f.brokenLast,a.brokenLast?D(a.brokenLast):null)}
+   ${row(T_.f.brokenType,a.brokenType?esc(E('brokenType',a.brokenType)):null,false,true)}
+  </div>`:`<div class="emptyline">${esc(T_.noPromise)}</div>`);
+
+ const f=a.fields||{},fv=k=>f[k]===undefined?null:(f[k]==='yes'?esc(T_.yes):f[k]==='no'?esc(T_.no):esc(L(f[k])));
+ const fields=block('fields',`<div class="rows grid2">
+   ${row(T_.f.disputed,a.dispute?`<span class="badge q">${esc(T_.yes)}</span>`:esc(T_.no))}${row(T_.f.verif,fv('verif'))}
+   ${row(T_.f.churn,fv('churn'))}${row(T_.f.repo,fv('repo'))}
+   ${row(T_.f.hardship,fv('hardship'))}${row(T_.f.employer,fv('employer'))}
+   ${row(T_.f.disputeWhy,a.dispute?esc(L(a.dispute.why)):null,false,true)}
+   ${row(T_.f.settle,fv('settle'),false,true)}
+  </div>`);
+
+ const m=a.meta||{};
+ const meta=block('meta',`<div class="rows grid2">
+   ${row(T_.f.cby,esc(m.cby))}${row(T_.f.cat,D(m.cat))}
+   ${row(T_.f.uby,esc(m.uby))}${row(T_.f.uat,D(m.uat))}
+   ${row(T_.f.lenderId,ltr(a.lid),false,true)}
+  </div>`);
+
+ return `<div class="col" id="c-acc">
+  <div class="colhead"><span class="eyebrow">${esc(T_.selected)} · ${esc(L(a.lender))} · ${esc(E('product',a.product))} · ${ltr(a.ref)}</span>${statusBadge(a,false)}</div>
+  <div class="colbody">
+   ${balance}${plan}${promises}${fields}${meta}
+  </div></div>`;
+}
+/* ═══ 9 · REGION 4 · activity column + entry mode ═══ */
+function activityCol(){
+ const r=rec(),a=acc(),T_=t();
+ const filt=l=>S.scope==='a'?l.filter(x=>x.a===a.ref):l;
+ const tabs=[['i',T_.tab.i],['m',T_.tab.m],['t',T_.tab.t],['k',T_.tab.k]];
+
+ let body='';
+ if(S.tab==='i'||S.tab==='m'){
+  const list=filt(S.tab==='i'?r.logs:r.msgs).sort((x,y)=>new Date(y.at)-new Date(x.at));
+  body=list.length?list.map(x=>{
+   const an=(r.accts.find(z=>z.ref===x.a)||{}).lender;
+   const cls=x===S.justLogged?'new':(x.src==='ai'?'ai':'');
+   return `<div class="log ${cls}"><span class="when num">${DT(x.at)}</span><span>
+    <b class="t-pri">${esc(E('out',x.out))}</b>
+    <span class="t-sec"> ${esc(E('src',x.src))} · ${esc(E('dir',x.dir))}</span>
+    ${x.note?`<div>${esc(L(x.note))}</div>`:''}
+    <div class="meta">${esc(x.by)}${S.scope==='all'&&an?` · ${esc(L(an))}`:''}</div></span></div>`;
+  }).join(''):`<div class="emptyline">${esc(T_.noLogs)}</div>`;
+ } else if(S.tab==='t'){
+  body=r.time.length?r.time.map(x=>`<div class="log"><span class="when num">${D(x.at)}</span>
+   <span>${esc(L(x.t))}</span></div>`).join(''):`<div class="emptyline">${esc(T_.noTimeline)}</div>`;
+ } else body=`<div class="emptyline">${esc(T_.noTickets)}</div>`;
+
+ /* the post-call write used to open inline here (S.entry). it's now its own screen
+    (wrapupView, S.mode='wrapup') — same reasoning as before (the record must stay
+    visible while transcribing), just given the room a sustained-attention task needs.
+    "Log outcome" below is the one entry point into it. */
+ return `<div class="col" id="c-act">
+  <div class="colhead">
+   <div class="tabs">${tabs.map(([k,l])=>`<button data-t="${k}" class="${S.tab===k?'on':''}" data-gated="${S.tab===k?0:1}">${esc(l)}</button>`).join('')}</div>
+   <button class="mini" id="b-scope">${esc(S.scope==='a'?T_.scopeAcct:T_.scopeAll)}</button>
+  </div>
+  <div class="colbody">
+   ${body}
+  </div></div>`;
+}
+/* ═══ 10 · compare view. comparison is a different job from navigation. ═══ */
+function compareView(){
+ const r=rec(),T_=t(),h=T_.tbl,list=accts();
+ return `<div class="col">
+  <div class="colhead"><span class="eyebrow">${esc(T_.compare)} · ${N(list.length)}</span></div>
+  <div class="colbody flush">
+   <table><thead><tr><th>${esc(h.ref)}</th><th>${esc(h.acctRef)}</th><th>${esc(h.product)}</th>
+    <th>${esc(h.merchant)}</th><th class="n">${esc(h.bal)}</th><th class="n">${esc(h.total)}</th>
+    <th>${esc(h.due)}</th><th class="n">${esc(h.dpd)}</th><th>${esc(h.status)}</th><th></th></tr></thead>
+   <tbody>${list.map((a,i)=>`<tr data-a="${i}"><td>${ltr(a.ref)}</td><td>${ltr(a.aref)}</td>
+    <td>${esc(E('product',a.product))}</td><td>${a.merchant?esc(L(a.merchant)):dash()}</td>
+    <td class="n">${M(a.out)}</td><td class="n">${M(a.total)}</td><td>${D(a.due)}</td>
+    <td class="n">${N(dpd(a))}</td><td>${statusBadge(a,false)}</td>
+    <td><button class="mini" data-a="${i}">${esc(h.open)}</button></td></tr>`).join('')}</tbody></table>
+  </div></div>`;
+}
+/* ═══ 11 · SCREEN · queue. the case arrives here before any borrower record is open.
+   Reuses the four existing records — no invented cases, no invented "time waited" field
+   (none of the fixtures carry one, and fabricating it would be exactly the kind of
+   unsourced number the defensibility pass exists to catch). ═══ */
+function queueView(){
+ const T_=t();
+ /* sort: top escalation severity desc, then exposure desc — reuses reasons()'s own
+    severity score, no new scoring logic. See spec.md's queue section for why. */
+ const keys=Object.keys(R).sort((x,y)=>{
+  const sx=reasons(R[x])[0]?.s||0, sy=reasons(R[y])[0]?.s||0;
+  return sy!==sx ? sy-sx : sumOut(R[y])-sumOut(R[x]);
+ });
+ const flagged=keys.filter(k=>(reasons(R[k])[0]?.s||0)>0).length;
+ const rows=keys.map(k=>{
+  const r=R[k],rs=reasons(r),top=rs[0],w=worst(r);
+  /* the badge names the reason's type (a triage column the agent scans without reading);
+     the detail line carries the specifics. top-1 reason only: one coral badge per flagged
+     row holds the fixtures at exactly 3, the existing budget cap (see spec.md). */
+  const why=top
+    ?`<div class="top"><span class="badge alert" data-alert="1"><i class="dot"></i>${esc(T_.rk[top.k])}</span>
+      ${rs.length>1?`<span class="t-sec">${esc(T_.more(rs.length-1))}</span>`:''}</div>
+     <span class="t-sec detail" title="${esc(top.x)}">${esc(top.d)}</span>`
+    :`<span class="t-sec">${esc(T_.q.noFlag)}</span>`;
+  return `<div class="qrow" data-q="${k}" tabindex="0" role="button">
+   <div class="qrow-id">
+    <div class="avatar">${esc(r.ini)}</div>
+    <div class="who"><span class="t-title">${esc(L(r.name))}</span>
+     <span class="t-sec">${esc(S.lang==='en'?r.name.ar:r.name.en)}</span></div>
+   </div>
+   <div class="qrow-why">${why}</div>
+   <div class="qrow-num"><div class="t-display sm">${M(sumOut(r))}</div>
+    <span class="t-sec">${esc(T_.across(r.accts.length))}</span></div>
+   <div class="qrow-num"><div class="t-display sm">${N(dpd(w))}</div>
+    <span class="t-sec">${esc(T_.on)} ${esc(L(w.lender))}</span></div>
+   <div class="qrow-contact">${icon('robot')}<span class="num">${N(r.calls.ai)}</span>
+    ${icon('phone')}<span class="num">${N(r.calls.h)}</span></div>
+   <span class="mini pri" aria-hidden="true">${esc(T_.q.openCase)}</span>
+  </div>`;
+ }).join('');
+
+ const c=T_.q.cols;
+ return `<div class="queue">
+  <div class="qhead">
+   <span class="t-title">${esc(T_.q.title)} · ${esc(T_.q.count(keys.length))}</span>
+   <span class="t-sec">${esc(T_.q.needsAttention(flagged))}</span>
+  </div>
+  <div class="qbody">
+   <div class="qcols" aria-hidden="true"><span>${esc(c.who)}</span><span>${esc(c.why)}</span>
+    <span class="n">${esc(T_.outstanding)}</span><span class="n">${esc(T_.worstDpd)}</span>
+    <span class="n">${esc(c.calls)}</span><span></span></div>
+   ${rows}
+  </div>
+ </div>`;
+}
+/* ═══ 12 · SCREEN · wrap-up. replaces the old inline entry form (one canonical home).
+   Spine + borrowerCol stay mounted around this (see app.js render()) for the same
+   reason the inline form was never a modal: the record must stay visible while
+   the agent is transcribing from it. ═══ */
+function wrapupView(){
+ const a=acc(),T_=t();
+ if(S.wrapDone){
+  return `<div class="col"><div class="colhead"><span class="eyebrow">${esc(T_.wrap.title)}</span></div>
+   <div class="colbody"><div class="wrap-done">
+    ${icon('check')}<div class="t-pri">${esc(T_.wrap.logged)}</div>
+    <button class="act primary" id="w-return">${esc(T_.wrap.returnToQueue)}</button>
+   </div></div></div>`;
+ }
+ return `<div class="col"><div class="colhead">
+   <span class="eyebrow">${esc(T_.wrap.title)} · ${esc(T_.wrap.forAccount)} ${esc(L(a.lender))} · ${ltr(a.ref)}</span>
+  </div>
+  <div class="colbody"><div class="wrap">
+   <div class="f"><span id="w-out-l">${esc(T_.outcome)}</span>
+    ${selectMenu('w-out',['rpc','noans','promise','callback','dispute','hardship','wrong'].map(k=>[k,E('out',k)]),'w-out-l')}</div>
+   <label class="f"><span>${esc(T_.notes)}</span>
+    <input type="text" id="w-note"></label>
+   <div class="f" role="group" aria-labelledby="w-ptp-l"><span id="w-ptp-l">${esc(T_.setPtp)}</span>
+    <span class="pair">
+     <input type="text" id="w-amt" class="amt" placeholder="AED" dir="ltr" aria-label="${esc(T_.f.ptpAmt)}">
+     ${datePicker('w-date','w-ptp-l')}</span></div>
+   <div class="wrap-note">${esc(T_.wrap.note)}</div>
+   <div class="actions">
+    <button class="act primary" id="w-save">${esc(T_.wrap.save)}</button>
+    <button class="act" id="w-cancel">${esc(T_.cancel)}</button>
+   </div>
+  </div></div></div>`;
+}
+
+// nav, render, event wiring.
+
+/* ═══ 11 · nav + render ═══ */
+/* the brand files as shipped in assets/, never redrawn or re-cropped. same images in
+   both directions: a logo is not mirrored or re-lettered for RTL. build.sh inlines them. */
+const LOGO=`<img class="logo-full" alt="ClearGrid" src="data:image/webp;base64,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">
+   <img class="logo-mark" alt="ClearGrid" src="data:image/webp;base64,UklGRjQEAABXRUJQVlA4WAoAAAAQAAAATwIATwIAQUxQSIQAAAABL0AQQBJCqKtussEaERG8i2AUSZKiPRKARu6UoH9BS6/bjOj/BAT+53/+53/+53/+l9F1Ln3+4z/+4z/+4z/+4z/nOs7Yl2qaQuw7//Ef//Ef//FfY1rgP/77UYj/+mKvpy6UMv/xH//xH//xH//xnx+9X+6nYuJ//ud//ud//uf/pnhWUDggigMAAPBaAJ0BKlACUAI+YTCUSKQjIaEgCJiADAlpbuF2sRq5tP5nawAn3T2prBmlGQY8zMXsgnmZi9kE8zMXsgnmZi9kE8zMXsgnmZi9kE8zMXsgnmZi9kE8zMXsgnmZi9kE8zMXsgnmZi9kE8zMXsgnmZi9kE8zMXsgnmZi9kE8zMXsgnmZi9kE8zMXsehEYVhj1Gekf17puLDHqM9I/r3TcWGPUZ6R/RKgxLjzMxewpe3oNHIYPQaOQweg0arDaZBjzMrNrRkGPMzF7IJ5mVnTGsGaUY2U1kE8zMXsgnmZi3qayCeZmLeprIJ5mYvZBPMzFvU1kE8zMW9TWQTzMxeyCeZmLeprIJ5mYt6msgnmZi9kE8zMW9TWQTzMxb1NZBPMzF7IJ5mYt6msgnmZi3qayCeZ0s6IAQ0FBkCbg+KzMxeh05TWDQCL9ovDo1nSfZmYd606prBmj/rTqmsbqHmXQLqDIE3B8VmZi9DpymsGkPuZh3rTqmoaCDNKMgxrhnOntXhrU1DQQZpQDa0ZBjzMrNrRkGREjBmYbWjIL06OnmZi9hTo6eZcIiRszKza0ZBenR08zMXsKdHTzLoF1BkCbg+Ky/hnOntTWCWGc6eyXBg5CKQVIVDzDLkrue5LeK+Aw38gnmZi3qayCeZmL2QZTEE8zMXsgnmXQLqDIMeZmL4Zr7U1gzSjIMeGQL8F7IJ5mYzOoMgx5mYvZA6dHTzMxeyCeuADNKMgx5mYvQ6cprBmlGQZESMGaUZBjzMxb1NZBPMzF7IMpiCeZmL2QTzLoF1BkGPMzF8Mv5vxWZmL2QTUXnGFqjzVcde6k9HqNvrKfKjj1G31kGc6e1NYM0oyDHmZi9kE8zMXsgnmZi9kE8zMXsgnmZi9kE8zMXsgnmZi9kE8zMXsgnmZi9kE8zMXsgnmZi9kE8zMXsgnmZi9kE8zMXsgnmZi9kE8zMXsgnmZi9kE8zMXsgnmZi9kE8zMOAAA/v/ZNAAAAAAAAAApdxIJ22pVyaTSaTSaTSaTSaTECY8O5BFXmLE0GLE0GLE0GLE0GLE0GLE0GLE0GLE0GLE0GLE0GLE0GKEzAk5l8AAAAAAAB7F4BW389S+AoAAAAAAAXV9lYDGBeA6X/m1M6pdUuqXVLqd/mY/ig9qWamAw3Ah+ZnHbl8AAAAAAcFZHW3b1xMm3riZNvXEybeuJk2wIAAAAAAAAAAAAAA==">`;
+function nav(){
+ const n=t().nav;
+ const i=(k,ic,on,key)=>`<div class="item${on?' on':''}"${key?` data-nav="${key}" tabindex="0" role="button"`:''}>${icon(ic)}<span class="label">${esc(k)}</span></div>`;
+ return `<div class="nav-scroll">
+   <div class="logo">${LOGO}</div>
+   <div class="gl">${esc(n.p)}</div>${i(n.dash,'dash')}${i(n.bor,'users',1,'queue')}${i(n.acc,'wallet')}
+   <div class="gl">${esc(n.sup)}</div>${i(n.inbox,'mail')}${i(n.tick,'ticket')}
+   <div class="gl">${esc(n.tools)}</div>${i(n.rep,'chartbar')}${i(n.ai,'robot')}${i(n.camp,'megaphone')}${i(n.wf,'flow')}
+  </div>
+  <div class="nav-bottom">
+   <div class="nav-lang">
+    <button data-v="en"${S.lang==='en'?' class="on"':''}><span class="full">English</span><span class="ic">EN</span></button>
+    <button data-v="ar"${S.lang==='ar'?' class="on"':''}><span class="full">العربية</span><span class="ic">ع</span></button>
+   </div>
+   <div class="nav-promo">
+    <div class="t-pri">${esc(n.voiceTitle)}</div>
+    <div class="t-sec">${esc(n.voiceSub)}</div>
+    <button class="nav-promo-btn">${icon('mic')}<span>${esc(n.voiceBtn)}</span></button>
+   </div>
+   <div class="nav-profile">
+    <div class="avatar">S</div>
+    <div class="who"><span class="t-pri">sara.haddad</span><span class="t-sec">sara.haddad@example.com</span></div>
+    ${icon('caret')}
+   </div>
+  </div>
+  <div class="nav-foot">
+   <button id="b-navcollapse" title="${esc(S.navCollapsed?n.expand:n.collapse)}">${icon('dcaret')}</button>
+  </div>`;
+}
+
+function render(){
+ document.documentElement.lang=S.lang;
+ document.documentElement.dir=S.lang==='ar'?'rtl':'ltr';
+ const list=accts(); if(S.sel>=list.length) S.sel=0;
+ document.getElementById('nav').classList.toggle('collapsed',S.navCollapsed);
+ document.getElementById('nav').innerHTML=nav();
+ const stack=document.getElementById('stack');
+ /* the only screen-swap mechanism the app has: a state field branched once, here.
+    'queue' has no spine (no borrower is open yet); 'wrapup' reuses the exact
+    two-column shape 'compare' already uses so the write pane keeps the spine and
+    the account-card rail visible instead of introducing a second layout. */
+ if(S.mode==='queue'){
+  stack.innerHTML=queueView();
+ } else if(S.mode==='wrapup'){
+  stack.innerHTML=spine()+`<div class="cols compare">${borrowerCol()}${wrapupView()}</div>`;
+ } else {
+  stack.innerHTML=spine()+
+   `<div class="cols${S.mode==='compare'?' compare':''}">${borrowerCol()}${S.mode==='compare'?compareView():accountCol()+activityCol()}</div>`;
+ }
+ wire();
+}
+
+/* default selection: the account the escalation line names, else the largest. */
+function defaultSel(){
+ const h=hot(rec()),list=accts();
+ const i=list.findIndex(a=>h.has(a.ref));
+ return i<0?0:i;
+}
+/* ═══ 13 · events ═══ */
+/* product nav's own EN/AR toggle and the "Borrowers" -> queue link — #nav's innerHTML is
+   replaced each render, so these listeners are delegated on the persistent container
+   rather than rebound per render like wire(). */
+document.getElementById('nav').addEventListener('click',e=>{
+ const b=e.target.closest('.nav-lang button');
+ if(b){
+  /* collapsed rail only shows the active button (the inactive one is display:none),
+     so clicking it must flip rather than re-set the same value or it would be a dead end.
+     Expanded, both buttons are visible and clickable, so just set to whichever was
+     clicked — flipping there too would make clicking the already-active language switch
+     away from it, which is wrong for an ordinary two-button toggle. */
+  const collapsed=document.getElementById('nav').classList.contains('collapsed');
+  S.lang=collapsed?(S.lang==='en'?'ar':'en'):b.dataset.v; render(); return;
+ }
+ if(e.target.closest('[data-nav]')){ S.mode='queue'; render(); }
+});
+document.getElementById('nav').addEventListener('keydown',e=>{
+ if(e.key!=='Enter'&&e.key!==' ')return;
+ if(e.target.closest('[data-nav]')){ e.preventDefault(); S.mode='queue'; render(); }
+});
+
+/* keyboard: selection is a many-times-a-day action, so it gets no animation.
+   digits/compare only act once a case is open, so a stray keystroke on the queue
+   or mid-write on the wrap-up screen can't silently jump the agent somewhere else. */
+document.addEventListener('keydown',e=>{
+ if(e.target.matches('input,textarea,select'))return;
+ const inCase=S.mode==='profile'||S.mode==='compare';
+ const n=parseInt(e.key,10);
+ if(inCase&&n>=1&&n<=9&&accts()[n-1]){S.sel=n-1;S.mode='profile';render();}
+ if(inCase&&e.key==='c'){S.mode=S.mode==='compare'?'profile':'compare';render();}
+ if(e.key==='q'&&S.mode!=='queue'&&S.mode!=='wrapup'){S.mode='queue';render();}
+ if(e.key==='Escape'&&S.mode==='wrapup'){S.mode='profile';S.wrapDone=false;render();}
+});
+
+/* ═══ 13.1 · collapsed-nav hover flyout. one shared, fixed-position, JS-driven element.
+   a per-item CSS :hover + position:absolute child was tried first and was invisible in
+   practice: .nav-scroll{overflow:auto} silently clips any absolutely-positioned descendant
+   that escapes its own bounds. position:fixed + JS placement sidesteps that entirely. ═══ */
+function wireNavFlyout(){
+ const fly=document.getElementById('nav-flyout'),navEl=document.getElementById('nav');
+ if(!navEl.classList.contains('collapsed')){ fly.hidden=true; return; }
+ navEl.querySelectorAll('.nav-scroll .item').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{
+   const label=el.querySelector('.label'); if(!label)return;
+   const r=el.getBoundingClientRect();
+   fly.textContent=label.textContent;
+   fly.style.top=r.top+r.height/2+'px';
+   if(S.lang==='ar'){ fly.style.insetInlineEnd=(window.innerWidth-r.left)+'px'; fly.style.insetInlineStart='auto'; }
+   else{ fly.style.insetInlineStart=r.right+'px'; fly.style.insetInlineEnd='auto'; }
+   fly.hidden=false;
+  });
+  el.addEventListener('mouseleave',()=>{ fly.hidden=true; });
+ });
+}
+
+function wire(){
+ const s=document.getElementById('stack');
+ s.querySelectorAll('[data-a]').forEach(el=>el.addEventListener('click',()=>{
+  S.sel=+el.dataset.a;S.mode='profile';render();}));
+ /* account cards carry role="button"+tabindex (regions.js) so Tab reaches them; the
+    compare table's rows lean on their own real <button>, which is native-keyboard-safe
+    already, so only the card-shaped targets need this explicit key handling. */
+ s.querySelectorAll('[role="button"][data-a]').forEach(el=>el.addEventListener('keydown',e=>{
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();S.sel=+el.dataset.a;S.mode='profile';render();}}));
+ s.querySelectorAll('[data-q]').forEach(el=>{
+  const open=()=>{S.rec=el.dataset.q;S.mode='profile';S.sel=defaultSel();render();};
+  el.addEventListener('click',open);
+  el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});
+ });
+ s.querySelectorAll('[data-t]').forEach(b=>b.addEventListener('click',()=>{S.tab=b.dataset.t;render();}));
+ /* aria-disabled controls stay focusable (for their tooltip) but must never act */
+ const on=(id,f)=>{const e=document.getElementById(id); if(e)e.addEventListener('click',ev=>{
+  if(e.getAttribute('aria-disabled')!=='true')f(ev);});};
+ on('b-compare',()=>{S.mode=S.mode==='compare'?'profile':'compare';render();});
+ on('b-scope',()=>{S.scope=S.scope==='a'?'all':'a';render();});
+ on('b-entry',()=>{S.mode='wrapup';S.wrapDone=false;render();});
+ on('b-inbox',()=>{S.mode='profile';S.tab='m';S.scope='all';render();});
+ on('w-cancel',()=>{S.mode='profile';render();});
+ on('w-save',()=>{
+  const a=acc(),r=rec();
+  const out=document.getElementById('w-out').value;
+  const note=document.getElementById('w-note').value.trim();
+  const amt=parseFloat(document.getElementById('w-amt').value.replace(/[^\d.]/g,''));
+  const date=document.getElementById('w-date').value;
+  const entry={at:new Date().toISOString().slice(0,16),a:a.ref,src:'phone',dir:'out',out,
+    by:r.owner||'Agent',note:note?{en:note,ar:note}:null};
+  r.logs.unshift(entry); S.justLogged=entry;
+  /* one write, three synchronised reads: spine stat, account card, this list */
+  if(amt&&date){ a.ptp={amt,date,state:'open'}; }
+  S.wrapDone=true; S.tab='i'; render();
+ });
+ on('w-return',()=>{S.wrapDone=false;S.mode='queue';render();});
+ on('b-navcollapse',()=>{S.navCollapsed=!S.navCollapsed;render();});
+ wireNavFlyout();
+ s.querySelectorAll('.dd').forEach(wireDropdown);
+}
+
+/* ═══ 13.2 · select + date picker behaviour (markup: components.js 5.2).
+   Popovers open instantly (CLAUDE.md motion), close on Escape / outside click / pick,
+   and hand focus back to their trigger. ═══ */
+const ISO=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+function closeDropdowns(except){
+ document.querySelectorAll('.dd-pop:not([hidden])').forEach(p=>{
+  if(p.parentElement===except)return;
+  p.hidden=true; p.parentElement.querySelector('.dd-trigger').setAttribute('aria-expanded','false');
+ });
+}
+document.addEventListener('mousedown',e=>{ if(!e.target.closest('.dd')) closeDropdowns(); });
+
+function wireDropdown(dd){
+ const trig=dd.querySelector('.dd-trigger'),pop=dd.querySelector('.dd-pop'),input=dd.querySelector('input');
+ const open=()=>{ closeDropdowns(dd); pop.hidden=false; trig.setAttribute('aria-expanded','true'); };
+ const close=()=>{ pop.hidden=true; trig.setAttribute('aria-expanded','false'); trig.focus(); };
+ /* stopPropagation: Escape here closes the popover only, not the whole wrap-up screen */
+ pop.addEventListener('keydown',e=>{ if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();} if(e.key==='Tab')close(); });
+
+ if(dd.dataset.dd==='select'){
+  const opts=[...pop.querySelectorAll('.dd-opt')];
+  const pick=o=>{ input.value=o.dataset.v; dd.querySelector('.dd-val').textContent=o.textContent.trim();
+   opts.forEach(x=>x.setAttribute('aria-selected',x===o)); close(); };
+  trig.addEventListener('click',()=>{ if(!pop.hidden){close();return;} open();
+   (opts.find(o=>o.dataset.v===input.value)||opts[0]).focus(); });
+  trig.addEventListener('keydown',e=>{ if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();trig.click();} });
+  opts.forEach(o=>o.addEventListener('click',()=>pick(o)));
+  pop.addEventListener('keydown',e=>{
+   const i=opts.indexOf(document.activeElement),n=opts.length;
+   const to={ArrowDown:(i+1)%n,ArrowUp:(i-1+n)%n,Home:0,End:n-1}[e.key];
+   if(to!==undefined){e.preventDefault();opts[to].focus();}
+   if((e.key==='Enter'||e.key===' ')&&i>=0){e.preventDefault();pick(opts[i]);}
+  });
+  return;
+ }
+
+ /* date: a month grid, weeks from Monday (UAE), past days not selectable —
+    a promise to pay can only be made for today or later. */
+ let view=new Date(TODAY.getFullYear(),TODAY.getMonth(),1);
+ const T_=t(),loc=S.lang==='ar'?'ar-AE-u-ca-gregory-nu-latn':'en-AE-u-ca-gregory';
+ const monthF=new Intl.DateTimeFormat(loc,{month:'long',year:'numeric'});
+ const dayF=new Intl.DateTimeFormat(loc,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ const wk=Array.from({length:7},(_,i)=>new Intl.DateTimeFormat(loc,{weekday:S.lang==='ar'?'narrow':'short'})
+   .format(new Date(2026,0,5+i))).map(w=>S.lang==='ar'?w:w.slice(0,2));
+ const today=ISO(TODAY);
+ const draw=focusIso=>{
+  const y=view.getFullYear(),m=view.getMonth(),days=new Date(y,m+1,0).getDate(),lead=(new Date(y,m,1).getDay()+6)%7;
+  const atStart=y===TODAY.getFullYear()&&m===TODAY.getMonth();
+  const sel=input.value;
+  const tgt=focusIso||(sel&&sel.slice(0,7)===ISO(view).slice(0,7)?sel:(atStart?today:ISO(view)));
+  let cells='<span></span>'.repeat(lead);
+  for(let d=1;d<=days;d++){
+   const iso=ISO(new Date(y,m,d)),past=iso<today;
+   cells+=past?`<span class="cal-day past" aria-hidden="true">${N(d)}</span>`
+    :`<button type="button" class="cal-day${iso===today?' today':''}${iso===sel?' on':''}" data-d="${iso}"
+       tabindex="${iso===tgt?0:-1}" aria-pressed="${iso===sel}" aria-label="${dayF.format(new Date(y,m,d))}">${N(d)}</button>`;
+  }
+  pop.innerHTML=`<div class="cal-head">
+    <button type="button" class="cal-nav" data-m="-1"${atStart?` aria-disabled="true" data-tip="${esc(T_.noPast)}"`:''} aria-label="${esc(T_.prevMonth)}">${icon('prev')}</button>
+    <span class="cal-cap" aria-live="polite">${esc(monthF.format(view))}</span>
+    <button type="button" class="cal-nav" data-m="1" aria-label="${esc(T_.nextMonth)}">${icon('next')}</button></div>
+   <div class="cal-grid" role="grid">${wk.map(w=>`<span class="cal-wd" aria-hidden="true">${esc(w)}</span>`).join('')}${cells}</div>`;
+  const f=pop.querySelector(`[data-d="${tgt}"]`)||pop.querySelector('.cal-day[data-d]');
+  if(f){f.tabIndex=0; if(focusIso!==null)f.focus();}
+ };
+ const shift=n=>{view=new Date(view.getFullYear(),view.getMonth()+n,1);};
+ trig.addEventListener('click',()=>{ if(!pop.hidden){close();return;}
+  if(input.value) view=new Date(+input.value.slice(0,4),+input.value.slice(5,7)-1,1);
+  open(); draw(); });
+ pop.addEventListener('click',e=>{
+  const nav=e.target.closest('.cal-nav');
+  if(nav){ if(nav.getAttribute('aria-disabled')!=='true'){shift(+nav.dataset.m);draw(null);
+   pop.querySelector(`.cal-nav[data-m="${nav.dataset.m}"]`).focus();} return; }
+  const b=e.target.closest('.cal-day[data-d]'); if(!b)return;
+  input.value=b.dataset.d;
+  const v=dd.querySelector('.dd-val'); v.textContent=D(b.dataset.d); v.classList.remove('empty-val');
+  close();
+ });
+ pop.addEventListener('keydown',e=>{
+  const b=e.target.closest('.cal-day[data-d]'); if(!b)return;
+  const rtl=S.lang==='ar';
+  const step={ArrowRight:rtl?-1:1,ArrowLeft:rtl?1:-1,ArrowDown:7,ArrowUp:-7}[e.key];
+  if(step===undefined)return;
+  e.preventDefault();
+  const [y,m,d]=b.dataset.d.split('-').map(Number),n=new Date(y,m-1,d+step),iso=ISO(n);
+  if(iso<today)return;
+  if(n.getMonth()!==view.getMonth()) view=new Date(n.getFullYear(),n.getMonth(),1);
+  draw(iso);
+ });
+}
+S.sel=defaultSel();
+render();
+</script>
+</body>
+</html>
